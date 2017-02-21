@@ -72,6 +72,39 @@ var GamePlayScene = function(game, stage)
       if(dragging_obj == self) dragging_obj = 0;
     }
   }
+  var module_whippet_dongle = function(offx,offy,r,module)
+  {
+    var self = this;
+    self.module = module;
+    self.off_x = offx;
+    self.off_y = offy;
+    self.drag_start_x = 0;
+    self.drag_start_y = 0;
+    self.r = r;
+
+    self.shouldDrag = function(evt)
+    {
+      if(dragging_obj && dragging_obj != self) return false;
+      return distsqr(self.module.x+self.off_x,self.module.y+self.off_y,evt.doX,evt.doY) < self.r*self.r;
+    }
+    self.dragStart = function(evt)
+    {
+      dragging_obj = self;
+      self.drag_start_x = evt.doX;
+      self.drag_start_y = evt.doY;
+      self.drag_x = evt.doX;
+      self.drag_y = evt.doY;
+    }
+    self.drag = function(evt)
+    {
+      self.drag_x = evt.doX;
+      self.drag_y = evt.doY;
+    }
+    self.dragFinish = function(evt)
+    {
+      if(dragging_obj == self) dragging_obj = 0;
+    }
+  }
 
   var module = function(wx,wy,ww,wh)
   {
@@ -109,26 +142,8 @@ var GamePlayScene = function(game, stage)
 
     self.range_dongle = new module_dongle(0,0,0,self);
 
-    self.adder_dongle = new module_dongle(self.w,5,10,self);
-    self.adder_dongle.dragStart = function(evt)
-    {
-      dragging_obj = self.adder_dongle;
-      self.adder_dongle.drag_start_x = evt.doX;
-      self.adder_dongle.drag_start_y = evt.doY;
-      self.adder_dongle.drag_x = evt.doX;
-      self.adder_dongle.drag_y = evt.doY;
-    }
-    self.adder_dongle.drag = function(evt)
-    {
-      self.adder_dongle.drag_x = evt.doX;
-      self.adder_dongle.drag_y = evt.doY;
-    }
-    self.adder_dongle.dragFinish = function(evt)
-    {
-      if(dragging_obj == self.adder_dongle) dragging_obj = 0;
-    }
-
-    self.subtracter_dongle = new module_dongle(0,0,0,self);
+    self.adder_dongle = new module_whippet_dongle(self.w,5,10,self);
+    self.subtractor_dongle = new module_whippet_dongle(self.w,self.h-5,10,self);
 
     //the module itself
     self.shouldDrag = function(evt)
@@ -161,6 +176,13 @@ var GamePlayScene = function(game, stage)
 
       //adder_dongle
       ctx.drawImage(blurb,self.x+self.adder_dongle.off_x-self.adder_dongle.r,self.y+self.adder_dongle.off_y-self.adder_dongle.r,self.adder_dongle.r*2,self.adder_dongle.r*2);
+      ctx.fillStyle = "#000000";
+      ctx.fillText("+",self.x+self.adder_dongle.off_x+self.adder_dongle.r/2,self.y+self.adder_dongle.off_y+self.adder_dongle.r/2);
+
+      //subtractor_dongle
+      ctx.drawImage(blurb,self.x+self.subtractor_dongle.off_x-self.subtractor_dongle.r,self.y+self.subtractor_dongle.off_y-self.subtractor_dongle.r,self.subtractor_dongle.r*2,self.subtractor_dongle.r*2);
+      ctx.fillStyle = "#000000";
+      ctx.fillText("-",self.x+self.subtractor_dongle.off_x+self.subtractor_dongle.r/2,self.y+self.subtractor_dongle.off_y+self.subtractor_dongle.r/2);
 
       //fill
       ctx.fillStyle = self.color;
@@ -192,6 +214,17 @@ var GamePlayScene = function(game, stage)
         ctx.lineTo(self.adder_dongle.drag_x,self.adder_dongle.drag_y);
         ctx.stroke();
       }
+
+      //subtractor_dongle_line
+      ctx.strokeStyle = "#000000"
+      if(self.subtractor_dongle.dragging)
+      {
+        ctx.beginPath();
+        ctx.moveTo(self.x+self.subtractor_dongle.off_x,self.y+self.subtractor_dongle.off_y);
+        ctx.lineTo(self.subtractor_dongle.drag_x,self.subtractor_dongle.drag_y);
+        ctx.stroke();
+      }
+
     }
   }
 
@@ -232,6 +265,8 @@ var GamePlayScene = function(game, stage)
       dragger.filter(modules[i].v_dongle);
     for(var i = 0; i < modules.length; i++)
       dragger.filter(modules[i].adder_dongle);
+    for(var i = 0; i < modules.length; i++)
+      dragger.filter(modules[i].subtractor_dongle);
     for(var i = 0; i < modules.length; i++)
       dragger.filter(modules[i]);
     dragger.filter(add_module_btn);
