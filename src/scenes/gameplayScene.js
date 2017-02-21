@@ -109,6 +109,28 @@ var GamePlayScene = function(game, stage)
 
     self.range_dongle = new module_dongle(0,0,0,self);
 
+    self.adder_dongle = new module_dongle(self.w,5,10,self);
+    self.adder_dongle.dragStart = function(evt)
+    {
+      dragging_obj = self.adder_dongle;
+      self.adder_dongle.drag_start_x = evt.doX;
+      self.adder_dongle.drag_start_y = evt.doY;
+      self.adder_dongle.drag_x = evt.doX;
+      self.adder_dongle.drag_y = evt.doY;
+    }
+    self.adder_dongle.drag = function(evt)
+    {
+      self.adder_dongle.drag_x = evt.doX;
+      self.adder_dongle.drag_y = evt.doY;
+    }
+    self.adder_dongle.dragFinish = function(evt)
+    {
+      if(dragging_obj == self.adder_dongle) dragging_obj = 0;
+    }
+
+    self.subtracter_dongle = new module_dongle(0,0,0,self);
+
+    //the module itself
     self.shouldDrag = function(evt)
     {
       if(dragging_obj && dragging_obj != self) return false;
@@ -133,6 +155,14 @@ var GamePlayScene = function(game, stage)
 
     self.draw = function()
     {
+      //title
+      ctx.fillStyle = "#000000";
+      ctx.fillText(self.title,self.x,self.y-10);
+
+      //adder_dongle
+      ctx.drawImage(blurb,self.x+self.adder_dongle.off_x-self.adder_dongle.r,self.y+self.adder_dongle.off_y-self.adder_dongle.r,self.adder_dongle.r*2,self.adder_dongle.r*2);
+
+      //fill
       ctx.fillStyle = self.color;
       var p = self.v/self.range;
       ctx.fillRect(self.x,self.y+self.h*(1-p),self.w,self.h*p);
@@ -143,15 +173,25 @@ var GamePlayScene = function(game, stage)
         ctx.fillRect(self.x,self.y+self.h*(1-p),self.w,self.h*p);
       }
 
+      //stroke
       ctx.strokeStyle = "#000000";
       ctx.strokeRect(self.x,self.y,self.w,self.h);
 
+      //v_dongle
+      ctx.fillStyle = "#000000"
       ctx.drawImage(blurb,self.x+self.v_dongle.off_x-self.v_dongle.r,self.y+self.v_dongle.off_y-self.v_dongle.r,self.v_dongle.r*2,self.v_dongle.r*2);
-      ctx.fillStyle = "#000000";
-      ctx.fillText(self.title,self.x,self.y-10);
-
       if(self.v_dongle.dragging) ctx.fillText(self.v_temp,self.x+self.v_dongle.off_x-self.v_dongle.r/2,self.y+self.v_dongle.off_y+self.v_dongle.r/2);
       else                       ctx.fillText(self.v     ,self.x+self.v_dongle.off_x-self.v_dongle.r/2,self.y+self.v_dongle.off_y+self.v_dongle.r/2);
+
+      //adder_dongle_line
+      ctx.strokeStyle = "#000000"
+      if(self.adder_dongle.dragging)
+      {
+        ctx.beginPath();
+        ctx.moveTo(self.x+self.adder_dongle.off_x,self.y+self.adder_dongle.off_y);
+        ctx.lineTo(self.adder_dongle.drag_x,self.adder_dongle.drag_y);
+        ctx.stroke();
+      }
     }
   }
 
@@ -190,6 +230,8 @@ var GamePlayScene = function(game, stage)
   {
     for(var i = 0; i < modules.length; i++)
       dragger.filter(modules[i].v_dongle);
+    for(var i = 0; i < modules.length; i++)
+      dragger.filter(modules[i].adder_dongle);
     for(var i = 0; i < modules.length; i++)
       dragger.filter(modules[i]);
     dragger.filter(add_module_btn);
