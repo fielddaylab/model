@@ -14,6 +14,8 @@ var GamePlayScene = function(game, stage)
 
   var modules;
   var dragging_obj;
+  var ticking;
+  var tick_timer;
 
   var add_module_btn;
 
@@ -60,6 +62,8 @@ var GamePlayScene = function(game, stage)
     self.dragStart = function(evt)
     {
       dragging_obj = self;
+      ticking = false;
+      tick_timer = 0;
       self.drag_start_x = evt.doX;
       self.drag_start_y = evt.doY;
     }
@@ -70,6 +74,7 @@ var GamePlayScene = function(game, stage)
     self.dragFinish = function(evt)
     {
       if(dragging_obj == self) dragging_obj = 0;
+      ticking = true;
     }
   }
   var module_whippet_dongle = function(offx,offy,r,module)
@@ -90,6 +95,7 @@ var GamePlayScene = function(game, stage)
     self.dragStart = function(evt)
     {
       dragging_obj = self;
+      ticking = false;
       self.drag_start_x = evt.doX;
       self.drag_start_y = evt.doY;
       self.drag_x = evt.doX;
@@ -103,6 +109,7 @@ var GamePlayScene = function(game, stage)
     self.dragFinish = function(evt)
     {
       if(dragging_obj == self) dragging_obj = 0;
+      ticking = true;
       self.attachment = 0;
       for(var i = 0; i < modules.length; i++)
       {
@@ -143,6 +150,7 @@ var GamePlayScene = function(game, stage)
     self.v_dongle.dragFinish = function(evt)
     {
       if(dragging_obj == self.v_dongle) dragging_obj = 0;
+      ticking = true;
       self.v = self.v_temp;
     }
 
@@ -259,6 +267,7 @@ var GamePlayScene = function(game, stage)
 
     modules = [];
     dragging_obj = 0;
+    ticking = true;
 
     add_module_btn = new btn(-0.4,0.4,0.2,0.2);
     add_module_btn.wx = -screen_cam.ww/2+add_module_btn.ww/2+0.1;
@@ -294,6 +303,25 @@ var GamePlayScene = function(game, stage)
 
     dragger.flush();
     clicker.flush();
+
+    if(ticking)
+    {
+      tick_timer--;
+      if(tick_timer <= 0)
+      {
+        tick_timer = 10;
+        for(var i = 0; i < modules.length; i++)
+          modules[i].v_temp = modules[i].v;
+        for(var i = 0; i < modules.length; i++)
+        {
+          console.log(modules[i].v);
+          if(modules[i].adder_dongle.attachment)      modules[i].adder_dongle.attachment.v_temp      += modules[i].v;
+          if(modules[i].subtractor_dongle.attachment) modules[i].subtractor_dongle.attachment.v_temp -= modules[i].v;
+        }
+        for(var i = 0; i < modules.length; i++)
+          modules[i].v = clamp(0,modules[i].range,modules[i].v_temp);
+      }
+    }
   };
 
   self.draw = function()
@@ -304,6 +332,12 @@ var GamePlayScene = function(game, stage)
     ctx.strokeRect(add_module_btn.x,add_module_btn.y,add_module_btn.w,add_module_btn.h);
     for(var i = 0; i < modules.length; i++)
       modules[i].draw();
+
+    if(!ticking)
+    {
+      ctx.fillStyle = "rgba(0,0,0,0.1)";
+      ctx.fillRect(0,0,canv.width,canv.height);
+    }
   };
 
   self.cleanup = function()
