@@ -103,6 +103,12 @@ var GamePlayScene = function(game, stage)
     self.dragFinish = function(evt)
     {
       if(dragging_obj == self) dragging_obj = 0;
+      self.attachment = 0;
+      for(var i = 0; i < modules.length; i++)
+      {
+        if(doEvtWithinBB(evt, modules[i]))
+          self.attachment = modules[i];
+      }
     }
   }
 
@@ -214,6 +220,13 @@ var GamePlayScene = function(game, stage)
         ctx.lineTo(self.adder_dongle.drag_x,self.adder_dongle.drag_y);
         ctx.stroke();
       }
+      else if(self.adder_dongle.attachment)
+      {
+        ctx.beginPath();
+        ctx.moveTo(self.x+self.adder_dongle.off_x,self.y+self.adder_dongle.off_y);
+        ctx.lineTo(self.adder_dongle.attachment.x+self.adder_dongle.attachment.w/2,self.adder_dongle.attachment.y+self.adder_dongle.attachment.h/2);
+        ctx.stroke();
+      }
 
       //subtractor_dongle_line
       ctx.strokeStyle = "#000000"
@@ -224,8 +237,16 @@ var GamePlayScene = function(game, stage)
         ctx.lineTo(self.subtractor_dongle.drag_x,self.subtractor_dongle.drag_y);
         ctx.stroke();
       }
+      else if(self.subtractor_dongle.attachment)
+      {
+        ctx.beginPath();
+        ctx.moveTo(self.x+self.subtractor_dongle.off_x,self.y+self.subtractor_dongle.off_y);
+        ctx.lineTo(self.subtractor_dongle.attachment.x+self.subtractor_dongle.attachment.w/2,self.subtractor_dongle.attachment.y+self.subtractor_dongle.attachment.h/2);
+        ctx.stroke();
+      }
 
     }
+
   }
 
   self.ready = function()
