@@ -237,12 +237,12 @@ var GamePlayScene = function(game, stage)
 
     self.v = 0;
     self.v_temp = 0;
-    self.range = 100;
+    self.range = 10;
 
     self.v_dongle = new dongle(self.w/2,self.h/2,10,self);
     self.v_dongle.drag = function(evt)
     {
-      self.v_dongle.delta = self.v_dongle.drag_start_y-evt.doY;
+      self.v_dongle.delta = (self.v_dongle.drag_start_y-evt.doY)/10;
       self.v_temp = clamp(-self.range,self.range,self.v+self.v_dongle.delta);
     }
     self.v_dongle.dragFinish = function(evt)
@@ -351,8 +351,8 @@ var GamePlayScene = function(game, stage)
       //v_dongle
       ctx.fillStyle = "#000000"
       ctx.drawImage(blurb,self.x+self.v_dongle.off_x-self.v_dongle.r,self.y+self.v_dongle.off_y-self.v_dongle.r,self.v_dongle.r*2,self.v_dongle.r*2);
-      if(self.v_dongle.dragging) ctx.fillText((self.v_temp/10),self.x+self.v_dongle.off_x-self.v_dongle.r/2,self.y+self.v_dongle.off_y+self.v_dongle.r/2);
-      else                       ctx.fillText((self.v     /10),self.x+self.v_dongle.off_x-self.v_dongle.r/2,self.y+self.v_dongle.off_y+self.v_dongle.r/2);
+      if(self.v_dongle.dragging) ctx.fillText(fdisp(self.v_temp,1),self.x+self.v_dongle.off_x-self.v_dongle.r/2,self.y+self.v_dongle.off_y+self.v_dongle.r/2);
+      else                       ctx.fillText(fdisp(self.v     ,1),self.x+self.v_dongle.off_x-self.v_dongle.r/2,self.y+self.v_dongle.off_y+self.v_dongle.r/2);
     }
 
   }
@@ -437,14 +437,23 @@ var GamePlayScene = function(game, stage)
         for(var i = 0; i < pools.length; i++)
           pools[i].v_temp = pools[i].v;
         for(var i = 0; i < modules.length; i++)
+          modules[i].v_temp = modules[i].v;
+
+        for(var i = 0; i < modules.length; i++)
         {
           if(modules[i].input_dongle.attachment && modules[i].adder_dongle.attachment)
-            modules[i].adder_dongle.attachment.v_temp += modules[i].input_dongle.attachment.v*(modules[i].v/10);
+            modules[i].adder_dongle.attachment.v_temp += modules[i].input_dongle.attachment.v*(modules[i].v);
         }
+
         for(var i = 0; i < pools.length; i++)
         {
-          pools[i].v_temp = round(clamp(0,pools[i].range,pools[i].v_temp));
+          pools[i].v_temp = fdisp(clamp(0,pools[i].range,pools[i].v_temp),1);
           pools[i].v = pools[i].v_temp;
+        }
+        for(var i = 0; i < modules.length; i++)
+        {
+          modules[i].v_temp = fdisp(clamp(-modules[i].range,modules[i].range,modules[i].v_temp),1);
+          modules[i].v = modules[i].v_temp;
         }
       }
     }
