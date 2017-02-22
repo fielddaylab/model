@@ -43,6 +43,8 @@ var GamePlayScene = function(game, stage)
   module_img.context.fill();
   module_img.context.stroke();
 
+  var precision = 2;
+
   var btn = function(wx,wy,ww,wh)
   {
     var self = this;
@@ -403,8 +405,8 @@ var GamePlayScene = function(game, stage)
       //v_dongle
       ctx.drawImage(dongle_img,self.x+self.w/2+self.v_dongle.off.x-self.v_dongle.r,self.y+self.h/2+self.v_dongle.off.y-self.v_dongle.r,self.v_dongle.r*2,self.v_dongle.r*2);
       ctx.fillStyle = "#000000"
-      if(self.v_dongle.dragging) ctx.fillText(fdisp(self.v_temp,1),self.x+self.w/2+self.v_dongle.off.x-self.v_dongle.r/2,self.y+self.h/2+self.v_dongle.off.y+self.v_dongle.r/2);
-      else                       ctx.fillText(fdisp(self.v     ,1),self.x+self.w/2+self.v_dongle.off.x-self.v_dongle.r/2,self.y+self.h/2+self.v_dongle.off.y+self.v_dongle.r/2);
+      if(self.v_dongle.dragging) ctx.fillText(fdisp(self.v_temp,2),self.x+self.w/2+self.v_dongle.off.x-self.v_dongle.r/2,self.y+self.h/2+self.v_dongle.off.y+self.v_dongle.r/2);
+      else                       ctx.fillText(fdisp(self.v     ,2),self.x+self.w/2+self.v_dongle.off.x-self.v_dongle.r/2,self.y+self.h/2+self.v_dongle.off.y+self.v_dongle.r/2);
     }
 
     var from = {x:0,y:0};
@@ -418,23 +420,39 @@ var GamePlayScene = function(game, stage)
 
       normvec(self.input_dongle.off,self.input_dongle.off);
       normvec(self.adder_dongle.off,self.adder_dongle.off);
-      if(self.input_dongle.attachment)
+      if(self.input_dongle.attachment || self.input_dongle.dragging)
       {
-        target.x = self.input_dongle.attachment.x+self.input_dongle.attachment.w/2;
-        target.y = self.input_dongle.attachment.y+self.input_dongle.attachment.h/2;
-        from.x = self.x+self.input_dongle.off.x;
-        from.y = self.y+self.input_dongle.off.y;
+        if(self.input_dongle.attachment)
+        {
+          target.x = self.input_dongle.attachment.x+self.input_dongle.attachment.w/2;
+          target.y = self.input_dongle.attachment.y+self.input_dongle.attachment.h/2;
+        }
+        else if(self.input_dongle.dragging)
+        {
+          target.x = self.input_dongle.drag_x;
+          target.y = self.input_dongle.drag_y;
+        }
+        from.x = self.x+self.w/2+self.input_dongle.off.x;
+        from.y = self.y+self.h/2+self.input_dongle.off.y;
         subvec(target,from,vel);
         safenormvec(vel,1,vel);
         mulvec(vel,0.5,vel);
         addvec(self.input_dongle_vel,vel,self.input_dongle_vel);
       }
-      if(self.adder_dongle.attachment)
+      if(self.adder_dongle.attachment || self.adder_dongle.dragging)
       {
-        target.x = self.adder_dongle.attachment.x+self.adder_dongle.attachment.w/2;
-        target.y = self.adder_dongle.attachment.y+self.adder_dongle.attachment.h/2;
-        from.x = self.x+self.adder_dongle.off.x;
-        from.y = self.y+self.adder_dongle.off.y;
+        if(self.adder_dongle.attachment)
+        {
+          target.x = self.adder_dongle.attachment.x+self.adder_dongle.attachment.w/2;
+          target.y = self.adder_dongle.attachment.y+self.adder_dongle.attachment.h/2;
+        }
+        else if(self.adder_dongle.dragging)
+        {
+          target.x = self.adder_dongle.drag_x;
+          target.y = self.adder_dongle.drag_y;
+        }
+        from.x = self.x+self.w/2+self.adder_dongle.off.x;
+        from.y = self.y+self.h/2+self.adder_dongle.off.y;
         subvec(target,from,vel);
         safenormvec(vel,-1,vel);
         mulvec(vel,0.5,vel);
@@ -551,12 +569,12 @@ var GamePlayScene = function(game, stage)
 
         for(var i = 0; i < pools.length; i++)
         {
-          pools[i].v_temp = fdisp(clamp(0,pools[i].range,pools[i].v_temp),1);
+          pools[i].v_temp = fdisp(clamp(0,pools[i].range,pools[i].v_temp),2);
           pools[i].v = pools[i].v_temp;
         }
         for(var i = 0; i < modules.length; i++)
         {
-          modules[i].v_temp = fdisp(clamp(-modules[i].range,modules[i].range,modules[i].v_temp),1);
+          modules[i].v_temp = fdisp(clamp(-modules[i].range,modules[i].range,modules[i].v_temp),2);
           modules[i].v = modules[i].v_temp;
         }
       }
