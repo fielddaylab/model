@@ -235,6 +235,8 @@ var screenSpace  = function(cam, canv, obj)
 }
 var worldSpaceX = function(cam, canv, x) { return ((x/canv.width) -0.5)* cam.ww + cam.wx; }
 var worldSpaceY = function(cam, canv, y) { return ((y/canv.height)-0.5)*-cam.wh + cam.wy; }
+var worldSpaceW = function(cam, canv, w) { return (w/canv.width)*cam.ww; }
+var worldSpaceH = function(cam, canv, h) { return (h/canv.height)*cam.wh; }
 var worldSpaceCoords = function(cam, canv, obj) //opposite of screenspace, doesn't alter w/h (to preserve fp precision)
 {
   obj.wx = ((obj.x/canv.width) -0.5)* cam.ww + cam.wx;
@@ -409,5 +411,55 @@ var textToLines = function(canv, font, width, text)
 
   canv.context.restore();
   return lines;
+}
+
+//vector
+var addvec = function(a,b,r)
+{
+  r.x = a.x+b.x;
+  r.y = a.y+b.y;
+}
+var subvec = function(a,b,r)
+{
+  r.x = a.x-b.x;
+  r.y = a.y-b.y;
+}
+var mulvec = function(a,m,r)
+{
+  r.x = a.x*m;
+  r.y = a.y*m;
+}
+var lensqrvec = function(a)
+{
+  return (a.x*a.x)+(a.y*a.y);
+}
+var lenvec = function(a)
+{
+  return sqrt((a.x*a.x)+(a.y*a.y));
+}
+var normvec = function(a,r)
+{
+  var l = sqrt((a.x*a.x)+(a.y*a.y));
+  r.x = a.x/l;
+  r.y = a.y/l;
+}
+var safenormvec = function(a,m,r)
+{
+  var l = sqrt((a.x*a.x)+(a.y*a.y));
+  if(l != 0)
+  {
+    r.x = a.x/l;
+    r.y = a.y/l;
+  }
+  else
+  {
+    r.x = m;
+    r.y = 0;
+  }
+}
+var avevec = function(a,b,r)
+{
+  r.x = (a.x+b.x)/2.;
+  r.y = (a.y+b.y)/2.;
 }
 
