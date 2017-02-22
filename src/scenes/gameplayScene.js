@@ -22,6 +22,7 @@ var GamePlayScene = function(game, stage)
   var add_pool_btn;
   var add_module_btn;
   var pause_btn;
+  var advance_btn;
 
   var w = 20;
   var h = 20;
@@ -160,6 +161,16 @@ var GamePlayScene = function(game, stage)
     self.v = 0;
     self.v_temp = 0;
     self.range = 100;
+    self.locked = 0;
+
+    self.lock_dongle = new dongle(0,-20,dongle_img.width/2,self);
+    self.lock_dongle.shouldDrag = function(evt)
+    {
+      if(dragging_obj) return false;
+      if(distsqr(self.x+self.w/2+self.lock_dongle.off.x,self.y+self.w/2+self.lock_dongle.off.y,evt.doX,evt.doY) < self.lock_dongle.r*self.lock_dongle.r)
+        self.locked = !self.locked;
+      return false;
+    }
 
     self.v_dongle = new dongle(0,0,dongle_img.width/2,self);
     self.v_dongle.drag = function(evt)
@@ -216,15 +227,17 @@ var GamePlayScene = function(game, stage)
         ctx.fillRect(self.x,self.y+self.h*(1-p),self.w,self.h*p);
       }
 
-      //stroke
-      ctx.strokeStyle = "#000000";
-      ctx.strokeRect(self.x,self.y,self.w,self.h);
-
       //v_dongle
       ctx.fillStyle = "#000000";
       ctx.drawImage(dongle_img,self.x+self.w/2+self.v_dongle.off.x-self.v_dongle.r,self.y+self.h/2+self.v_dongle.off.y-self.v_dongle.r,self.v_dongle.r*2,self.v_dongle.r*2);
       if(self.v_dongle.dragging) ctx.fillText(self.v_temp,self.x+self.w/2+self.v_dongle.off.x-self.v_dongle.r/2,self.y+self.h/2+self.v_dongle.off.y+self.v_dongle.r/2);
       else                       ctx.fillText(self.v     ,self.x+self.w/2+self.v_dongle.off.x-self.v_dongle.r/2,self.y+self.h/2+self.v_dongle.off.y+self.v_dongle.r/2);
+
+      //lock_dongle
+      ctx.fillStyle = "#000000";
+      //ctx.drawImage(dongle_img,self.x+self.w/2+self.lock_dongle.off.x-self.lock_dongle.r,self.y+self.h/2+self.lock_dongle.off.y-self.lock_dongle.r,self.lock_dongle.r*2,self.lock_dongle.r*2);
+      if(self.locked) ctx.fillText("x",self.x+self.w/2+self.lock_dongle.off.x-self.lock_dongle.r/2,self.y+self.h/2+self.lock_dongle.off.y+self.lock_dongle.r/2);
+      else            ctx.fillText("o",self.x+self.w/2+self.lock_dongle.off.x-self.lock_dongle.r/2,self.y+self.h/2+self.lock_dongle.off.y+self.lock_dongle.r/2);
 
     }
 
@@ -251,6 +264,16 @@ var GamePlayScene = function(game, stage)
     self.v = 0;
     self.v_temp = 0;
     self.range = 10;
+    self.locked = 0;
+
+    self.lock_dongle = new dongle(0,-20,dongle_img.width/2,self);
+    self.lock_dongle.shouldDrag = function(evt)
+    {
+      if(dragging_obj) return false;
+      if(distsqr(self.x+self.w/2+self.lock_dongle.off.x,self.y+self.w/2+self.lock_dongle.off.y,evt.doX,evt.doY) < self.lock_dongle.r*self.lock_dongle.r)
+        self.locked = !self.locked;
+      return false;
+    }
 
     self.v_dongle = new dongle(0,0,dongle_img.width/2,self);
     self.v_dongle.drag = function(evt)
@@ -415,6 +438,12 @@ var GamePlayScene = function(game, stage)
       ctx.fillStyle = "#000000"
       if(self.v_dongle.dragging) ctx.fillText(fdisp(self.v_temp,2),self.x+self.w/2+self.v_dongle.off.x-self.v_dongle.r/2,self.y+self.h/2+self.v_dongle.off.y+self.v_dongle.r/2);
       else                       ctx.fillText(fdisp(self.v     ,2),self.x+self.w/2+self.v_dongle.off.x-self.v_dongle.r/2,self.y+self.h/2+self.v_dongle.off.y+self.v_dongle.r/2);
+
+      //lock_dongle
+      ctx.fillStyle = "#000000";
+      //ctx.drawImage(dongle_img,self.x+self.w/2+self.lock_dongle.off.x-self.lock_dongle.r,self.y+self.h/2+self.lock_dongle.off.y-self.lock_dongle.r,self.lock_dongle.r*2,self.lock_dongle.r*2);
+      if(self.locked) ctx.fillText("x",self.x+self.w/2+self.lock_dongle.off.x-self.lock_dongle.r/2,self.y+self.h/2+self.lock_dongle.off.y+self.lock_dongle.r/2);
+      else            ctx.fillText("o",self.x+self.w/2+self.lock_dongle.off.x-self.lock_dongle.r/2,self.y+self.h/2+self.lock_dongle.off.y+self.lock_dongle.r/2);
     }
 
     var from = {x:0,y:0};
@@ -549,14 +578,97 @@ var GamePlayScene = function(game, stage)
       return false;
     }
 
+    advance_btn = new btn(-0.4,0.4,0.2,0.2);
+    advance_btn.wx = -screen_cam.ww/2+advance_btn.ww/2+0.1+pause_btn.ww+0.1;
+    advance_btn.wy =  pause_btn.wy;
+    screenSpace(screen_cam,canv,advance_btn);
+    advance_btn.shouldDrag = function(evt)
+    {
+      if(dragging_obj) return false;
+      if(doEvtWithinBB(evt,advance_btn))
+        flow();
+      return false;
+    }
+
   };
+
+  var flow = function()
+  {
+    tick_timer = 10;
+    for(var i = 0; i < pools.length; i++)
+      if(pools[i].locked) pools[i].v = 0;
+    for(var i = 0; i < modules.length; i++)
+      if(modules[i].locked) modules[i].v = 0;
+
+    for(var i = 0; i < pools.length; i++)
+      pools[i].v_temp = pools[i].v;
+    for(var i = 0; i < modules.length; i++)
+      modules[i].v_temp = modules[i].v;
+
+    for(var i = 0; i < modules.length; i++)
+    {
+      if(modules[i].adder_dongle.attachment && modules[i].adder_dongle.attachment.locked)
+      {
+        if(modules[i].input_dongle.attachment) modules[i].adder_dongle.attachment.v_temp += modules[i].input_dongle.attachment.v*(modules[i].v);
+        else                                   modules[i].adder_dongle.attachment.v_temp +=                                    1*(modules[i].v);
+      }
+    }
+    for(var i = 0; i < pools.length; i++)
+    {
+      if(pools[i].locked)
+      {
+        pools[i].v_temp = fdisp(clamp(0,pools[i].range,pools[i].v_temp),2);
+        pools[i].v = pools[i].v_temp;
+      }
+    }
+    for(var i = 0; i < modules.length; i++)
+    {
+      if(modules[i].locked)
+      {
+        modules[i].v_temp = fdisp(clamp(-modules[i].range,modules[i].range,modules[i].v_temp),2);
+        modules[i].v = modules[i].v_temp;
+      }
+    }
+
+
+    for(var i = 0; i < modules.length; i++)
+    {
+      if(modules[i].adder_dongle.attachment && !modules[i].adder_dongle.attachment.locked)
+      {
+        if(modules[i].input_dongle.attachment) modules[i].adder_dongle.attachment.v_temp += modules[i].input_dongle.attachment.v*(modules[i].v);
+        else                                   modules[i].adder_dongle.attachment.v_temp +=                                    1*(modules[i].v);
+      }
+    }
+
+
+    for(var i = 0; i < pools.length; i++)
+    {
+      if(!pools[i].locked)
+      {
+        pools[i].v_temp = fdisp(clamp(0,pools[i].range,pools[i].v_temp),2);
+        pools[i].v = pools[i].v_temp;
+      }
+    }
+    for(var i = 0; i < modules.length; i++)
+    {
+      if(!modules[i].locked)
+      {
+        modules[i].v_temp = fdisp(clamp(-modules[i].range,modules[i].range,modules[i].v_temp),2);
+        modules[i].v = modules[i].v_temp;
+      }
+    }
+  }
 
   self.tick = function()
   {
     for(var i = 0; i < pools.length; i++)
+      dragger.filter(pools[i].lock_dongle);
+    for(var i = 0; i < pools.length; i++)
       dragger.filter(pools[i].v_dongle);
     for(var i = 0; i < pools.length; i++)
       dragger.filter(pools[i]);
+    for(var i = 0; i < modules.length; i++)
+      dragger.filter(modules[i].lock_dongle);
     for(var i = 0; i < modules.length; i++)
       dragger.filter(modules[i].v_dongle);
     for(var i = 0; i < modules.length; i++)
@@ -568,6 +680,7 @@ var GamePlayScene = function(game, stage)
     dragger.filter(add_pool_btn);
     dragger.filter(add_module_btn);
     dragger.filter(pause_btn);
+    dragger.filter(advance_btn);
 
     dragger.flush();
     clicker.flush();
@@ -576,33 +689,7 @@ var GamePlayScene = function(game, stage)
     {
       tick_timer--;
       if(tick_timer <= 0)
-      {
-        tick_timer = 10;
-        for(var i = 0; i < pools.length; i++)
-          pools[i].v_temp = pools[i].v;
-        for(var i = 0; i < modules.length; i++)
-          modules[i].v_temp = modules[i].v;
-
-        for(var i = 0; i < modules.length; i++)
-        {
-          if(modules[i].adder_dongle.attachment)
-          {
-            if(modules[i].input_dongle.attachment) modules[i].adder_dongle.attachment.v_temp += modules[i].input_dongle.attachment.v*(modules[i].v);
-            else                                   modules[i].adder_dongle.attachment.v_temp +=                                    1*(modules[i].v);
-          }
-        }
-
-        for(var i = 0; i < pools.length; i++)
-        {
-          pools[i].v_temp = fdisp(clamp(0,pools[i].range,pools[i].v_temp),2);
-          pools[i].v = pools[i].v_temp;
-        }
-        for(var i = 0; i < modules.length; i++)
-        {
-          modules[i].v_temp = fdisp(clamp(-modules[i].range,modules[i].range,modules[i].v_temp),2);
-          modules[i].v = modules[i].v_temp;
-        }
-      }
+        flow();
     }
 
     for(var i = 0; i < modules.length; i++)
@@ -614,11 +701,17 @@ var GamePlayScene = function(game, stage)
     ctx.fillStyle = "#EEEEEE";
     ctx.fillRect(0,0,canv.width,canv.height);
 
+    ctx.fillStyle = "#000000";
     ctx.strokeStyle = "#000000";
     ctx.lineWidth = 1;
+    ctx.fillText("Add Pool",add_pool_btn.x+2,add_pool_btn.y+10);
     ctx.strokeRect(add_pool_btn.x,add_pool_btn.y,add_pool_btn.w,add_pool_btn.h);
+    ctx.fillText("Add Amp",add_module_btn.x+2,add_module_btn.y+10);
     ctx.strokeRect(add_module_btn.x,add_module_btn.y,add_module_btn.w,add_module_btn.h);
+    ctx.fillText("Pause",pause_btn.x+2,pause_btn.y+10);
     ctx.strokeRect(pause_btn.x,pause_btn.y,pause_btn.w,pause_btn.h);
+    ctx.fillText("Advance",advance_btn.x+2,advance_btn.y+10);
+    ctx.strokeRect(advance_btn.x,advance_btn.y,advance_btn.w,advance_btn.h);
 
     for(var i = 0; i < modules.length; i++)
       modules[i].draw_bg();
