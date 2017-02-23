@@ -18,6 +18,8 @@ var GamePlayScene = function(game, stage)
   var full_pause;
   var drag_pause;
   var tick_timer;
+  var max_tick_i;
+  var tick_i;
 
   var add_pool_btn;
   var add_module_btn;
@@ -258,6 +260,8 @@ var GamePlayScene = function(game, stage)
     self.range = 100;
     self.locked = 0;
 
+    self.plot = [];
+
     self.lock_dongle = new dongle(0,-20,dongle_img.width/2,self);
     self.lock_dongle.shouldDrag = function(evt)
     {
@@ -360,6 +364,8 @@ var GamePlayScene = function(game, stage)
     self.v_temp = 0;
     self.range = 10;
     self.locked = 0;
+
+    self.plot = [];
 
     self.lock_dongle = new dongle(0,-20,dongle_img.width/2,self);
     self.lock_dongle.shouldDrag = function(evt)
@@ -625,6 +631,8 @@ var GamePlayScene = function(game, stage)
     full_pause = false;
     drag_pause = false;
     tick_timer = 0;
+    tick_i = 0;
+    max_tick_i = 100
 
     load_template_i = 0;
     templates = [];
@@ -722,6 +730,9 @@ var GamePlayScene = function(game, stage)
 
   var flow = function()
   {
+    tick_i++;
+    if(tick_i >= max_tick_i) tick_i = 0;
+
     tick_timer = 10;
     for(var i = 0; i < pools.length; i++)
       if(pools[i].locked) pools[i].v_temp = 0;
@@ -743,11 +754,13 @@ var GamePlayScene = function(game, stage)
     {
       pools[i].v_temp = fdisp(clamp(0,pools[i].range,pools[i].v_temp),2);
       pools[i].v = pools[i].v_temp;
+      pools[i].plot[tick_i] = pools[i].v;
     }
     for(var i = 0; i < modules.length; i++)
     {
       modules[i].v_temp = fdisp(clamp(-modules[i].range,modules[i].range,modules[i].v_temp),2);
       modules[i].v = modules[i].v_temp;
+      modules[i].plot[tick_i] = modules[i].v;
     }
   }
 
@@ -823,6 +836,48 @@ var GamePlayScene = function(game, stage)
       ctx.fillStyle = "rgba(0,0,0,0.05)";
       ctx.fillRect(0,0,canv.width,canv.height);
     }
+
+    ctx.lineWidth = 1;
+    ctx.strokeStyle = "#000000";
+    var x = 0;
+    var y = 0;
+    for(var i = 0; i < pools.length; i++)
+    {
+      x = 0;
+      y = canv.height;
+      ctx.beginPath();
+      if(!isNaN(pools[i].plot[0])) y = canv.height-((pools[i].plot[0]/pools[i].range)*100);
+      ctx.moveTo(x,y);
+      for(var j = 0; j < max_tick_i; j++)
+      {
+        x = j/max_tick_i*canv.width;
+        if(!isNaN(pools[i].plot[j])) y = canv.height-((pools[i].plot[j]/pools[i].range)*100);
+        ctx.lineTo(x,y);
+      }
+      ctx.stroke();
+    }
+
+    for(var i = 0; i < modules.length; i++)
+    {
+      x = 0;
+      y = canv.height;
+      ctx.beginPath();
+      if(!isNaN(modules[i].plot[0])) y = canv.height-((0.5+(modules[i].plot[0]/modules[i].range)/2)*100);
+      ctx.moveTo(x,y);
+      for(var j = 0; j < max_tick_i; j++)
+      {
+        x = j/max_tick_i*canv.width;
+        if(!isNaN(modules[i].plot[j])) y = canv.height-((0.5+(modules[i].plot[j]/modules[i].range)/2)*100);
+        ctx.lineTo(x,y);
+      }
+      ctx.stroke();
+    }
+
+    x = tick_i/max_tick_i*canv.width;
+    ctx.beginPath();
+    ctx.moveTo(x,canv.height-100);
+    ctx.lineTo(x,canv.height);
+    ctx.stroke();
   };
 
   self.cleanup = function()
