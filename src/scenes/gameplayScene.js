@@ -596,66 +596,30 @@ var GamePlayScene = function(game, stage)
   {
     tick_timer = 10;
     for(var i = 0; i < pools.length; i++)
-      if(pools[i].locked) pools[i].v = 0;
+      if(pools[i].locked) pools[i].v_temp = 0;
+      else                pools[i].v_temp = pools[i].v;
     for(var i = 0; i < modules.length; i++)
-      if(modules[i].locked) modules[i].v = 0;
-
-    for(var i = 0; i < pools.length; i++)
-      pools[i].v_temp = pools[i].v;
-    for(var i = 0; i < modules.length; i++)
-      modules[i].v_temp = modules[i].v;
+      if(modules[i].locked) modules[i].v_temp = 0;
+      else                  modules[i].v_temp = modules[i].v;
 
     for(var i = 0; i < modules.length; i++)
     {
-      if(modules[i].adder_dongle.attachment && modules[i].adder_dongle.attachment.locked)
-      {
-        if(modules[i].input_dongle.attachment) modules[i].adder_dongle.attachment.v_temp += modules[i].input_dongle.attachment.v*(modules[i].v);
-        else                                   modules[i].adder_dongle.attachment.v_temp +=                                    1*(modules[i].v);
-      }
-    }
-    for(var i = 0; i < pools.length; i++)
-    {
-      if(pools[i].locked)
-      {
-        pools[i].v_temp = fdisp(clamp(0,pools[i].range,pools[i].v_temp),2);
-        pools[i].v = pools[i].v_temp;
-      }
-    }
-    for(var i = 0; i < modules.length; i++)
-    {
-      if(modules[i].locked)
-      {
-        modules[i].v_temp = fdisp(clamp(-modules[i].range,modules[i].range,modules[i].v_temp),2);
-        modules[i].v = modules[i].v_temp;
-      }
-    }
-
-
-    for(var i = 0; i < modules.length; i++)
-    {
-      if(modules[i].adder_dongle.attachment && !modules[i].adder_dongle.attachment.locked)
+      if(modules[i].adder_dongle.attachment)
       {
         if(modules[i].input_dongle.attachment) modules[i].adder_dongle.attachment.v_temp += modules[i].input_dongle.attachment.v*(modules[i].v);
         else                                   modules[i].adder_dongle.attachment.v_temp +=                                    1*(modules[i].v);
       }
     }
 
-
     for(var i = 0; i < pools.length; i++)
     {
-      if(!pools[i].locked)
-      {
-        pools[i].v_temp = fdisp(clamp(0,pools[i].range,pools[i].v_temp),2);
-        pools[i].v = pools[i].v_temp;
-      }
+      pools[i].v_temp = fdisp(clamp(0,pools[i].range,pools[i].v_temp),2);
+      pools[i].v = pools[i].v_temp;
     }
     for(var i = 0; i < modules.length; i++)
     {
-      if(!modules[i].locked)
-      {
-        modules[i].v_temp = fdisp(clamp(-modules[i].range,modules[i].range,modules[i].v_temp),2);
-        modules[i].v = modules[i].v_temp;
-      }
+      modules[i].v_temp = fdisp(clamp(-modules[i].range,modules[i].range,modules[i].v_temp),2);
+      modules[i].v = modules[i].v_temp;
     }
   }
 
