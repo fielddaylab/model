@@ -23,6 +23,10 @@ var GamePlayScene = function(game, stage)
   var add_module_btn;
   var pause_btn;
   var advance_btn;
+  var print_btn;
+  var load_btn;
+  var load_template_i;
+  var templates;
 
   var w = 20;
   var h = 20;
@@ -47,6 +51,98 @@ var GamePlayScene = function(game, stage)
   module_img.context.stroke();
 
   var precision = 2;
+
+  var print_template = function()
+  {
+    var str = "";
+    str += "{\"pools\":[";
+    for(var i = 0; i < pools.length; i++)
+    {
+      var p = pools[i];
+      str += "{\"v\":"+p.v+",\"locked\":"+p.locked+",\"wx\":"+p.wx+",\"wy\":"+p.wy+",\"ww\":"+p.ww+",\"wh\":"+p.wh+"}";
+      if(i < pools.length-1) str += ",";
+    }
+    str += "],\"modules\":[";
+    for(var i = 0; i < modules.length; i++)
+    {
+      var m = modules[i];
+      var input = -1;
+      var adder = -1;
+      if(m.input_dongle.attachment)
+      {
+        for(var j = 0; j < pools.length; j++)
+          if(m.input_dongle.attachment == pools[j]) input = j;
+        for(var j = 0; j < modules.length; j++)
+          if(m.input_dongle.attachment == modules[j]) input = pools.length+j;
+      }
+      if(m.adder_dongle.attachment)
+      {
+        for(var j = 0; j < pools.length; j++)
+          if(m.adder_dongle.attachment == pools[j]) adder = j;
+        for(var j = 0; j < modules.length; j++)
+          if(m.adder_dongle.attachment == modules[j]) adder = pools.length+j;
+      }
+      str += "{\"v\":"+m.v+",\"locked\":"+m.locked+",\"wx\":"+m.wx+",\"wy\":"+m.wy+",\"ww\":"+m.ww+",\"wh\":"+m.wh+",\"input\":"+input+",\"adder\":"+adder+"}";
+      if(i < modules.length-1) str += ",";
+    }
+    str += "]}";
+
+    templates.push(str);
+    console.log(str);
+  }
+
+  var load_template = function(template)
+  {
+    console.log(template);
+    var t = JSON.parse(template);
+    pools = [];
+    modules = [];
+
+    for(var i = 0; i < t.pools.length; i++)
+    {
+      var tp = t.pools[i];
+      var p = new pool(tp.wx,tp.wy,tp.ww,tp.wh);
+      screenSpace(work_cam,canv,p);
+      p.v = tp.v;
+      p.locked = tp.locked;
+      pools.push(p);
+    }
+    for(var i = 0; i < t.modules.length; i++)
+    {
+      var tm = t.modules[i];
+      var m = new module(tm.wx,tm.wy,tm.ww,tm.wh);
+      screenSpace(work_cam,canv,m);
+      m.v = tm.v;
+      m.locked = tm.locked;
+      modules.push(m);
+    }
+    for(var i = 0; i < t.modules.length; i++)
+    {
+      var tm = t.modules[i];
+      if(tm.input >= 0)
+      {
+        if(tm.input >= pools.length)
+          modules[i].input_dongle.attachment = modules[tm.input-pools.length];
+        else
+          modules[i].input_dongle.attachment = pools[tm.input];
+      }
+      if(tm.adder >= 0)
+      {
+        if(tm.adder >= pools.length)
+          modules[i].adder_dongle.attachment = modules[tm.adder-pools.length];
+        else
+          modules[i].adder_dongle.attachment = pools[tm.adder];
+      }
+    }
+  }
+
+  var load_next_template = function()
+  {
+    load_template_i++;
+    if(load_template_i > templates.length-1)
+      load_template_i = 0;
+    load_template(templates[load_template_i]);
+  }
 
   var btn = function(wx,wy,ww,wh)
   {
@@ -530,6 +626,9 @@ var GamePlayScene = function(game, stage)
     full_pause = false;
     drag_pause = false;
 
+    load_template_i = 0;
+    templates = [];
+
     add_pool_btn = new btn(-0.4,0.4,0.2,0.2);
     add_pool_btn.wx = -screen_cam.ww/2+add_pool_btn.ww/2+0.1;
     add_pool_btn.wy =  screen_cam.wh/2-add_pool_btn.wh/2-0.1;
@@ -539,11 +638,11 @@ var GamePlayScene = function(game, stage)
       if(dragging_obj) return false;
       if(doEvtWithinBB(evt,add_pool_btn))
       {
-        var m = new pool(worldSpaceX(work_cam,canv,evt.doX),worldSpaceY(work_cam,canv,evt.doY),0.1,0.1);
-        screenSpace(work_cam,canv,m);
+        var p = new pool(worldSpaceX(work_cam,canv,evt.doX),worldSpaceY(work_cam,canv,evt.doY),0.1,0.1);
+        screenSpace(work_cam,canv,p);
 
-        if(m.shouldDrag(evt)) { m.dragStart(evt); m.dragging = true; }
-        pools.push(m);
+        if(p.shouldDrag(evt)) { p.dragStart(evt); p.dragging = true; }
+        pools.push(p);
       }
       return false;
     }
@@ -587,6 +686,30 @@ var GamePlayScene = function(game, stage)
       if(dragging_obj) return false;
       if(doEvtWithinBB(evt,advance_btn))
         flow();
+      return false;
+    }
+
+    print_btn = new btn(-0.4,0.4,0.2,0.2);
+    print_btn.wx = screen_cam.ww/2-print_btn.ww/2-0.1;
+    print_btn.wy = screen_cam.wh/2-print_btn.wh/2-0.1;
+    screenSpace(screen_cam,canv,print_btn);
+    print_btn.shouldDrag = function(evt)
+    {
+      if(dragging_obj) return false;
+      if(doEvtWithinBB(evt,print_btn))
+        print_template();
+      return false;
+    }
+
+    load_btn = new btn(-0.4,0.4,0.2,0.2);
+    load_btn.wx = screen_cam.ww/2-load_btn.ww/2-0.1;
+    load_btn.wy = screen_cam.wh/2-load_btn.wh/2-0.1-print_btn.wh-0.1;
+    screenSpace(screen_cam,canv,load_btn);
+    load_btn.shouldDrag = function(evt)
+    {
+      if(dragging_obj) return false;
+      if(doEvtWithinBB(evt,load_btn))
+        load_next_template();
       return false;
     }
 
@@ -645,6 +768,8 @@ var GamePlayScene = function(game, stage)
     dragger.filter(add_module_btn);
     dragger.filter(pause_btn);
     dragger.filter(advance_btn);
+    dragger.filter(print_btn);
+    dragger.filter(load_btn);
 
     dragger.flush();
     clicker.flush();
@@ -676,6 +801,10 @@ var GamePlayScene = function(game, stage)
     ctx.strokeRect(pause_btn.x,pause_btn.y,pause_btn.w,pause_btn.h);
     ctx.fillText("Advance",advance_btn.x+2,advance_btn.y+10);
     ctx.strokeRect(advance_btn.x,advance_btn.y,advance_btn.w,advance_btn.h);
+    ctx.fillText("Print",print_btn.x+2,print_btn.y+10);
+    ctx.strokeRect(print_btn.x,print_btn.y,print_btn.w,print_btn.h);
+    ctx.fillText("Load Next ("+load_template_i+")",load_btn.x+2,load_btn.y+10);
+    ctx.strokeRect(load_btn.x,load_btn.y,load_btn.w,load_btn.h);
 
     for(var i = 0; i < modules.length; i++)
       modules[i].draw_bg();
