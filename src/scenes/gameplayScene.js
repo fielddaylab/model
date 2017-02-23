@@ -18,6 +18,7 @@ var GamePlayScene = function(game, stage)
   var full_pause;
   var drag_pause;
   var tick_timer;
+  var max_tick_timer;
   var max_tick_i;
   var tick_i;
 
@@ -25,6 +26,7 @@ var GamePlayScene = function(game, stage)
   var add_module_btn;
   var pause_btn;
   var advance_btn;
+  var speed_btn;
   var print_btn;
   var load_btn;
   var load_template_i;
@@ -631,6 +633,7 @@ var GamePlayScene = function(game, stage)
     full_pause = false;
     drag_pause = false;
     tick_timer = 0;
+    max_tick_timer = 10;
     tick_i = 0;
     max_tick_i = 100
 
@@ -702,6 +705,21 @@ var GamePlayScene = function(game, stage)
       return false;
     }
 
+    speed_btn = new btn(-0.4,0.4,0.2,0.2);
+    speed_btn.wx = -screen_cam.ww/2+speed_btn.ww/2+0.1+pause_btn.ww+0.1+advance_btn.ww+0.1;
+    speed_btn.wy =  pause_btn.wy;
+    screenSpace(screen_cam,canv,speed_btn);
+    speed_btn.shouldDrag = function(evt)
+    {
+      if(dragging_obj) return false;
+      if(doEvtWithinBB(evt,speed_btn))
+      {
+        max_tick_timer--;
+        if(max_tick_timer <= 0) max_tick_timer = 10;
+      }
+      return false;
+    }
+
     print_btn = new btn(-0.4,0.4,0.2,0.2);
     print_btn.wx = screen_cam.ww/2-print_btn.ww/2-0.1;
     print_btn.wy = screen_cam.wh/2-print_btn.wh/2-0.1;
@@ -733,7 +751,7 @@ var GamePlayScene = function(game, stage)
     tick_i++;
     if(tick_i >= max_tick_i) tick_i = 0;
 
-    tick_timer = 10;
+    tick_timer = max_tick_timer;
     for(var i = 0; i < pools.length; i++)
       if(pools[i].locked) pools[i].v_temp = 0;
       else                pools[i].v_temp = pools[i].v;
@@ -786,6 +804,7 @@ var GamePlayScene = function(game, stage)
     dragger.filter(add_module_btn);
     dragger.filter(pause_btn);
     dragger.filter(advance_btn);
+    dragger.filter(speed_btn);
     dragger.filter(print_btn);
     dragger.filter(load_btn);
 
@@ -819,6 +838,8 @@ var GamePlayScene = function(game, stage)
     ctx.strokeRect(pause_btn.x,pause_btn.y,pause_btn.w,pause_btn.h);
     ctx.fillText("Advance",advance_btn.x+2,advance_btn.y+10);
     ctx.strokeRect(advance_btn.x,advance_btn.y,advance_btn.w,advance_btn.h);
+    ctx.fillText("Speed ("+max_tick_timer+")",speed_btn.x+2,speed_btn.y+10);
+    ctx.strokeRect(speed_btn.x,speed_btn.y,speed_btn.w,speed_btn.h);
     ctx.fillText("Print",print_btn.x+2,print_btn.y+10);
     ctx.strokeRect(print_btn.x,print_btn.y,print_btn.w,print_btn.h);
     ctx.fillText("Load Next ("+load_template_i+")",load_btn.x+2,load_btn.y+10);
@@ -850,7 +871,8 @@ var GamePlayScene = function(game, stage)
       ctx.moveTo(x,y);
       for(var j = 0; j < max_tick_i; j++)
       {
-        x = j/max_tick_i*canv.width;
+        if(j <= tick_i) x =  j   /(max_tick_i-1)*canv.width;
+        else            x = (j-1)/(max_tick_i-1)*canv.width;
         if(!isNaN(pools[i].plot[j])) y = canv.height-((pools[i].plot[j]/pools[i].range)*100);
         ctx.lineTo(x,y);
       }
@@ -866,14 +888,15 @@ var GamePlayScene = function(game, stage)
       ctx.moveTo(x,y);
       for(var j = 0; j < max_tick_i; j++)
       {
-        x = j/max_tick_i*canv.width;
+        if(j <= tick_i) x =  j   /(max_tick_i-1)*canv.width;
+        else            x = (j-1)/(max_tick_i-1)*canv.width;
         if(!isNaN(modules[i].plot[j])) y = canv.height-((0.5+(modules[i].plot[j]/modules[i].range)/2)*100);
         ctx.lineTo(x,y);
       }
       ctx.stroke();
     }
 
-    x = tick_i/max_tick_i*canv.width;
+    x = tick_i/(max_tick_i-1)*canv.width;
     ctx.beginPath();
     ctx.moveTo(x,canv.height-100);
     ctx.lineTo(x,canv.height);
