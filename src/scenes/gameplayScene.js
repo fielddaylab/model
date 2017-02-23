@@ -616,8 +616,8 @@ var GamePlayScene = function(game, stage)
     dragger = new Dragger({source:stage.dispCanv.canvas});
     clicker = new Clicker({source:stage.dispCanv.canvas});
 
-    screen_cam = {wx:0,wy:0,ww:2,wh:1,x:0,y:0,w:0,y:0};
-    work_cam   = {wx:0,wy:0,ww:2,wh:1,x:0,y:0,w:0,y:0};
+    screen_cam = {wx:0,wy:0,ww:2,wh:canv.height/canv.width*2,x:0,y:0,w:0,y:0};
+    work_cam   = {wx:0,wy:0,ww:2,wh:canv.height/canv.width*2,x:0,y:0,w:0,y:0};
 
     pools = [];
     modules = [];
