@@ -239,13 +239,13 @@ var worldSpaceW = function(cam, canv, w) { return (w/canv.width)*cam.ww; }
 var worldSpaceH = function(cam, canv, h) { return (h/canv.height)*cam.wh; }
 var worldSpaceCoords = function(cam, canv, obj) //opposite of screenspace, doesn't alter w/h (to preserve fp precision)
 {
-  obj.wx = ((obj.x/canv.width) -0.5)* cam.ww + cam.wx;
-  obj.wy = ((obj.y/canv.height)-0.5)*-cam.wh + cam.wy;
+  obj.wx = (((obj.x/canv.width) -0.5)* cam.ww + cam.wx)+obj.ww/2;
+  obj.wy = (((obj.y/canv.height)-0.5)*-cam.wh + cam.wy)-obj.wh/2;
 }
 var worldSpace = function(cam, canv, obj) //opposite of screenspace
 {
-  obj.wx = ((obj.x/canv.width) -0.5)* cam.ww + cam.wx;
-  obj.wy = ((obj.y/canv.height)-0.5)*-cam.wh + cam.wy;
+  obj.wx = (((obj.x/canv.width) -0.5)* cam.ww + cam.wx)+obj.ww/2;
+  obj.wy = (((obj.y/canv.height)-0.5)*-cam.wh + cam.wy)-obj.wh/2;
   obj.ww = (obj.w/canv.width)*cam.ww;
   obj.wh = (obj.h/canv.height)*cam.wh;
 }
