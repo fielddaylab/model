@@ -32,6 +32,8 @@ var GamePlayScene = function(game, stage)
   var load_template_i;
   var templates;
 
+  var s_dragger;
+
   var w = 20;
   var h = 20;
   var dongle_img = GenIcon(w,h)
@@ -55,6 +57,35 @@ var GamePlayScene = function(game, stage)
   module_img.context.stroke();
 
   var precision = 2;
+
+  var screen_dragger = function()
+  {
+    var self = this;
+    self.last_x = 0
+    self.last_y = 0
+    self.shouldDrag = function(evt)
+    {
+      if(dragging_obj && dragging_obj != self) return false;
+      return true;
+    }
+    self.dragStart = function(evt)
+    {
+      dragging_obj = self;
+      self.last_x = evt.doX;
+      self.last_y = evt.doY;
+    }
+    self.drag = function(evt)
+    {
+      work_cam.wx += (self.last_x-evt.doX)/500;
+      work_cam.wy -= (self.last_y-evt.doY)/500;
+      self.last_x = evt.doX;
+      self.last_y = evt.doY;
+    }
+    self.dragFinish = function(evt)
+    {
+      if(dragging_obj = self) dragging_obj = 0;
+    }
+  }
 
   var print_template = function()
   {
@@ -137,6 +168,9 @@ var GamePlayScene = function(game, stage)
           modules[i].adder_dongle.attachment = pools[tm.adder];
       }
     }
+
+    work_cam.wx = 0;
+    work_cam.wy = 0;
   }
 
   var load_next_template = function()
@@ -229,7 +263,7 @@ var GamePlayScene = function(game, stage)
       self.attachment = 0;
       for(var i = 0; i < modules.length; i++)
       {
-        if(self.src != modules[i] && !doEvtWithinBB(evt, modules[i]))
+        if(self.src != modules[i] && doEvtWithinBB(evt, modules[i]))
           self.attachment = modules[i];
       }
       for(var i = 0; i < pools.length; i++)
@@ -646,6 +680,8 @@ var GamePlayScene = function(game, stage)
     /*cycle*/            templates.push("{\"pools\":[{\"v\":0,\"locked\":0,\"wx\":-0.31875,\"wy\":0.184375,\"ww\":0.1,\"wh\":0.1},{\"v\":70.6,\"locked\":0,\"wx\":0.2437499999999999,\"wy\":0.175,\"ww\":0.1,\"wh\":0.1}],\"modules\":[{\"v\":-0.3,\"locked\":0,\"wx\":-0.078125,\"wy\":0.384375,\"ww\":0.15625,\"wh\":0.15625,\"input\":1,\"adder\":0},{\"v\":0.3,\"locked\":0,\"wx\":-0.050000000000000044,\"wy\":0.003124999999999989,\"ww\":0.15625,\"wh\":0.15625,\"input\":0,\"adder\":1},{\"v\":10,\"locked\":0,\"wx\":-0.6,\"wy\":0.21875,\"ww\":0.15625,\"wh\":0.15625,\"input\":-1,\"adder\":0},{\"v\":-10,\"locked\":0,\"wx\":0.48124999999999996,\"wy\":0.203125,\"ww\":0.15625,\"wh\":0.15625,\"input\":-1,\"adder\":1}]}");
     /*proportion cycle*/ templates.push("{\"pools\":[{\"v\":100,\"locked\":0,\"wx\":-0.31875,\"wy\":0.184375,\"ww\":0.1,\"wh\":0.1},{\"v\":50,\"locked\":0,\"wx\":0.2437499999999999,\"wy\":0.175,\"ww\":0.1,\"wh\":0.1}],\"modules\":[{\"v\":-0.4,\"locked\":0,\"wx\":-0.078125,\"wy\":0.384375,\"ww\":0.15625,\"wh\":0.15625,\"input\":1,\"adder\":0},{\"v\":0.1,\"locked\":0,\"wx\":-0.050000000000000044,\"wy\":0.003124999999999989,\"ww\":0.15625,\"wh\":0.15625,\"input\":0,\"adder\":1},{\"v\":0.3,\"locked\":0,\"wx\":-0.6,\"wy\":0.21875,\"ww\":0.15625,\"wh\":0.15625,\"input\":0,\"adder\":0},{\"v\":-0.2,\"locked\":0,\"wx\":0.48124999999999996,\"wy\":0.203125,\"ww\":0.15625,\"wh\":0.15625,\"input\":1,\"adder\":1}]}");
 
+    s_dragger = new screen_dragger();
+
     add_pool_btn = new btn(-0.4,0.4,0.2,0.2);
     add_pool_btn.wx = -screen_cam.ww/2+add_pool_btn.ww/2+0.1;
     add_pool_btn.wy =  screen_cam.wh/2-add_pool_btn.wh/2-0.1;
@@ -808,6 +844,7 @@ var GamePlayScene = function(game, stage)
     dragger.filter(speed_btn);
     dragger.filter(print_btn);
     dragger.filter(load_btn);
+    dragger.filter(s_dragger);
 
     dragger.flush();
     clicker.flush();
@@ -845,6 +882,11 @@ var GamePlayScene = function(game, stage)
     ctx.strokeRect(print_btn.x,print_btn.y,print_btn.w,print_btn.h);
     ctx.fillText("Load Next ("+load_template_i+")",load_btn.x+2,load_btn.y+10);
     ctx.strokeRect(load_btn.x,load_btn.y,load_btn.w,load_btn.h);
+
+    for(var i = 0; i < modules.length; i++)
+      screenSpace(work_cam,canv,modules[i]);
+    for(var i = 0; i < pools.length; i++)
+      screenSpace(work_cam,canv,pools[i]);
 
     for(var i = 0; i < modules.length; i++)
       modules[i].draw_bg();
