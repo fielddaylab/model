@@ -229,12 +229,12 @@ var GamePlayScene = function(game, stage)
       self.attachment = 0;
       for(var i = 0; i < modules.length; i++)
       {
-        if(doEvtWithinBB(evt, modules[i]))
+        if(self.src != modules[i] && !doEvtWithinBB(evt, modules[i]))
           self.attachment = modules[i];
       }
       for(var i = 0; i < pools.length; i++)
       {
-        if(doEvtWithinBB(evt, pools[i]))
+        if(self.src != pools[i] && doEvtWithinBB(evt, pools[i]))
           self.attachment = pools[i];
       }
     }
@@ -338,8 +338,8 @@ var GamePlayScene = function(game, stage)
       //lock_dongle
       ctx.fillStyle = "#000000";
       //ctx.drawImage(dongle_img,self.x+self.w/2+self.lock_dongle.off.x-self.lock_dongle.r,self.y+self.h/2+self.lock_dongle.off.y-self.lock_dongle.r,self.lock_dongle.r*2,self.lock_dongle.r*2);
-      if(self.locked) ctx.fillText("x",self.x+self.w/2+self.lock_dongle.off.x-self.lock_dongle.r/2,self.y+self.h/2+self.lock_dongle.off.y+self.lock_dongle.r/2);
-      else            ctx.fillText("o",self.x+self.w/2+self.lock_dongle.off.x-self.lock_dongle.r/2,self.y+self.h/2+self.lock_dongle.off.y+self.lock_dongle.r/2);
+      if(self.locked) ctx.fillText("o",self.x+self.w/2+self.lock_dongle.off.x-self.lock_dongle.r/2,self.y+self.h/2+self.lock_dongle.off.y+self.lock_dongle.r/2);
+      else            ctx.fillText("+",self.x+self.w/2+self.lock_dongle.off.x-self.lock_dongle.r/2,self.y+self.h/2+self.lock_dongle.off.y+self.lock_dongle.r/2);
 
     }
 
@@ -546,8 +546,8 @@ var GamePlayScene = function(game, stage)
       //lock_dongle
       ctx.fillStyle = "#000000";
       //ctx.drawImage(dongle_img,self.x+self.w/2+self.lock_dongle.off.x-self.lock_dongle.r,self.y+self.h/2+self.lock_dongle.off.y-self.lock_dongle.r,self.lock_dongle.r*2,self.lock_dongle.r*2);
-      if(self.locked) ctx.fillText("x",self.x+self.w/2+self.lock_dongle.off.x-self.lock_dongle.r/2,self.y+self.h/2+self.lock_dongle.off.y+self.lock_dongle.r/2);
-      else            ctx.fillText("o",self.x+self.w/2+self.lock_dongle.off.x-self.lock_dongle.r/2,self.y+self.h/2+self.lock_dongle.off.y+self.lock_dongle.r/2);
+      if(self.locked) ctx.fillText("o",self.x+self.w/2+self.lock_dongle.off.x-self.lock_dongle.r/2,self.y+self.h/2+self.lock_dongle.off.y+self.lock_dongle.r/2);
+      else            ctx.fillText("+",self.x+self.w/2+self.lock_dongle.off.x-self.lock_dongle.r/2,self.y+self.h/2+self.lock_dongle.off.y+self.lock_dongle.r/2);
     }
 
     var from = {x:0,y:0};
