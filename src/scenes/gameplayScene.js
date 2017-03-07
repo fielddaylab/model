@@ -111,6 +111,8 @@ var GamePlayScene = function(game, stage)
 
     templates.push(str);
     console.log(str);
+    console.log("for copy paste into source:")
+    console.log("\""+str.replace(/\"/g,"\\\"")+"\"");
   }
 
   var load_template = function(template)
@@ -177,11 +179,12 @@ var GamePlayScene = function(game, stage)
 
     self.shouldDrag = function(evt)
     {
-      if(dragging_obj && dragging_obj != self) return false;
+      if(dragging_obj && dragging_obj != self || evt.hitUI) return false;
       return distsqr(self.src.x+self.src.w/2+self.off.x,self.src.y+self.src.w/2+self.off.y,evt.doX,evt.doY) < self.r*self.r;
     }
     self.dragStart = function(evt)
     {
+      evt.hitUI = true;
       dragging_obj = self;
       drag_pause = true;
       tick_timer = 0;
@@ -268,12 +271,37 @@ var GamePlayScene = function(game, stage)
 
     self.plot = [];
 
-    self.zero_dongle = new dongle(0,-20,dongle_img.width/2,self);
+    self.zero_dongle = new dongle(0,-30,dongle_img.width/2,self);
     self.zero_dongle.shouldDrag = function(evt)
     {
-      if(dragging_obj) return false;
+      if(dragging_obj || evt.hitUI) return false;
       if(distsqr(self.x+self.w/2+self.zero_dongle.off.x,self.y+self.w/2+self.zero_dongle.off.y,evt.doX,evt.doY) < self.zero_dongle.r*self.zero_dongle.r)
+      {
         self.zero = !self.zero;
+        evt.hitUI = true;
+      }
+      return false;
+    }
+    self.graph_dongle = new dongle(0,-20,dongle_img.width/2,self);
+    self.graph_dongle.shouldDrag = function(evt)
+    {
+      if(dragging_obj || evt.hitUI) return false;
+      if(distsqr(self.x+self.w/2+self.graph_dongle.off.x,self.y+self.w/2+self.graph_dongle.off.y,evt.doX,evt.doY) < self.graph_dongle.r*self.graph_dongle.r)
+      {
+        self.graph = !self.graph;
+        evt.hitUI = true;
+      }
+      return false;
+    }
+    self.pool_dongle = new dongle(0,-10,dongle_img.width/2,self);
+    self.pool_dongle.shouldDrag = function(evt)
+    {
+      if(dragging_obj || evt.hitUI) return false;
+      if(distsqr(self.x+self.w/2+self.pool_dongle.off.x,self.y+self.w/2+self.pool_dongle.off.y,evt.doX,evt.doY) < self.pool_dongle.r*self.pool_dongle.r)
+      {
+        self.pool = !self.pool;
+        evt.hitUI = true;
+      }
       return false;
     }
 
@@ -446,7 +474,19 @@ var GamePlayScene = function(game, stage)
       ctx.fillStyle = "#000000";
       //ctx.drawImage(dongle_img,self.x+self.w/2+self.zero_dongle.off.x-self.zero_dongle.r,self.y+self.h/2+self.zero_dongle.off.y-self.zero_dongle.r,self.zero_dongle.r*2,self.zero_dongle.r*2);
       if(self.zero) ctx.fillText("o",self.x+self.w/2+self.zero_dongle.off.x-self.zero_dongle.r/2,self.y+self.h/2+self.zero_dongle.off.y+self.zero_dongle.r/2);
-      else          ctx.fillText("+",self.x+self.w/2+self.zero_dongle.off.x-self.zero_dongle.r/2,self.y+self.h/2+self.zero_dongle.off.y+self.zero_dongle.r/2);
+      else          ctx.fillText("-",self.x+self.w/2+self.zero_dongle.off.x-self.zero_dongle.r/2,self.y+self.h/2+self.zero_dongle.off.y+self.zero_dongle.r/2);
+
+      //graph_dongle
+      ctx.fillStyle = "#000000";
+      //ctx.drawImage(dongle_img,self.x+self.w/2+self.graph_dongle.off.x-self.graph_dongle.r,self.y+self.h/2+self.graph_dongle.off.y-self.graph_dongle.r,self.graph_dongle.r*2,self.graph_dongle.r*2);
+      if(self.graph) ctx.fillText("o",self.x+self.w/2+self.graph_dongle.off.x-self.graph_dongle.r/2,self.y+self.h/2+self.graph_dongle.off.y+self.graph_dongle.r/2);
+      else           ctx.fillText("-",self.x+self.w/2+self.graph_dongle.off.x-self.graph_dongle.r/2,self.y+self.h/2+self.graph_dongle.off.y+self.graph_dongle.r/2);
+
+      //pool_dongle
+      ctx.fillStyle = "#000000";
+      //ctx.drawImage(dongle_img,self.x+self.w/2+self.pool_dongle.off.x-self.pool_dongle.r,self.y+self.h/2+self.pool_dongle.off.y-self.pool_dongle.r,self.pool_dongle.r*2,self.pool_dongle.r*2);
+      if(self.pool) ctx.fillText("o",self.x+self.w/2+self.pool_dongle.off.x-self.pool_dongle.r/2,self.y+self.h/2+self.pool_dongle.off.y+self.pool_dongle.r/2);
+      else          ctx.fillText("-",self.x+self.w/2+self.pool_dongle.off.x-self.pool_dongle.r/2,self.y+self.h/2+self.pool_dongle.off.y+self.pool_dongle.r/2);
     }
 
     var from = {x:0,y:0};
@@ -539,10 +579,10 @@ var GamePlayScene = function(game, stage)
     load_template_i = 0;
     templates = [];
     /*empty*/            templates.push("{\"modules\":[]}");
-    /*feedback loop*/    templates.push("{\"modules\":[{\"v\":0,\"min\":-10,\"max\":100,\"zero\":true,\"graph\":0,\"pool\":0,\"wx\":-0.35,\"wy\":0.18749999999999994,\"ww\":0.15625,\"wh\":0.15625},{\"v\":0,\"min\":-10,\"max\":100,\"zero\":true,\"graph\":0,\"pool\":0,\"wx\":0.1656249999999999,\"wy\":0.184375,\"ww\":0.15625,\"wh\":0.15625},{\"v\":1.1,\"min\":-10,\"max\":100,\"zero\":0,\"graph\":0,\"pool\":0,\"wx\":-0.13124999999999998,\"wy\":0.38125,\"ww\":0.15625,\"wh\":0.15625,\"input\":1,\"adder\":0},{\"v\":1.1,\"min\":-10,\"max\":100,\"zero\":0,\"graph\":0,\"pool\":0,\"wx\":-0.13124999999999998,\"wy\":0.021874999999999978,\"ww\":0.15625,\"wh\":0.15625,\"input\":0,\"adder\":1}]}");
-    /*normalizing loop*/ templates.push("{\"modules\":[{\"v\":55.56,\"min\":-10,\"max\":100,\"zero\":0,\"graph\":0,\"pool\":0,\"wx\":-0.10624999999999996,\"wy\":0.06874999999999998,\"ww\":0.15625,\"wh\":0.15625},{\"v\":50,\"min\":-10,\"max\":100,\"zero\":true,\"graph\":0,\"pool\":0,\"wx\":0.5125,\"wy\":0.09687499999999999,\"ww\":0.15625,\"wh\":0.15625},{\"v\":50,\"min\":-10,\"max\":100,\"zero\":0,\"graph\":0,\"pool\":0,\"wx\":-0.44687500000000013,\"wy\":0.43125,\"ww\":0.15625,\"wh\":0.15625},{\"v\":-1,\"min\":-10,\"max\":100,\"zero\":0,\"graph\":0,\"pool\":0,\"wx\":0.1875,\"wy\":0.11249999999999999,\"ww\":0.15625,\"wh\":0.15625,\"input\":1,\"adder\":0},{\"v\":1,\"min\":-10,\"max\":100,\"zero\":0,\"graph\":0,\"pool\":0,\"wx\":-0.43437499999999996,\"wy\":0.19374999999999998,\"ww\":0.15625,\"wh\":0.15625,\"input\":2,\"adder\":0},{\"v\":0.9,\"min\":-10,\"max\":100,\"zero\":0,\"graph\":0,\"pool\":0,\"wx\":0.1968749999999999,\"wy\":-0.10312500000000002,\"ww\":0.15625,\"wh\":0.15625,\"input\":0,\"adder\":1}]}");
-    /*cycle*/            templates.push("{\"modules\":[{\"v\":0,\"min\":-10,\"max\":100,\"zero\":0,\"graph\":0,\"pool\":0,\"wx\":-0.31875,\"wy\":0.184375,\"ww\":0.15625,\"wh\":0.15625},{\"v\":70.6,\"min\":-10,\"max\":100,\"zero\":0,\"graph\":0,\"pool\":0,\"wx\":0.2437499999999999,\"wy\":0.175,\"ww\":0.15625,\"wh\":0.15625},{\"v\":-0.3,\"min\":-10,\"max\":100,\"zero\":0,\"graph\":0,\"pool\":0,\"wx\":-0.078125,\"wy\":0.384375,\"ww\":0.15625,\"wh\":0.15625,\"input\":1,\"adder\":0},{\"v\":0.3,\"min\":-10,\"max\":100,\"zero\":0,\"graph\":0,\"pool\":0,\"wx\":-0.050000000000000044,\"wy\":0.003124999999999989,\"ww\":0.15625,\"wh\":0.15625,\"input\":0,\"adder\":1},{\"v\":10,\"min\":-10,\"max\":100,\"zero\":0,\"graph\":0,\"pool\":0,\"wx\":-0.6,\"wy\":0.21875,\"ww\":0.15625,\"wh\":0.15625,\"input\":-1,\"adder\":0},{\"v\":-10,\"min\":-10,\"max\":100,\"zero\":0,\"graph\":0,\"pool\":0,\"wx\":0.48124999999999996,\"wy\":0.203125,\"ww\":0.15625,\"wh\":0.15625,\"input\":-1,\"adder\":1}]}");
-    /*proportion cycle*/ templates.push("{\"modules\":[{\"v\":100,\"min\":-10,\"max\":100,\"zero\":0,\"graph\":0,\"pool\":0,\"wx\":-0.31875,\"wy\":0.184375,\"ww\":0.15625,\"wh\":0.15625},{\"v\":50,\"min\":-10,\"max\":100,\"zero\":0,\"graph\":0,\"pool\":0,\"wx\":0.2437499999999999,\"wy\":0.175,\"ww\":0.15625,\"wh\":0.15625},{\"v\":-0.4,\"min\":-10,\"max\":100,\"zero\":0,\"graph\":0,\"pool\":0,\"wx\":-0.078125,\"wy\":0.384375,\"ww\":0.15625,\"wh\":0.15625,\"input\":1,\"adder\":0},{\"v\":0.1,\"min\":-10,\"max\":100,\"zero\":0,\"graph\":0,\"pool\":0,\"wx\":-0.050000000000000044,\"wy\":0.003124999999999989,\"ww\":0.15625,\"wh\":0.15625,\"input\":0,\"adder\":1},{\"v\":0.3,\"min\":-10,\"max\":100,\"zero\":0,\"graph\":0,\"pool\":0,\"wx\":-0.6,\"wy\":0.21875,\"ww\":0.15625,\"wh\":0.15625,\"input\":0,\"adder\":0},{\"v\":-0.2,\"min\":-10,\"max\":100,\"zero\":0,\"graph\":0,\"pool\":0,\"wx\":0.48124999999999996,\"wy\":0.203125,\"ww\":0.15625,\"wh\":0.15625,\"input\":1,\"adder\":1}]}");
+    /*feedback loop*/    templates.push("{\"modules\":[{\"v\":0,\"min\":-10,\"max\":100,\"zero\":true,\"graph\":true,\"pool\":true,\"wx\":-0.35,\"wy\":0.18749999999999994,\"ww\":0.15625,\"wh\":0.15625,\"input\":-1,\"adder\":-1},{\"v\":0,\"min\":-10,\"max\":100,\"zero\":true,\"graph\":true,\"pool\":true,\"wx\":0.1656249999999999,\"wy\":0.184375,\"ww\":0.15625,\"wh\":0.15625,\"input\":-1,\"adder\":-1},{\"v\":1.1,\"min\":-10,\"max\":100,\"zero\":0,\"graph\":0,\"pool\":0,\"wx\":-0.13124999999999998,\"wy\":0.38125,\"ww\":0.15625,\"wh\":0.15625,\"input\":1,\"adder\":0},{\"v\":1.1,\"min\":-10,\"max\":100,\"zero\":0,\"graph\":0,\"pool\":0,\"wx\":-0.13124999999999998,\"wy\":0.021874999999999978,\"ww\":0.15625,\"wh\":0.15625,\"input\":0,\"adder\":1}]}");
+    /*normalizing loop*/ templates.push("{\"modules\":[{\"v\":55.56,\"min\":-10,\"max\":100,\"zero\":0,\"graph\":true,\"pool\":true,\"wx\":-0.10624999999999996,\"wy\":0.06874999999999998,\"ww\":0.15625,\"wh\":0.15625,\"input\":-1,\"adder\":-1},{\"v\":50,\"min\":-10,\"max\":100,\"zero\":true,\"graph\":true,\"pool\":true,\"wx\":0.5125,\"wy\":0.09687499999999999,\"ww\":0.15625,\"wh\":0.15625,\"input\":-1,\"adder\":-1},{\"v\":50,\"min\":-10,\"max\":100,\"zero\":0,\"graph\":true,\"pool\":true,\"wx\":-0.44687500000000013,\"wy\":0.43125,\"ww\":0.15625,\"wh\":0.15625,\"input\":-1,\"adder\":-1},{\"v\":-1,\"min\":-10,\"max\":100,\"zero\":0,\"graph\":0,\"pool\":0,\"wx\":0.1875,\"wy\":0.11249999999999999,\"ww\":0.15625,\"wh\":0.15625,\"input\":1,\"adder\":0},{\"v\":1,\"min\":-10,\"max\":100,\"zero\":0,\"graph\":0,\"pool\":0,\"wx\":-0.43437499999999996,\"wy\":0.19374999999999998,\"ww\":0.15625,\"wh\":0.15625,\"input\":2,\"adder\":0},{\"v\":0.9,\"min\":-10,\"max\":100,\"zero\":0,\"graph\":0,\"pool\":0,\"wx\":0.1968749999999999,\"wy\":-0.10312500000000002,\"ww\":0.15625,\"wh\":0.15625,\"input\":0,\"adder\":1}]}");
+    /*cycle*/            templates.push("{\"modules\":[{\"v\":59.82,\"min\":-10,\"max\":100,\"zero\":0,\"graph\":true,\"pool\":true,\"wx\":-0.31875,\"wy\":0.184375,\"ww\":0.15625,\"wh\":0.15625,\"input\":-1,\"adder\":-1},{\"v\":91.74,\"min\":-10,\"max\":100,\"zero\":0,\"graph\":true,\"pool\":true,\"wx\":0.2437499999999999,\"wy\":0.175,\"ww\":0.15625,\"wh\":0.15625,\"input\":-1,\"adder\":-1},{\"v\":-0.3,\"min\":-10,\"max\":100,\"zero\":0,\"graph\":0,\"pool\":0,\"wx\":-0.078125,\"wy\":0.384375,\"ww\":0.15625,\"wh\":0.15625,\"input\":1,\"adder\":0},{\"v\":0.3,\"min\":-10,\"max\":100,\"zero\":0,\"graph\":0,\"pool\":0,\"wx\":-0.050000000000000044,\"wy\":0.003124999999999989,\"ww\":0.15625,\"wh\":0.15625,\"input\":0,\"adder\":1},{\"v\":10,\"min\":-10,\"max\":100,\"zero\":0,\"graph\":0,\"pool\":0,\"wx\":-0.6,\"wy\":0.21875,\"ww\":0.15625,\"wh\":0.15625,\"input\":-1,\"adder\":0},{\"v\":-10,\"min\":-10,\"max\":100,\"zero\":0,\"graph\":0,\"pool\":0,\"wx\":0.48124999999999996,\"wy\":0.203125,\"ww\":0.15625,\"wh\":0.15625,\"input\":-1,\"adder\":1}]}");
+    /*proportion cycle*/ templates.push("{\"modules\":[{\"v\":100,\"min\":-10,\"max\":100,\"zero\":0,\"graph\":true,\"pool\":true,\"wx\":-0.31875,\"wy\":0.184375,\"ww\":0.15625,\"wh\":0.15625,\"input\":-1,\"adder\":-1},{\"v\":50,\"min\":-10,\"max\":100,\"zero\":0,\"graph\":true,\"pool\":true,\"wx\":0.2437499999999999,\"wy\":0.175,\"ww\":0.15625,\"wh\":0.15625,\"input\":-1,\"adder\":-1},{\"v\":-0.4,\"min\":-10,\"max\":100,\"zero\":0,\"graph\":0,\"pool\":0,\"wx\":-0.078125,\"wy\":0.384375,\"ww\":0.15625,\"wh\":0.15625,\"input\":1,\"adder\":0},{\"v\":0.1,\"min\":-10,\"max\":100,\"zero\":0,\"graph\":0,\"pool\":0,\"wx\":-0.050000000000000044,\"wy\":0.003124999999999989,\"ww\":0.15625,\"wh\":0.15625,\"input\":0,\"adder\":1},{\"v\":0.3,\"min\":-10,\"max\":100,\"zero\":0,\"graph\":0,\"pool\":0,\"wx\":-0.6,\"wy\":0.21875,\"ww\":0.15625,\"wh\":0.15625,\"input\":0,\"adder\":0},{\"v\":-0.2,\"min\":-10,\"max\":100,\"zero\":0,\"graph\":0,\"pool\":0,\"wx\":0.48124999999999996,\"wy\":0.203125,\"ww\":0.15625,\"wh\":0.15625,\"input\":1,\"adder\":1}]}");
 
     s_dragger = new screen_dragger();
 
@@ -660,6 +700,10 @@ var GamePlayScene = function(game, stage)
   {
     for(var i = 0; i < modules.length; i++)
       dragger.filter(modules[i].zero_dongle);
+    for(var i = 0; i < modules.length; i++)
+      dragger.filter(modules[i].graph_dongle);
+    for(var i = 0; i < modules.length; i++)
+      dragger.filter(modules[i].pool_dongle);
     for(var i = 0; i < modules.length; i++)
       dragger.filter(modules[i].v_dongle);
     for(var i = 0; i < modules.length; i++)
