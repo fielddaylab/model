@@ -201,6 +201,31 @@ var GamePlayScene = function(game, stage)
       drag_pause = false;
     }
   }
+  var toggle_dongle = function(offx,offy,r,src)
+  {
+    var self = this;
+    self.src = src;
+    self.off = {x:offx,y:offy};
+    self.drag_start_x = 0;
+    self.drag_start_y = 0;
+    self.r = r;
+
+    self.shouldDrag = function(evt)
+    {
+      if(dragging_obj || evt.hitUI) return false;
+      if(distsqr(self.src.x+self.src.w/2+self.off.x,self.src.y+self.src.w/2+self.off.y,evt.doX,evt.doY) < self.r*self.r)
+      {
+        evt.hitUI = true;
+        return true;
+      }
+      return false;
+    }
+    self.dragStart = function(evt)
+    {
+      dragging_obj = self;
+      self.dragging = false;
+    }
+  }
   var whippet_dongle = function(offx,offy,r,src)
   {
     var self = this;
@@ -271,39 +296,12 @@ var GamePlayScene = function(game, stage)
 
     self.plot = [];
 
-    self.zero_dongle = new dongle(0,-30,dongle_img.width/2,self);
-    self.zero_dongle.shouldDrag = function(evt)
-    {
-      if(dragging_obj || evt.hitUI) return false;
-      if(distsqr(self.x+self.w/2+self.zero_dongle.off.x,self.y+self.w/2+self.zero_dongle.off.y,evt.doX,evt.doY) < self.zero_dongle.r*self.zero_dongle.r)
-      {
-        self.zero = !self.zero;
-        evt.hitUI = true;
-      }
-      return false;
-    }
-    self.graph_dongle = new dongle(0,-20,dongle_img.width/2,self);
-    self.graph_dongle.shouldDrag = function(evt)
-    {
-      if(dragging_obj || evt.hitUI) return false;
-      if(distsqr(self.x+self.w/2+self.graph_dongle.off.x,self.y+self.w/2+self.graph_dongle.off.y,evt.doX,evt.doY) < self.graph_dongle.r*self.graph_dongle.r)
-      {
-        self.graph = !self.graph;
-        evt.hitUI = true;
-      }
-      return false;
-    }
-    self.pool_dongle = new dongle(0,-10,dongle_img.width/2,self);
-    self.pool_dongle.shouldDrag = function(evt)
-    {
-      if(dragging_obj || evt.hitUI) return false;
-      if(distsqr(self.x+self.w/2+self.pool_dongle.off.x,self.y+self.w/2+self.pool_dongle.off.y,evt.doX,evt.doY) < self.pool_dongle.r*self.pool_dongle.r)
-      {
-        self.pool = !self.pool;
-        evt.hitUI = true;
-      }
-      return false;
-    }
+    self.zero_dongle  = new toggle_dongle(0,-30,dongle_img.width/2,self);
+    self.zero_dongle.dragStart = function(evt) { self.zero = !self.zero; self.zero_dongle.dragging = false; }
+    self.graph_dongle = new toggle_dongle(0,-20,dongle_img.width/2,self);
+    self.graph_dongle.dragStart = function(evt) { self.graph = !self.graph; self.graph_dongle.dragging = false; }
+    self.pool_dongle  = new toggle_dongle(0,-10,dongle_img.width/2,self);
+    self.pool_dongle.dragStart = function(evt) { self.pool = !self.pool; self.pool_dongle.dragging = false; }
 
     self.v_dongle = new dongle(0,0,dongle_img.width/2,self);
     self.v_dongle.drag = function(evt)
