@@ -750,9 +750,9 @@ var GamePlayScene = function(game, stage)
     ctx.strokeRect(advance_btn.x,advance_btn.y,advance_btn.w,advance_btn.h);
     ctx.fillText("Speed ("+max_tick_timer+")",speed_btn.x+2,speed_btn.y+10);
     ctx.strokeRect(speed_btn.x,speed_btn.y,speed_btn.w,speed_btn.h);
-    ctx.fillText("Print",print_btn.x+2,print_btn.y+10);
+    ctx.fillText("Save",print_btn.x+2,print_btn.y+10);
     ctx.strokeRect(print_btn.x,print_btn.y,print_btn.w,print_btn.h);
-    ctx.fillText("Load Next ("+load_template_i+")",load_btn.x+2,load_btn.y+10);
+    ctx.fillText("Load Next ("+load_template_i+"/"+(templates.length-1)+")",load_btn.x+2,load_btn.y+10);
     ctx.strokeRect(load_btn.x,load_btn.y,load_btn.w,load_btn.h);
 
     for(var i = 0; i < modules.length; i++)
