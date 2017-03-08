@@ -99,10 +99,10 @@ var GamePlayScene = function(game, stage)
         for(var j = 0; j < modules.length; j++)
           if(m.input_dongle.attachment == modules[j]) input = j;
       }
-      if(m.adder_dongle.attachment)
+      if(m.output_dongle.attachment)
       {
         for(var j = 0; j < modules.length; j++)
-          if(m.adder_dongle.attachment == modules[j]) adder = j;
+          if(m.output_dongle.attachment == modules[j]) adder = j;
       }
       str += "{\"v\":"+m.v+",\"min\":"+m.min+",\"max\":"+m.max+",\"pool\":"+m.pool+",\"graph\":"+m.graph+",\"square\":"+m.square+",\"wx\":"+m.wx+",\"wy\":"+m.wy+",\"ww\":"+m.ww+",\"wh\":"+m.wh+",\"input\":"+input+",\"adder\":"+adder+"}";
       if(i < modules.length-1) str += ",";
@@ -139,7 +139,7 @@ var GamePlayScene = function(game, stage)
       if(tm.input >= 0)
         modules[i].input_dongle.attachment = modules[tm.input];
       if(tm.adder >= 0)
-        modules[i].adder_dongle.attachment = modules[tm.adder];
+        modules[i].output_dongle.attachment = modules[tm.adder];
     }
 
     work_cam.wx = 0;
@@ -234,6 +234,7 @@ var GamePlayScene = function(game, stage)
     self.drag_start_x = 0;
     self.drag_start_y = 0;
     self.r = r;
+    self.attachment = 0;
 
     self.shouldDrag = function(evt)
     {
@@ -268,6 +269,9 @@ var GamePlayScene = function(game, stage)
     }
   }
 
+  ENUM = 0;
+  var OPERATOR_MUL = ENUM; ENUM++;
+  var OPERATOR_DIV = ENUM; ENUM++;
   var module = function(wx,wy,ww,wh)
   {
     var self = this;
@@ -292,7 +296,13 @@ var GamePlayScene = function(game, stage)
     self.max =  100;
     self.pool = 0;
     self.graph = 0;
-    self.square = 0;
+
+    self.operator = OPERATOR_MUL;
+    self.sign = 1.;
+
+    self.scale = 1.;
+
+    self.cache_const = 0;
 
     self.plot = [];
 
@@ -317,10 +327,10 @@ var GamePlayScene = function(game, stage)
     }
 
     self.input_dongle_vel = {x:0,y:0};
-    self.adder_dongle_vel = {x:0,y:0};
+    self.output_dongle_vel = {x:0,y:0};
 
     self.input_dongle = new whippet_dongle( self.w,0,dongle_img.width/2,self);
-    self.adder_dongle = new whippet_dongle(-self.w,0,dongle_img.width/2,self);
+    self.output_dongle = new whippet_dongle(-self.w,0,dongle_img.width/2,self);
 
     //the module itself
     self.shouldDrag = function(evt)
@@ -364,20 +374,20 @@ var GamePlayScene = function(game, stage)
         ctx.stroke();
       }
 
-      //adder_dongle_line
+      //output_dongle_line
       ctx.strokeStyle = "#000000"
-      if(self.adder_dongle.dragging)
+      if(self.output_dongle.dragging)
       {
         ctx.beginPath();
-        ctx.moveTo(self.x+self.w/2+self.adder_dongle.off.x,self.y+self.h/2+self.adder_dongle.off.y);
-        ctx.lineTo(self.adder_dongle.drag_x,self.adder_dongle.drag_y);
+        ctx.moveTo(self.x+self.w/2+self.output_dongle.off.x,self.y+self.h/2+self.output_dongle.off.y);
+        ctx.lineTo(self.output_dongle.drag_x,self.output_dongle.drag_y);
         ctx.stroke();
       }
-      else if(self.adder_dongle.attachment)
+      else if(self.output_dongle.attachment)
       {
         ctx.beginPath();
-        ctx.moveTo(self.x+self.w/2+self.adder_dongle.off.x,self.y+self.h/2+self.adder_dongle.off.y);
-        ctx.lineTo(self.adder_dongle.attachment.x+self.adder_dongle.attachment.w/2,self.adder_dongle.attachment.y+self.adder_dongle.attachment.h/2);
+        ctx.moveTo(self.x+self.w/2+self.output_dongle.off.x,self.y+self.h/2+self.output_dongle.off.y);
+        ctx.lineTo(self.output_dongle.attachment.x+self.output_dongle.attachment.w/2,self.output_dongle.attachment.y+self.output_dongle.attachment.h/2);
         ctx.stroke();
       }
     }
@@ -407,7 +417,7 @@ var GamePlayScene = function(game, stage)
           ctx.fillText("1",self.x+self.w/2+self.input_dongle.off.x-self.input_dongle.r/2,self.y+self.h/2+self.input_dongle.off.y+self.input_dongle.r/2);
         }
 
-        //adder_dongle
+        //output_dongle
         ctx.lineWidth = self.v/max(abs(self.min),abs(self.max))*dongle_img.width/2;
         if(self.v > 0)
           ctx.strokeStyle = "#6666FF";
@@ -417,7 +427,7 @@ var GamePlayScene = function(game, stage)
         {
           ctx.beginPath();
           ctx.moveTo(self.x+self.w/2+self.v_dongle.off.x,    self.y+self.h/2+self.v_dongle.off.y);
-          ctx.lineTo(self.x+self.w/2+self.adder_dongle.off.x,self.y+self.h/2+self.adder_dongle.off.y);
+          ctx.lineTo(self.x+self.w/2+self.output_dongle.off.x,self.y+self.h/2+self.output_dongle.off.y);
           ctx.stroke();
         }
 
@@ -435,12 +445,12 @@ var GamePlayScene = function(game, stage)
           {
             ctx.beginPath();
             ctx.moveTo(self.x+self.w/2+self.v_dongle.off.x,    self.y+self.h/2+self.v_dongle.off.y);
-            ctx.lineTo(self.x+self.w/2+self.adder_dongle.off.x,self.y+self.h/2+self.adder_dongle.off.y);
+            ctx.lineTo(self.x+self.w/2+self.output_dongle.off.x,self.y+self.h/2+self.output_dongle.off.y);
             ctx.stroke();
           }
           ctx.globalAlpha = 1.;
         }
-        ctx.drawImage(dongle_img,self.x+self.w/2+self.adder_dongle.off.x-self.adder_dongle.r,self.y+self.h/2+self.adder_dongle.off.y-self.adder_dongle.r,self.adder_dongle.r*2,self.adder_dongle.r*2);
+        ctx.drawImage(dongle_img,self.x+self.w/2+self.output_dongle.off.x-self.output_dongle.r,self.y+self.h/2+self.output_dongle.off.y-self.output_dongle.r,self.output_dongle.r*2,self.output_dongle.r*2);
       }
       else
       {
@@ -497,7 +507,7 @@ var GamePlayScene = function(game, stage)
       var dongle_r = 40;
 
       normvec(self.input_dongle.off,self.input_dongle.off);
-      normvec(self.adder_dongle.off,self.adder_dongle.off);
+      normvec(self.output_dongle.off,self.output_dongle.off);
       if(self.input_dongle.attachment || self.input_dongle.dragging)
       {
         if(self.input_dongle.attachment)
@@ -517,43 +527,43 @@ var GamePlayScene = function(game, stage)
         mulvec(vel,0.5,vel);
         addvec(self.input_dongle_vel,vel,self.input_dongle_vel);
       }
-      if(self.adder_dongle.attachment || self.adder_dongle.dragging)
+      if(self.output_dongle.attachment || self.output_dongle.dragging)
       {
-        if(self.adder_dongle.attachment)
+        if(self.output_dongle.attachment)
         {
-          target.x = self.adder_dongle.attachment.x+self.adder_dongle.attachment.w/2;
-          target.y = self.adder_dongle.attachment.y+self.adder_dongle.attachment.h/2;
+          target.x = self.output_dongle.attachment.x+self.output_dongle.attachment.w/2;
+          target.y = self.output_dongle.attachment.y+self.output_dongle.attachment.h/2;
         }
-        else if(self.adder_dongle.dragging)
+        else if(self.output_dongle.dragging)
         {
-          target.x = self.adder_dongle.drag_x;
-          target.y = self.adder_dongle.drag_y;
+          target.x = self.output_dongle.drag_x;
+          target.y = self.output_dongle.drag_y;
         }
-        from.x = self.x+self.w/2+self.adder_dongle.off.x;
-        from.y = self.y+self.h/2+self.adder_dongle.off.y;
+        from.x = self.x+self.w/2+self.output_dongle.off.x;
+        from.y = self.y+self.h/2+self.output_dongle.off.y;
         subvec(target,from,vel);
         safenormvec(vel,-1,vel);
         mulvec(vel,0.5,vel);
-        addvec(self.adder_dongle_vel,vel,self.adder_dongle_vel);
+        addvec(self.output_dongle_vel,vel,self.output_dongle_vel);
       }
       addvec(self.input_dongle.off,self.input_dongle_vel,self.input_dongle.off);
-      addvec(self.adder_dongle.off,self.adder_dongle_vel,self.adder_dongle.off);
+      addvec(self.output_dongle.off,self.output_dongle_vel,self.output_dongle.off);
       normvec(self.input_dongle.off,self.input_dongle.off);
-      normvec(self.adder_dongle.off,self.adder_dongle.off);
+      normvec(self.output_dongle.off,self.output_dongle.off);
 
-      avevec(self.input_dongle.off,self.adder_dongle.off,ave);
+      avevec(self.input_dongle.off,self.output_dongle.off,ave);
 
       subvec(self.input_dongle.off,ave,self.input_dongle.off);
-      subvec(self.adder_dongle.off,ave,self.adder_dongle.off);
+      subvec(self.output_dongle.off,ave,self.output_dongle.off);
 
       safenormvec(self.input_dongle.off, 1,self.input_dongle.off);
-      safenormvec(self.adder_dongle.off,-1,self.adder_dongle.off);
+      safenormvec(self.output_dongle.off,-1,self.output_dongle.off);
 
       mulvec(self.input_dongle.off,dongle_r,self.input_dongle.off);
-      mulvec(self.adder_dongle.off,dongle_r,self.adder_dongle.off);
+      mulvec(self.output_dongle.off,dongle_r,self.output_dongle.off);
 
       mulvec(self.input_dongle_vel,0.9,self.input_dongle_vel);
-      mulvec(self.adder_dongle_vel,0.9,self.adder_dongle_vel);
+      mulvec(self.output_dongle_vel,0.9,self.output_dongle_vel);
     }
   }
 
@@ -680,10 +690,14 @@ var GamePlayScene = function(game, stage)
 
     for(var i = 0; i < modules.length; i++)
     {
-      if(modules[i].adder_dongle.attachment)
+      if(modules[i].output_dongle.attachment)
       {
-        if(modules[i].input_dongle.attachment) modules[i].adder_dongle.attachment.v_temp += modules[i].input_dongle.attachment.v*(modules[i].v);
-        else                                   modules[i].adder_dongle.attachment.v_temp +=                                    1*(modules[i].v);
+        if(modules[i].input_dongle.attachment)
+        {
+          if(modules[i].operator == OPERATOR_MUL) modules[i].output_dongle.attachment.v_temp += modules[i].input_dongle.attachment.v*(modules[i].v)*modules[i].sign;
+          else                                    modules[i].output_dongle.attachment.v_temp += modules[i].input_dongle.attachment.v/(modules[i].v)*modules[i].sign;
+        }
+        else                                      modules[i].output_dongle.attachment.v_temp +=                                      (modules[i].v)*modules[i].sign;
       }
     }
 
@@ -708,7 +722,7 @@ var GamePlayScene = function(game, stage)
     for(var i = 0; i < modules.length; i++)
       dragger.filter(modules[i].input_dongle);
     for(var i = 0; i < modules.length; i++)
-      dragger.filter(modules[i].adder_dongle);
+      dragger.filter(modules[i].output_dongle);
     for(var i = 0; i < modules.length; i++)
       dragger.filter(modules[i]);
     dragger.filter(add_module_btn);
@@ -721,6 +735,11 @@ var GamePlayScene = function(game, stage)
 
     dragger.flush();
     clicker.flush();
+
+    for(var i = 0; i < modules.length; i++)
+      modules[i].cache_const = 1;
+    for(var i = 0; i < modules.length; i++)
+      if(modules[i].output_dongle.attachment) modules[i].output_dongle.attachment.cache_const = 0;
 
     if(!drag_pause && !full_pause)
     {
