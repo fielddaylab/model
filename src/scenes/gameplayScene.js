@@ -13,24 +13,23 @@ var GamePlayScene = function(game, stage)
   var work_cam;
 
   var modules;
+  var selected_module;
   var dragging_obj;
   var full_pause;
   var drag_pause;
-  var tick_timer;
-  var max_tick_timer;
-  var max_tick_i;
-  var tick_i;
+  var advance_timer;
+  var advance_timer_max;
+  var t_max;
+  var t_i;
 
   var add_module_btn;
-  var pause_btn;
-  var advance_btn;
-  var speed_btn;
   var print_btn;
   var load_btn;
   var load_template_i;
   var templates;
 
   var s_dragger;
+  var s_graph;
 
   var w = 20;
   var h = 20;
@@ -55,6 +54,127 @@ var GamePlayScene = function(game, stage)
   module_img.context.stroke();
 
   var precision = 2;
+
+  var graph = function()
+  {
+    var self = this;
+    self.x = 0;
+    self.y = 0;
+    self.w = 0;
+    self.h = 0;
+    self.wx = 0;
+    self.wy = 0;
+    self.ww = 0;
+    self.wh = 0;
+
+    self.graph_x = 0;
+    self.graph_y = 0;
+    self.graph_w = 0;
+    self.graph_h = 0;
+
+    var playback_btn_size = 20;
+    self.pause_btn = new btn();
+    self.pause_btn.shouldDrag = function(evt)
+    {
+      if(dragging_obj) return false;
+      if(doEvtWithinBB(evt,self.pause_btn))
+        full_pause = !full_pause;
+      return false;
+    }
+
+    self.advance_btn = new btn();
+    self.advance_btn.shouldDrag = function(evt)
+    {
+      if(dragging_obj) return false;
+      if(doEvtWithinBB(evt,self.advance_btn))
+        flow();
+      return false;
+    }
+
+    self.speed_btn = new btn();
+    self.speed_btn.shouldDrag = function(evt)
+    {
+      if(dragging_obj) return false;
+      if(doEvtWithinBB(evt,self.speed_btn))
+      {
+        advance_timer_max--;
+        if(advance_timer_max <= 0) advance_timer_max = 10;
+      }
+      return false;
+    }
+
+    self.calc_sub_params = function()
+    {
+      self.pause_btn.w = playback_btn_size;
+      self.pause_btn.h = playback_btn_size;
+      self.pause_btn.x = self.x + (playback_btn_size + 10)*0;
+      self.pause_btn.y = self.y - playback_btn_size;
+
+      self.advance_btn.w = playback_btn_size;
+      self.advance_btn.h = playback_btn_size;
+      self.advance_btn.x = self.x + (playback_btn_size + 10)*1;
+      self.advance_btn.y = self.y - playback_btn_size;
+
+      self.speed_btn.w = playback_btn_size;
+      self.speed_btn.h = playback_btn_size;
+      self.speed_btn.x = self.x + (playback_btn_size + 10)*2;
+      self.speed_btn.y = self.y - playback_btn_size;
+
+      self.graph_x = self.x+10;
+      self.graph_y = self.y+10;
+      self.graph_w = self.w-20;
+      self.graph_h = self.h-20;
+    }
+
+    self.draw = function()
+    {
+      ctx.lineWidth = 1;
+      ctx.strokeStyle = "#000000";
+      var x = 0;
+      var y = 0;
+
+      for(var i = 0; i < modules.length; i++)
+      {
+        if(!modules[i].graph) continue;
+        x = self.graph_x;
+        y = self.graph_y+self.graph_h;
+        ctx.beginPath();
+        if(!isNaN(modules[i].plot[0])) y = self.graph_y+self.graph_h - mapVal(modules[i].min,modules[i].max,0,1,modules[i].plot[0])*self.graph_h;
+        ctx.moveTo(x,y);
+        for(var j = 0; j < t_max; j++)
+        {
+          x = self.graph_x + (j/(t_max-1)) * self.graph_w;
+          if(!isNaN(modules[i].plot[j])) y = self.graph_y+self.graph_h - (mapVal(modules[i].min,modules[i].max,0,1,modules[i].plot[j])*self.graph_h);
+          ctx.lineTo(x,y);
+          if(j == t_i)
+          {
+            if(!isNaN(modules[i].plot[j+1])) y = self.graph_y+self.graph_h - (mapVal(modules[i].min,modules[i].max,0,1,modules[i].plot[j+1])*self.graph_h);
+            ctx.lineTo(x,y);
+          }
+        }
+        ctx.stroke();
+      }
+
+      x = self.graph_x+ (t_i/(t_max-1)) * self.graph_w;
+      ctx.beginPath();
+      ctx.moveTo(x,self.graph_y);
+      ctx.lineTo(x,self.graph_y+self.graph_h);
+      ctx.stroke();
+
+      ctx.strokeRect(self.x,self.y,self.w,self.h);
+      ctx.strokeRect(self.graph_x,self.graph_y,self.graph_w,self.graph_h);
+
+      ctx.fillStyle = "#000000";
+      ctx.strokeStyle = "#000000";
+      ctx.lineWidth = 1;
+      ctx.fillText("||",self.pause_btn.x+2,self.pause_btn.y+10);
+      ctx.strokeRect(self.pause_btn.x,self.pause_btn.y,self.pause_btn.w,self.pause_btn.h);
+      ctx.fillText(">",self.advance_btn.x+2,self.advance_btn.y+10);
+      ctx.strokeRect(self.advance_btn.x,self.advance_btn.y,self.advance_btn.w,self.advance_btn.h);
+      ctx.fillText(">> ("+advance_timer_max+")",self.speed_btn.x+2,self.speed_btn.y+10);
+      ctx.strokeRect(self.speed_btn.x,self.speed_btn.y,self.speed_btn.w,self.speed_btn.h);
+    }
+  }
 
   var screen_dragger = function()
   {
@@ -154,14 +274,9 @@ var GamePlayScene = function(game, stage)
     load_template(templates[load_template_i]);
   }
 
-  var btn = function(wx,wy,ww,wh)
+  var btn = function()
   {
     var self = this;
-
-    self.wx = wx;
-    self.wy = wy;
-    self.ww = ww;
-    self.wh = wh;
     self.x = 0;
     self.y = 0;
     self.w = 0;
@@ -187,7 +302,7 @@ var GamePlayScene = function(game, stage)
       evt.hitUI = true;
       dragging_obj = self;
       drag_pause = true;
-      tick_timer = 0;
+      advance_timer = 0;
       self.drag_start_x = evt.doX;
       self.drag_start_y = evt.doY;
     }
@@ -576,13 +691,14 @@ var GamePlayScene = function(game, stage)
     work_cam   = {wx:0,wy:0,ww:2,wh:canv.height/canv.width*2,x:0,y:0,w:0,y:0};
 
     modules = [];
+    selected_module = 0;
     dragging_obj = 0;
     full_pause = false;
     drag_pause = false;
-    tick_timer = 0;
-    max_tick_timer = 10;
-    tick_i = 0;
-    max_tick_i = 100
+    advance_timer = 0;
+    advance_timer_max = 10;
+    t_i = 0;
+    t_max = 100
 
     load_template_i = 0;
     templates = [];
@@ -593,11 +709,18 @@ var GamePlayScene = function(game, stage)
     /*proportion cycle*/ templates.push("{\"modules\":[{\"v\":100,\"min\":-10,\"max\":100,\"pool\":true,\"graph\":true,\"square\":true,\"wx\":-0.31875,\"wy\":0.184375,\"ww\":0.15625,\"wh\":0.15625,\"input\":-1,\"adder\":-1},{\"v\":50,\"min\":-10,\"max\":100,\"pool\":true,\"graph\":true,\"square\":true,\"wx\":0.2437499999999999,\"wy\":0.175,\"ww\":0.15625,\"wh\":0.15625,\"input\":-1,\"adder\":-1},{\"v\":-0.4,\"min\":-10,\"max\":100,\"pool\":true,\"graph\":0,\"square\":0,\"wx\":-0.078125,\"wy\":0.384375,\"ww\":0.15625,\"wh\":0.15625,\"input\":1,\"adder\":0},{\"v\":0.1,\"min\":-10,\"max\":100,\"pool\":true,\"graph\":0,\"square\":0,\"wx\":-0.050000000000000044,\"wy\":0.003124999999999989,\"ww\":0.15625,\"wh\":0.15625,\"input\":0,\"adder\":1},{\"v\":0.3,\"min\":-10,\"max\":100,\"pool\":true,\"graph\":0,\"square\":0,\"wx\":-0.6,\"wy\":0.21875,\"ww\":0.15625,\"wh\":0.15625,\"input\":0,\"adder\":0},{\"v\":-0.2,\"min\":-10,\"max\":100,\"pool\":true,\"graph\":0,\"square\":0,\"wx\":0.48124999999999996,\"wy\":0.203125,\"ww\":0.15625,\"wh\":0.15625,\"input\":1,\"adder\":1}]}");
 
     s_dragger = new screen_dragger();
+    s_graph = new graph();
+    s_graph.x = 0;
+    s_graph.y = canv.height-100;
+    s_graph.w = canv.width-100;
+    s_graph.h = 100;
+    s_graph.calc_sub_params();
 
-    add_module_btn = new btn(-0.4,0.4,0.2,0.2);
-    add_module_btn.wx = -screen_cam.ww/2+add_module_btn.ww/2+0.1;
-    add_module_btn.wy =  screen_cam.wh/2-add_module_btn.wh/2-0.1;
-    screenSpace(screen_cam,canv,add_module_btn);
+    add_module_btn = new btn();
+    add_module_btn.w = 20;
+    add_module_btn.h = 20;
+    add_module_btn.x = 10;
+    add_module_btn.y = 10;
     add_module_btn.shouldDrag = function(evt)
     {
       if(dragging_obj) return false;
@@ -612,50 +735,11 @@ var GamePlayScene = function(game, stage)
       return false;
     }
 
-    var playback_btn_size = 0.1;
-    pause_btn = new btn(-0.4,0.4,playback_btn_size,playback_btn_size);
-    pause_btn.wx = -screen_cam.ww/2+pause_btn.ww/2+0.1;
-    pause_btn.wy = -screen_cam.wh/2+pause_btn.wh/2+0.1;
-    screenSpace(screen_cam,canv,pause_btn);
-    pause_btn.shouldDrag = function(evt)
-    {
-      if(dragging_obj) return false;
-      if(doEvtWithinBB(evt,pause_btn))
-        full_pause = !full_pause;
-      return false;
-    }
-
-    advance_btn = new btn(-0.4,0.4,playback_btn_size,playback_btn_size);
-    advance_btn.wx = -screen_cam.ww/2+advance_btn.ww/2+0.1+pause_btn.ww+0.1;
-    advance_btn.wy =  pause_btn.wy;
-    screenSpace(screen_cam,canv,advance_btn);
-    advance_btn.shouldDrag = function(evt)
-    {
-      if(dragging_obj) return false;
-      if(doEvtWithinBB(evt,advance_btn))
-        flow();
-      return false;
-    }
-
-    speed_btn = new btn(-0.4,0.4,playback_btn_size,playback_btn_size);
-    speed_btn.wx = -screen_cam.ww/2+speed_btn.ww/2+0.1+pause_btn.ww+0.1+advance_btn.ww+0.1;
-    speed_btn.wy =  pause_btn.wy;
-    screenSpace(screen_cam,canv,speed_btn);
-    speed_btn.shouldDrag = function(evt)
-    {
-      if(dragging_obj) return false;
-      if(doEvtWithinBB(evt,speed_btn))
-      {
-        max_tick_timer--;
-        if(max_tick_timer <= 0) max_tick_timer = 10;
-      }
-      return false;
-    }
-
-    print_btn = new btn(-0.4,0.4,0.2,0.2);
-    print_btn.wx = screen_cam.ww/2-print_btn.ww/2-0.1;
-    print_btn.wy = screen_cam.wh/2-print_btn.wh/2-0.1;
-    screenSpace(screen_cam,canv,print_btn);
+    print_btn = new btn();
+    print_btn.w = 20;
+    print_btn.h = 20;
+    print_btn.x = canv.width-30;
+    print_btn.y = 10;
     print_btn.shouldDrag = function(evt)
     {
       if(dragging_obj) return false;
@@ -664,10 +748,11 @@ var GamePlayScene = function(game, stage)
       return false;
     }
 
-    load_btn = new btn(-0.4,0.4,0.2,0.2);
-    load_btn.wx = screen_cam.ww/2-load_btn.ww/2-0.1;
-    load_btn.wy = screen_cam.wh/2-load_btn.wh/2-0.1-print_btn.wh-0.1;
-    screenSpace(screen_cam,canv,load_btn);
+    load_btn = new btn();
+    load_btn.w = 20;
+    load_btn.h = 20;
+    load_btn.x = canv.width-30;
+    load_btn.y = 40;
     load_btn.shouldDrag = function(evt)
     {
       if(dragging_obj) return false;
@@ -680,10 +765,9 @@ var GamePlayScene = function(game, stage)
 
   var flow = function()
   {
-    tick_i++;
-    if(tick_i >= max_tick_i) tick_i = 0;
+    t_i = (t_i+1)%t_max;
 
-    tick_timer = max_tick_timer;
+    advance_timer = advance_timer_max;
     for(var i = 0; i < modules.length; i++)
       if(modules[i].pool) modules[i].v_temp = modules[i].v;
       else                modules[i].v_temp = 0;
@@ -705,7 +789,7 @@ var GamePlayScene = function(game, stage)
     {
       modules[i].v_temp = fdisp(clamp(modules[i].min,modules[i].max,modules[i].v_temp),2);
       modules[i].v = modules[i].v_temp;
-      modules[i].plot[tick_i] = modules[i].v;
+      modules[i].plot[t_i] = modules[i].v;
     }
   }
 
@@ -726,9 +810,9 @@ var GamePlayScene = function(game, stage)
     for(var i = 0; i < modules.length; i++)
       dragger.filter(modules[i]);
     dragger.filter(add_module_btn);
-    dragger.filter(pause_btn);
-    dragger.filter(advance_btn);
-    dragger.filter(speed_btn);
+    dragger.filter(s_graph.pause_btn);
+    dragger.filter(s_graph.advance_btn);
+    dragger.filter(s_graph.speed_btn);
     dragger.filter(print_btn);
     dragger.filter(load_btn);
     dragger.filter(s_dragger);
@@ -743,8 +827,8 @@ var GamePlayScene = function(game, stage)
 
     if(!drag_pause && !full_pause)
     {
-      tick_timer--;
-      if(tick_timer <= 0)
+      advance_timer--;
+      if(advance_timer <= 0)
         flow();
     }
 
@@ -762,12 +846,6 @@ var GamePlayScene = function(game, stage)
     ctx.lineWidth = 1;
     ctx.fillText("Add Amp",add_module_btn.x+2,add_module_btn.y+10);
     ctx.strokeRect(add_module_btn.x,add_module_btn.y,add_module_btn.w,add_module_btn.h);
-    ctx.fillText("Pause",pause_btn.x+2,pause_btn.y+10);
-    ctx.strokeRect(pause_btn.x,pause_btn.y,pause_btn.w,pause_btn.h);
-    ctx.fillText("Advance",advance_btn.x+2,advance_btn.y+10);
-    ctx.strokeRect(advance_btn.x,advance_btn.y,advance_btn.w,advance_btn.h);
-    ctx.fillText("Speed ("+max_tick_timer+")",speed_btn.x+2,speed_btn.y+10);
-    ctx.strokeRect(speed_btn.x,speed_btn.y,speed_btn.w,speed_btn.h);
     ctx.fillText("Save",print_btn.x+2,print_btn.y+10);
     ctx.strokeRect(print_btn.x,print_btn.y,print_btn.w,print_btn.h);
     ctx.fillText("Load Next ("+load_template_i+"/"+(templates.length-1)+")",load_btn.x+2,load_btn.y+10);
@@ -787,35 +865,7 @@ var GamePlayScene = function(game, stage)
       ctx.fillRect(0,0,canv.width,canv.height);
     }
 
-    //graph
-    ctx.lineWidth = 1;
-    ctx.strokeStyle = "#000000";
-    var x = 0;
-    var y = 0;
-
-    for(var i = 0; i < modules.length; i++)
-    {
-      if(!modules[i].graph) continue;
-      x = 0;
-      y = canv.height;
-      ctx.beginPath();
-      if(!isNaN(modules[i].plot[0])) y = canv.height-mapVal(modules[i].min,modules[i].max,0,1,modules[i].plot[0])*100;
-      ctx.moveTo(x,y);
-      for(var j = 0; j < max_tick_i; j++)
-      {
-        if(j <= tick_i) x =  j   /(max_tick_i-1)*canv.width;
-        else            x = (j-1)/(max_tick_i-1)*canv.width;
-        if(!isNaN(modules[i].plot[j])) y = canv.height-mapVal(modules[i].min,modules[i].max,0,1,modules[i].plot[j])*100;
-        ctx.lineTo(x,y);
-      }
-      ctx.stroke();
-    }
-
-    x = tick_i/(max_tick_i-1)*canv.width;
-    ctx.beginPath();
-    ctx.moveTo(x,canv.height-100);
-    ctx.lineTo(x,canv.height);
-    ctx.stroke();
+    s_graph.draw();
   };
 
   self.cleanup = function()
