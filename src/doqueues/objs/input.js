@@ -233,6 +233,7 @@ function NumberBox(x,y,w,h,val,delta,callback)
   self.set = function(n)
   {
     self.number = validateNum(n);
+    self.value = ""+self.number;
     callback(self.number);
   }
 

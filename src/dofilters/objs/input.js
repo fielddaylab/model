@@ -7,6 +7,119 @@ function Box(x,y,w,h)
   self.h = h;
 }
 
+function TextBox(x,y,w,h,txt,callback)
+//register to keyer, dragger, blurer
+{
+  var self = this;
+  self.x = x;
+  self.y = y;
+  self.w = w;
+  self.h = h;
+
+  self.txt = txt;
+
+  self.focused = false;
+  self.highlit = false;
+  self.down = false;
+
+  self.delta = delta;
+
+  self.key = function(evt)
+  {
+  }
+  self.key_letter = function(k)
+  {
+    if(self.focused)
+    {
+      if(self.highlit) self.txt = ""+k;
+      else             self.txt = self.txt+k;
+      self.highlit = false;
+      callback(self.txt);
+    }
+  }
+  self.key_down = function(evt)
+  {
+    if(evt.keyCode == 13) //enter
+    {
+      if(self.focused)
+        self.blur();
+    }
+    if(evt.keyCode == 8) //delete
+    {
+      if(self.highlit)
+      {
+        self.txt = "";
+        self.highlit = false;
+        callback(self.number);
+      }
+      else if(self.focused)
+      {
+        self.txt = self.txt.substring(0,self.txt.length-1);
+        callback(self.txt);
+      }
+    }
+  }
+  self.key_up = function(evt)
+  {
+  }
+
+  self.dragStart = function(evt)
+  {
+    evt.hit_ui = true;
+    self.focused = true;
+    self.down = true;
+  }
+  self.drag = function(evt)
+  {
+    evt.hit_ui = true;
+    self.down = ptWithinObj(self, evt.doX, evt.doY);
+  }
+  self.dragFinish = function()
+  {
+    if(self.down) self.highlit = !self.highlit;
+    self.down = false;
+  }
+
+  self.blur = function()
+  {
+    self.focused = false;
+    self.highlit = false;
+    callback(self.txt);
+  }
+  self.focus = function()
+  {
+    self.focused = true;
+    self.highlit = true;
+  }
+  self.set = function(n)
+  {
+    callback(self.txt);
+  }
+
+  self.draw = function(canv)
+  {
+    if(self.highlit)
+    {
+      canv.context.fillStyle = "#8899FF";
+      canv.context.fillRect(self.x,self.y,self.w,self.h);
+    }
+         if(self.down)    canv.context.strokeStyle = "#00F400";
+    else if(self.focused) canv.context.strokeStyle = "#F40000";
+    else                  canv.context.strokeStyle = "#0000F4";
+    canv.context.strokeRect(self.x,self.y,self.w,self.h);
+    canv.context.fillStyle = "#000000";
+    if(self.value.length < 5)
+      canv.context.fillText(self.value,self.x+4,self.y+self.h*3/4,self.w-4);
+    else
+      canv.context.fillText(self.value.substring(0,5)+"...",self.x+4,self.y+self.h*3/4,self.w-4);
+  }
+
+  self.print = function()
+  {
+    console.log("("+self.x+","+self.y+","+self.w+","+self.h+") n:"+self.txt+" f:"+self.focused+" h:"+self.highlit+" d:"+self.down+" "+"");
+  }
+}
+
 function NumberBox(x,y,w,h,val,delta,callback)
 //register to keyer, dragger, blurer
 {
@@ -120,6 +233,7 @@ function NumberBox(x,y,w,h,val,delta,callback)
   self.set = function(n)
   {
     self.number = validateNum(n);
+    self.value = ""+self.number;
     callback(self.number);
   }
 

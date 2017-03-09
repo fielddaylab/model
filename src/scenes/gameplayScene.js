@@ -6,8 +6,10 @@ var GamePlayScene = function(game, stage)
   var canvas = canv.canvas;
   var ctx = canv.context;
 
-  var dragger;
   var clicker;
+  var dragger;
+  var keyer;
+  var blurer;
 
   var screen_cam;
   var work_cam;
@@ -181,11 +183,11 @@ var GamePlayScene = function(game, stage)
     self.w = 0;
     self.h = 0;
 
-    self.v_box   = new NumberBox(0,0,0,0,0,0,function(v){ var n = clamp(selected_module.min,selected_module.max,v); if(n != v) self.v_box.set(n);   else selected_module.v   = n; });
-    self.min_box = new NumberBox(0,0,0,0,0,0,function(v){ var n = min(selected_module.max,v);                       if(n != v) self.min_box.set(n); else selected_module.min = n; });
-    self.max_box = new NumberBox(0,0,0,0,0,0,function(v){ var n = max(selected_module.min,v);                       if(n != v) self.max_box.set(n); else selected_module.max = n; });
-    self.pool_box  = new ToggleBox(0,0,0,0,0,function(v){ selected_module.v = n; });
-    self.graph_box = new ToggleBox(0,0,0,0,0,function(v){ selected_module.v = n; });
+    self.v_box   = new NumberBox(0,0,0,0,0,0,function(v){ var n = clamp(selected_module.min,selected_module.max,v); selected_module.v   = n; if(n != v) self.v_box.set(n);   });
+    self.min_box = new NumberBox(0,0,0,0,0,0,function(v){ var n = min(selected_module.max,v);                       selected_module.min = n; if(n != v) self.min_box.set(n); });
+    self.max_box = new NumberBox(0,0,0,0,0,0,function(v){ var n = max(selected_module.min,v);                       selected_module.max = n; if(n != v) self.max_box.set(n); });
+    self.pool_box  = new ToggleBox(0,0,0,0,0,function(v){ selected_module.pool = v; });
+    self.graph_box = new ToggleBox(0,0,0,0,0,function(v){ selected_module.graph = v; });
 
     self.operator_box_mul = new ToggleBox(0,0,0,0,0,function(v){ var new_operator; if(v) new_operator = OPERATOR_MUL; else new_operator = OPERATOR_DIV; if(selected_module.operator != new_operator) { selected_module.operator = new_operator; self.operator_box_div.set(!v); } });
     self.operator_box_div = new ToggleBox(0,0,0,0,0,function(v){ self.operator_box_mul.set(!v); });
@@ -251,19 +253,57 @@ var GamePlayScene = function(game, stage)
       i++;
     }
 
+    self.calc_sub_values = function()
+    {
+      self.v_box.set(selected_module.v);
+      self.min_box.set(selected_module.min);
+      self.max_box.set(selected_module.max);
+      self.pool_box.set(selected_module.pool);
+      self.graph_box.set(selected_module.graph);
+
+      if(selected_module.operator == OPERATOR_MUL) self.operator_box_mul.set(1); else self.operator_box_mul.set(0);
+      if(selected_module.sign     == 1)            self.sign_box_pos.set(1); else self.sign_box_pos.set(0);
+    }
+
+    self.filter = function()
+    {
+      if(!selected_module) return;
+      keyer.filter(self.v_box);
+      dragger.filter(self.v_box);
+      blurer.filter(self.v_box);
+
+      keyer.filter(self.min_box);
+      dragger.filter(self.min_box);
+      blurer.filter(self.min_box);
+
+      keyer.filter(self.max_box);
+      dragger.filter(self.max_box);
+      blurer.filter(self.max_box);
+
+      clicker.filter(self.pool_box);
+      clicker.filter(self.graph_box);
+      clicker.filter(self.operator_box_mul);
+      clicker.filter(self.operator_box_div);
+      clicker.filter(self.sign_box_pos);
+      clicker.filter(self.sign_box_neg);
+    }
     self.draw = function()
     {
       ctx.strokeRect(self.x,self.y,self.w,self.h);
-      self.v_box.draw(canv);
-      self.min_box.draw(canv);
-      self.max_box.draw(canv);
-      self.pool_box.draw(canv);
-      self.graph_box.draw(canv);
 
-      self.operator_box_mul.draw(canv);
-      self.operator_box_div.draw(canv);
-      self.sign_box_pos.draw(canv);
-      self.sign_box_neg.draw(canv);
+      if(selected_module)
+      {
+        self.v_box.draw(canv);     ctx.fillStyle = "#000000"; ctx.fillText("val",  self.v_box.x     + self.v_box.w     + 10, self.v_box.y);
+        self.min_box.draw(canv);   ctx.fillStyle = "#000000"; ctx.fillText("min",  self.min_box.x   + self.min_box.w   + 10, self.min_box.y);
+        self.max_box.draw(canv);   ctx.fillStyle = "#000000"; ctx.fillText("max",  self.max_box.x   + self.max_box.w   + 10, self.max_box.y);
+        self.pool_box.draw(canv);  ctx.fillStyle = "#000000"; ctx.fillText("pool", self.pool_box.x  + self.pool_box.w  + 10, self.pool_box.y);
+        self.graph_box.draw(canv); ctx.fillStyle = "#000000"; ctx.fillText("graph",self.graph_box.x + self.graph_box.w + 10, self.graph_box.y);
+
+        self.operator_box_mul.draw(canv);
+        self.operator_box_div.draw(canv); ctx.fillStyle = "#000000"; ctx.fillText("mul/div",  self.operator_box_div.x + self.operator_box_div.w + 10, self.operator_box_div.y);
+        self.sign_box_pos.draw(canv);
+        self.sign_box_neg.draw(canv);     ctx.fillStyle = "#000000"; ctx.fillText("pos/nev",  self.sign_box_neg.x     + self.sign_box_neg.w     + 10, self.sign_box_neg.y);
+      }
     }
   }
 
@@ -275,6 +315,7 @@ var GamePlayScene = function(game, stage)
     self.shouldDrag = function(evt)
     {
       if(dragging_obj && dragging_obj != self) return false;
+      selected_module = 0;
       return true;
     }
     self.dragStart = function(evt)
@@ -502,7 +543,7 @@ var GamePlayScene = function(game, stage)
     self.v_temp = 0;
     self.min = -10;
     self.max =  100;
-    self.pool = 0;
+    self.pool = 1;
     self.graph = 0;
 
     self.operator = OPERATOR_MUL;
@@ -512,11 +553,7 @@ var GamePlayScene = function(game, stage)
 
     self.plot = [];
 
-    self.pool_dongle  = new toggle_dongle(0,-30,dongle_img.width/2,self);
-    self.pool_dongle.dragStart = function(evt) { self.pool = !self.pool; self.pool_dongle.dragging = false; }
-    self.graph_dongle = new toggle_dongle(0,-20,dongle_img.width/2,self);
-    self.graph_dongle.dragStart = function(evt) { self.graph = !self.graph; self.graph_dongle.dragging = false; }
-    self.square_dongle  = new toggle_dongle(0,-10,dongle_img.width/2,self);
+    self.square_dongle  = new toggle_dongle(0,-30,dongle_img.width/2,self);
     self.square_dongle.dragStart = function(evt) { self.square = !self.square; self.square_dongle.dragging = false; }
 
     self.v_dongle = new dongle(0,0,dongle_img.width/2,self);
@@ -548,6 +585,7 @@ var GamePlayScene = function(game, stage)
     {
       dragging_obj = self;
       selected_module = self;
+      s_editor.calc_sub_values();
       self.drag_start_x = evt.doX-self.x;
       self.drag_start_y = evt.doY-self.y;
     }
@@ -560,7 +598,6 @@ var GamePlayScene = function(game, stage)
     self.dragFinish = function(evt)
     {
       if(dragging_obj == self) dragging_obj = 0;
-      if(selected_module == self) selected_module = 0;
     }
 
     self.draw_bg = function()
@@ -686,18 +723,6 @@ var GamePlayScene = function(game, stage)
       if(self.v_dongle.dragging) ctx.fillText(fdisp(self.v_temp,2),self.x+self.w/2+self.v_dongle.off.x-self.v_dongle.r/2,self.y+self.h/2+self.v_dongle.off.y+self.v_dongle.r/2);
       else                       ctx.fillText(fdisp(self.v     ,2),self.x+self.w/2+self.v_dongle.off.x-self.v_dongle.r/2,self.y+self.h/2+self.v_dongle.off.y+self.v_dongle.r/2);
 
-      //pool_dongle
-      ctx.fillStyle = "#000000";
-      //ctx.drawImage(dongle_img,self.x+self.w/2+self.pool_dongle.off.x-self.pool_dongle.r,self.y+self.h/2+self.pool_dongle.off.y-self.pool_dongle.r,self.pool_dongle.r*2,self.pool_dongle.r*2);
-      if(self.pool) ctx.fillText("o",self.x+self.w/2+self.pool_dongle.off.x-self.pool_dongle.r/2,self.y+self.h/2+self.pool_dongle.off.y+self.pool_dongle.r/2);
-      else          ctx.fillText("-",self.x+self.w/2+self.pool_dongle.off.x-self.pool_dongle.r/2,self.y+self.h/2+self.pool_dongle.off.y+self.pool_dongle.r/2);
-
-      //graph_dongle
-      ctx.fillStyle = "#000000";
-      //ctx.drawImage(dongle_img,self.x+self.w/2+self.graph_dongle.off.x-self.graph_dongle.r,self.y+self.h/2+self.graph_dongle.off.y-self.graph_dongle.r,self.graph_dongle.r*2,self.graph_dongle.r*2);
-      if(self.graph) ctx.fillText("o",self.x+self.w/2+self.graph_dongle.off.x-self.graph_dongle.r/2,self.y+self.h/2+self.graph_dongle.off.y+self.graph_dongle.r/2);
-      else           ctx.fillText("-",self.x+self.w/2+self.graph_dongle.off.x-self.graph_dongle.r/2,self.y+self.h/2+self.graph_dongle.off.y+self.graph_dongle.r/2);
-
       //square_dongle
       ctx.fillStyle = "#000000";
       //ctx.drawImage(dongle_img,self.x+self.w/2+self.square_dongle.off.x-self.square_dongle.r,self.y+self.h/2+self.square_dongle.off.y-self.square_dongle.r,self.square_dongle.r*2,self.square_dongle.r*2);
@@ -777,8 +802,10 @@ var GamePlayScene = function(game, stage)
 
   self.ready = function()
   {
-    dragger = new Dragger({source:stage.dispCanv.canvas});
     clicker = new Clicker({source:stage.dispCanv.canvas});
+    dragger = new Dragger({source:stage.dispCanv.canvas});
+    keyer   = new Keyer(  {source:stage.dispCanv.canvas});
+    blurer  = new Blurer( {source:stage.dispCanv.canvas});
 
     screen_cam = {wx:0,wy:0,ww:2,wh:canv.height/canv.width*2,x:0,y:0,w:0,y:0};
     work_cam   = {wx:0,wy:0,ww:2,wh:canv.height/canv.width*2,x:0,y:0,w:0,y:0};
@@ -889,15 +916,12 @@ var GamePlayScene = function(game, stage)
       modules[i].v_temp = fdisp(clamp(modules[i].min,modules[i].max,modules[i].v_temp),2);
       modules[i].v = modules[i].v_temp;
       modules[i].plot[t_i] = modules[i].v;
+      if(modules[i] == selected_module) { s_editor.v_box.set(selected_module.v); }
     }
   }
 
   self.tick = function()
   {
-    for(var i = 0; i < modules.length; i++)
-      dragger.filter(modules[i].pool_dongle);
-    for(var i = 0; i < modules.length; i++)
-      dragger.filter(modules[i].graph_dongle);
     for(var i = 0; i < modules.length; i++)
       dragger.filter(modules[i].square_dongle);
     for(var i = 0; i < modules.length; i++)
@@ -915,9 +939,12 @@ var GamePlayScene = function(game, stage)
     dragger.filter(print_btn);
     dragger.filter(load_btn);
     dragger.filter(s_dragger);
+    s_editor.filter();
 
-    dragger.flush();
     clicker.flush();
+    dragger.flush();
+    keyer.flush();
+    blurer.flush();
 
     for(var i = 0; i < modules.length; i++)
       modules[i].cache_const = 1;
