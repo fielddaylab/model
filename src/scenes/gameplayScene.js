@@ -265,9 +265,30 @@ var GamePlayScene = function(game, stage)
       if(selected_module.sign     == 1)            self.sign_box_pos.set(1); else self.sign_box_pos.set(0);
     }
 
+    self.shouldDrag = function(evt)
+    {
+      if(dragging_obj && dragging_obj != self) return false;
+      return true;
+    }
+    self.dragStart = function(evt)
+    {
+      dragging_obj = self;
+      drag_pause = true;
+    }
+    self.drag = function(evt)
+    {
+    }
+    self.dragFinish = function(evt)
+    {
+      if(dragging_obj = self) dragging_obj = 0;
+      drag_pause = false;
+    }
+
     self.filter = function()
     {
       if(!selected_module) return;
+      dragger.filter(self);
+
       keyer.filter(self.v_box);
       dragger.filter(self.v_box);
       blurer.filter(self.v_box);
@@ -280,17 +301,12 @@ var GamePlayScene = function(game, stage)
       dragger.filter(self.max_box);
       blurer.filter(self.max_box);
 
-      if(clicker.filter(self.pool_box))         dragging_obj = self.pool_box;
-      if(clicker.filter(self.graph_box))        dragging_obj = self.graph_box;
-      if(clicker.filter(self.operator_box_mul)) dragging_obj = self.operator_box_mul;
-      if(clicker.filter(self.operator_box_div)) dragging_obj = self.operator_box_div;
-      if(clicker.filter(self.sign_box_pos))     dragging_obj = self.sign_box_pos;
-      if(clicker.filter(self.sign_box_neg))     dragging_obj = self.sign_box_neg;
-
-      if(self.v_box.dragging)   dragging_obj = self.v_box;
-      if(self.min_box.dragging) dragging_obj = self.min_box;
-      if(self.max_box.dragging) dragging_obj = self.max_box;
-      if(self.v_box.dragging)   dragging_obj = self.v_box;
+      clicker.filter(self.pool_box);
+      clicker.filter(self.graph_box);
+      clicker.filter(self.operator_box_mul);
+      clicker.filter(self.operator_box_div);
+      clicker.filter(self.sign_box_pos);
+      clicker.filter(self.sign_box_neg);
     }
     self.draw = function()
     {
@@ -945,21 +961,6 @@ var GamePlayScene = function(game, stage)
     dragger.filter(load_btn);
     s_editor.filter();
     dragger.filter(s_dragger);
-
-    //clicker set d_obj- unset it
-    if(
-      dragging_obj == s_editor.pool_box         ||
-      dragging_obj == s_editor.graph_box        ||
-      dragging_obj == s_editor.operator_box_mul ||
-      dragging_obj == s_editor.operator_box_div ||
-      dragging_obj == s_editor.sign_box_pos     ||
-      dragging_obj == s_editor.sign_box_neg     ||
-      (dragging_obj == s_editor.v_box   && !s_editor.v_box.dragging)   ||
-      (dragging_obj == s_editor.min_box && !s_editor.min_box.dragging) ||
-      (dragging_obj == s_editor.max_box && !s_editor.max_box.dragging) ||
-      (dragging_obj == s_editor.v_box   && !s_editor.v_box.dragging)
-    )
-      dragging_obj = 0;
 
     clicker.flush();
     dragger.flush();
