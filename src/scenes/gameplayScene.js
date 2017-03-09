@@ -280,12 +280,17 @@ var GamePlayScene = function(game, stage)
       dragger.filter(self.max_box);
       blurer.filter(self.max_box);
 
-      clicker.filter(self.pool_box);
-      clicker.filter(self.graph_box);
-      clicker.filter(self.operator_box_mul);
-      clicker.filter(self.operator_box_div);
-      clicker.filter(self.sign_box_pos);
-      clicker.filter(self.sign_box_neg);
+      if(clicker.filter(self.pool_box))         dragging_obj = self.pool_box;
+      if(clicker.filter(self.graph_box))        dragging_obj = self.graph_box;
+      if(clicker.filter(self.operator_box_mul)) dragging_obj = self.operator_box_mul;
+      if(clicker.filter(self.operator_box_div)) dragging_obj = self.operator_box_div;
+      if(clicker.filter(self.sign_box_pos))     dragging_obj = self.sign_box_pos;
+      if(clicker.filter(self.sign_box_neg))     dragging_obj = self.sign_box_neg;
+
+      if(self.v_box.dragging)   dragging_obj = self.v_box;
+      if(self.min_box.dragging) dragging_obj = self.min_box;
+      if(self.max_box.dragging) dragging_obj = self.max_box;
+      if(self.v_box.dragging)   dragging_obj = self.v_box;
     }
     self.draw = function()
     {
@@ -938,8 +943,23 @@ var GamePlayScene = function(game, stage)
     dragger.filter(s_graph.speed_btn);
     dragger.filter(print_btn);
     dragger.filter(load_btn);
-    dragger.filter(s_dragger);
     s_editor.filter();
+    dragger.filter(s_dragger);
+
+    //clicker set d_obj- unset it
+    if(
+      dragging_obj == s_editor.pool_box         ||
+      dragging_obj == s_editor.graph_box        ||
+      dragging_obj == s_editor.operator_box_mul ||
+      dragging_obj == s_editor.operator_box_div ||
+      dragging_obj == s_editor.sign_box_pos     ||
+      dragging_obj == s_editor.sign_box_neg     ||
+      (dragging_obj == s_editor.v_box   && !s_editor.v_box.dragging)   ||
+      (dragging_obj == s_editor.min_box && !s_editor.min_box.dragging) ||
+      (dragging_obj == s_editor.max_box && !s_editor.max_box.dragging) ||
+      (dragging_obj == s_editor.v_box   && !s_editor.v_box.dragging)
+    )
+      dragging_obj = 0;
 
     clicker.flush();
     dragger.flush();
