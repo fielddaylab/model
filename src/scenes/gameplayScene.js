@@ -30,6 +30,7 @@ var GamePlayScene = function(game, stage)
 
   var s_dragger;
   var s_graph;
+  var s_editor;
 
   var w = 20;
   var h = 20;
@@ -62,10 +63,6 @@ var GamePlayScene = function(game, stage)
     self.y = 0;
     self.w = 0;
     self.h = 0;
-    self.wx = 0;
-    self.wy = 0;
-    self.ww = 0;
-    self.wh = 0;
 
     self.graph_x = 0;
     self.graph_y = 0;
@@ -173,6 +170,100 @@ var GamePlayScene = function(game, stage)
       ctx.strokeRect(self.advance_btn.x,self.advance_btn.y,self.advance_btn.w,self.advance_btn.h);
       ctx.fillText(">> ("+advance_timer_max+")",self.speed_btn.x+2,self.speed_btn.y+10);
       ctx.strokeRect(self.speed_btn.x,self.speed_btn.y,self.speed_btn.w,self.speed_btn.h);
+    }
+  }
+
+  var module_editor = function()
+  {
+    var self = this;
+    self.x = 0;
+    self.y = 0;
+    self.w = 0;
+    self.h = 0;
+
+    self.v_box   = new NumberBox(0,0,0,0,0,0,function(v){ var n = clamp(selected_module.min,selected_module.max,v); if(n != v) self.v_box.set(n);   else selected_module.v   = n; });
+    self.min_box = new NumberBox(0,0,0,0,0,0,function(v){ var n = min(selected_module.max,v);                       if(n != v) self.min_box.set(n); else selected_module.min = n; });
+    self.max_box = new NumberBox(0,0,0,0,0,0,function(v){ var n = max(selected_module.min,v);                       if(n != v) self.max_box.set(n); else selected_module.max = n; });
+    self.pool_box  = new ToggleBox(0,0,0,0,0,function(v){ selected_module.v = n; });
+    self.graph_box = new ToggleBox(0,0,0,0,0,function(v){ selected_module.v = n; });
+
+    self.operator_box_mul = new ToggleBox(0,0,0,0,0,function(v){ var new_operator; if(v) new_operator = OPERATOR_MUL; else new_operator = OPERATOR_DIV; if(selected_module.operator != new_operator) { selected_module.operator = new_operator; self.operator_box_div.set(!v); } });
+    self.operator_box_div = new ToggleBox(0,0,0,0,0,function(v){ self.operator_box_mul.set(!v); });
+    self.sign_box_pos = new ToggleBox(0,0,0,0,0,function(v){ var new_sign; if(v) new_sign = 1.; else new_sign = -1.; if(selected_module.sign != new_sign) { selected_module.sign = new_sign; self.sign_box_neg.set(!v); } });
+    self.sign_box_neg = new ToggleBox(0,0,0,0,0,function(v){ self.sign_box_pos.set(!v); });
+
+    self.calc_sub_params = function()
+    {
+      var h = 20;
+      var w = 20;
+      var s = 10;
+      var i = 0;
+      self.v_box.w = w;
+      self.v_box.h = h;
+      self.v_box.x = self.x + s;
+      self.v_box.y = self.y + s + (h+s)*i;
+      i++;
+
+      self.min_box.w = w;
+      self.min_box.h = h;
+      self.min_box.x = self.x + s;
+      self.min_box.y = self.y + s + (h+s)*i;
+      i++;
+
+      self.max_box.w = w;
+      self.max_box.h = h;
+      self.max_box.x = self.x + s;
+      self.max_box.y = self.y + s + (h+s)*i;
+      i++;
+
+      self.pool_box.w = w;
+      self.pool_box.h = h;
+      self.pool_box.x = self.x + s;
+      self.pool_box.y = self.y + s + (h+s)*i;
+      i++;
+
+      self.graph_box.w = w;
+      self.graph_box.h = h;
+      self.graph_box.x = self.x + s;
+      self.graph_box.y = self.y + s + (h+s)*i;
+      i++;
+
+      self.operator_box_mul.w = w;
+      self.operator_box_mul.h = h;
+      self.operator_box_mul.x = self.x + s;
+      self.operator_box_mul.y = self.y + s + (h+s)*i;
+
+      self.operator_box_div.w = w;
+      self.operator_box_div.h = h;
+      self.operator_box_div.x = self.x + s + (w+s);
+      self.operator_box_div.y = self.y + s + (h+s)*i;
+      i++;
+
+      self.sign_box_pos.w = w;
+      self.sign_box_pos.h = h;
+      self.sign_box_pos.x = self.x + s;
+      self.sign_box_pos.y = self.y + s + (h+s)*i;
+
+      self.sign_box_neg.w = w;
+      self.sign_box_neg.h = h;
+      self.sign_box_neg.x = self.x + s + (w+s);
+      self.sign_box_neg.y = self.y + s + (h+s)*i;
+      i++;
+    }
+
+    self.draw = function()
+    {
+      ctx.strokeRect(self.x,self.y,self.w,self.h);
+      self.v_box.draw(canv);
+      self.min_box.draw(canv);
+      self.max_box.draw(canv);
+      self.pool_box.draw(canv);
+      self.graph_box.draw(canv);
+
+      self.operator_box_mul.draw(canv);
+      self.operator_box_div.draw(canv);
+      self.sign_box_pos.draw(canv);
+      self.sign_box_neg.draw(canv);
     }
   }
 
@@ -405,6 +496,8 @@ var GamePlayScene = function(game, stage)
     self.color = "#0000FF";
     self.damp_color = "rgba(200,200,200,0.5)";
 
+    self.selected = 0;
+
     self.v = 0;
     self.v_temp = 0;
     self.min = -10;
@@ -414,8 +507,6 @@ var GamePlayScene = function(game, stage)
 
     self.operator = OPERATOR_MUL;
     self.sign = 1.;
-
-    self.scale = 1.;
 
     self.cache_const = 0;
 
@@ -456,6 +547,7 @@ var GamePlayScene = function(game, stage)
     self.dragStart = function(evt)
     {
       dragging_obj = self;
+      selected_module = self;
       self.drag_start_x = evt.doX-self.x;
       self.drag_start_y = evt.doY-self.y;
     }
@@ -468,6 +560,7 @@ var GamePlayScene = function(game, stage)
     self.dragFinish = function(evt)
     {
       if(dragging_obj == self) dragging_obj = 0;
+      if(selected_module == self) selected_module = 0;
     }
 
     self.draw_bg = function()
@@ -715,6 +808,12 @@ var GamePlayScene = function(game, stage)
     s_graph.w = canv.width-100;
     s_graph.h = 100;
     s_graph.calc_sub_params();
+    s_editor = new module_editor();
+    s_editor.x = canv.width-100;
+    s_editor.y = 100;
+    s_editor.w = 100;
+    s_editor.h = canv.height-100;
+    s_editor.calc_sub_params();
 
     add_module_btn = new btn();
     add_module_btn.w = 20;
@@ -866,6 +965,7 @@ var GamePlayScene = function(game, stage)
     }
 
     s_graph.draw();
+    s_editor.draw();
   };
 
   self.cleanup = function()
