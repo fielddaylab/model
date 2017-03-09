@@ -972,7 +972,14 @@ var GamePlayScene = function(game, stage)
     for(var i = 0; i < modules.length; i++)
       if(modules[i].output_dongle.attachment) modules[i].output_dongle.attachment.cache_const = 0;
 
-    if(!drag_pause && !full_pause)
+    var tmp_pause = false;
+    if(
+      s_editor.v_box.focused ||
+      s_editor.min_box.focused ||
+      s_editor.max_box.focused
+    )
+      tmp_pause = true;
+    if(!drag_pause && !full_pause && !tmp_pause)
     {
       advance_timer--;
       if(advance_timer <= 0)
@@ -1006,7 +1013,14 @@ var GamePlayScene = function(game, stage)
     for(var i = 0; i < modules.length; i++)
       modules[i].draw();
 
-    if(drag_pause || full_pause)
+    var tmp_pause = false;
+    if(
+      s_editor.v_box.focused ||
+      s_editor.min_box.focused ||
+      s_editor.max_box.focused
+    )
+      tmp_pause = true;
+    if(drag_pause || full_pause || tmp_pause)
     {
       ctx.fillStyle = "rgba(0,0,0,0.05)";
       ctx.fillRect(0,0,canv.width,canv.height);
