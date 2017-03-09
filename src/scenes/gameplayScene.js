@@ -73,33 +73,25 @@ var GamePlayScene = function(game, stage)
 
     var playback_btn_size = 20;
     self.pause_btn = new btn();
-    self.pause_btn.shouldDrag = function(evt)
+    self.pause_btn.click = function(evt)
     {
-      if(dragging_obj) return false;
-      if(doEvtWithinBB(evt,self.pause_btn))
-        full_pause = !full_pause;
-      return false;
+      if(!dragging_obj) full_pause = !full_pause;
     }
 
     self.advance_btn = new btn();
-    self.advance_btn.shouldDrag = function(evt)
+    self.advance_btn.click = function(evt)
     {
-      if(dragging_obj) return false;
-      if(doEvtWithinBB(evt,self.advance_btn))
-        flow();
-      return false;
+      if(!dragging_obj) flow();
     }
 
     self.speed_btn = new btn();
     self.speed_btn.shouldDrag = function(evt)
     {
-      if(dragging_obj) return false;
-      if(doEvtWithinBB(evt,self.speed_btn))
+      if(!dragging_obj) 
       {
         advance_timer_max--;
         if(advance_timer_max <= 0) advance_timer_max = 10;
       }
-      return false;
     }
 
     self.calc_sub_params = function()
@@ -183,9 +175,9 @@ var GamePlayScene = function(game, stage)
     self.w = 0;
     self.h = 0;
 
-    self.v_box   = new NumberBox(0,0,0,0,0,0,function(v){ var n = clamp(selected_module.min,selected_module.max,v); selected_module.v   = n; if(n != v) self.v_box.set(n);   });
-    self.min_box = new NumberBox(0,0,0,0,0,0,function(v){ var n = min(selected_module.max,v);                       selected_module.min = n; if(n != v) self.min_box.set(n); });
-    self.max_box = new NumberBox(0,0,0,0,0,0,function(v){ var n = max(selected_module.min,v);                       selected_module.max = n; if(n != v) self.max_box.set(n); });
+    self.v_box   = new NumberBox(0,0,0,0,0,0,function(v){ var n = fdisp(clamp(selected_module.min,selected_module.max,v),2); selected_module.v   = n; if(n != v) self.v_box.set(n);   });
+    self.min_box = new NumberBox(0,0,0,0,0,0,function(v){ var n = fdisp(min(selected_module.max,v),2);                       selected_module.min = n; if(n != v) self.min_box.set(n); var delta = max((selected_module.max-selected_module.min),1)/100; self.v_box.delta = delta; self.min_box.delta = delta; self.max_box.delta = delta; });
+    self.max_box = new NumberBox(0,0,0,0,0,0,function(v){ var n = fdisp(max(selected_module.min,v),2);                       selected_module.max = n; if(n != v) self.max_box.set(n); var delta = max((selected_module.max-selected_module.min),1)/100; self.v_box.delta = delta; self.min_box.delta = delta; self.max_box.delta = delta; });
     self.pool_box  = new ToggleBox(0,0,0,0,0,function(v){ selected_module.pool = v; });
     self.graph_box = new ToggleBox(0,0,0,0,0,function(v){ selected_module.graph = v; });
 
@@ -268,7 +260,7 @@ var GamePlayScene = function(game, stage)
     self.shouldDrag = function(evt)
     {
       if(dragging_obj && dragging_obj != self) return false;
-      return true;
+      return doEvtWithinBB(evt, self);
     }
     self.dragStart = function(evt)
     {
@@ -887,12 +879,9 @@ var GamePlayScene = function(game, stage)
     print_btn.h = 20;
     print_btn.x = canv.width-30;
     print_btn.y = 10;
-    print_btn.shouldDrag = function(evt)
+    print_btn.click = function(evt)
     {
-      if(dragging_obj) return false;
-      if(doEvtWithinBB(evt,print_btn))
-        print_template();
-      return false;
+      if(!dragging_obj) print_template();
     }
 
     load_btn = new btn();
@@ -900,12 +889,9 @@ var GamePlayScene = function(game, stage)
     load_btn.h = 20;
     load_btn.x = canv.width-30;
     load_btn.y = 40;
-    load_btn.shouldDrag = function(evt)
+    load_btn.click = function(evt)
     {
-      if(dragging_obj) return false;
-      if(doEvtWithinBB(evt,load_btn))
-        load_next_template();
-      return false;
+      if(!dragging_obj) load_next_template();
     }
 
   };
@@ -954,13 +940,14 @@ var GamePlayScene = function(game, stage)
     for(var i = 0; i < modules.length; i++)
       dragger.filter(modules[i]);
     dragger.filter(add_module_btn);
-    dragger.filter(s_graph.pause_btn);
-    dragger.filter(s_graph.advance_btn);
-    dragger.filter(s_graph.speed_btn);
-    dragger.filter(print_btn);
-    dragger.filter(load_btn);
+    var clicked = false;
+    if(clicker.filter(s_graph.pause_btn))   clicked = true;
+    if(clicker.filter(s_graph.advance_btn)) clicked = true;
+    if(clicker.filter(s_graph.speed_btn))   clicked = true;
+    if(clicker.filter(print_btn))           clicked = true;
+    if(clicker.filter(load_btn))            clicked = true;
     s_editor.filter();
-    dragger.filter(s_dragger);
+    if(!clicked) dragger.filter(s_dragger);
 
     clicker.flush();
     dragger.flush();
