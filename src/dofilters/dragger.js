@@ -82,6 +82,7 @@ var Dragger = function(init)
   }
   self.filter = function(draggable)
   {
+    var hit = false;
     var evt;
     for(var i = 0; i < evts.length; i++)
     {
@@ -96,6 +97,7 @@ var Dragger = function(init)
             {
               draggable.dragging = true;
               draggable.dragStart(evt);
+              hit = true;
             }
           }
         }
@@ -103,19 +105,26 @@ var Dragger = function(init)
         case EVT_TYPE_MOVE:
         {
           if(draggable.dragging)
+          {
             draggable.drag(evt);
+            hit = true;
+          }
         }
         break;
         case EVT_TYPE_UP:
         {
           if(draggable.dragging)
+          {
             draggable.dragFinish(evt);
+            hit = true;
+          }
           draggable.dragging = false;
         }
         break;
       }
 
     }
+    return hit;
   }
   self.flush = function()
   {

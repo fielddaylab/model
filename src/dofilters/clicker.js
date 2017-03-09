@@ -27,13 +27,18 @@ var Clicker = function(init)
   }
   self.filter = function(clickable)
   {
+    var hit = false;
     var evt;
     for(var i = 0; i < evts.length; i++)
     {
       evt = evts[i];
       if((clickable.shouldClick && clickable.shouldClick(evt)) || (!clickable.shouldClick && doEvtWithinBB(evt, clickable)))
+      {
         clickable.click(evt);
+        hit = true;
+      }
     }
+    return hit;
   }
   self.flush = function()
   {

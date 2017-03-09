@@ -56,6 +56,7 @@ var Keyer = function(init)
   }
   self.filter = function(keyable)
   {
+    var hit = false;
     var k;
     for(var i = 0; i < evts.length; i++)
     {
@@ -63,22 +64,27 @@ var Keyer = function(init)
       {
         case KEY_EVT_PRESS:
         {
-          if(keyable.key) keyable.key(evts[i]);
+          if(keyable.key) { keyable.key(evts[i]); hit = true; }
           if(keyable.key_letter)
           {
             k = String.fromCharCode(evts[i].charCode).toLowerCase();
-            if(k != "") keyable.key_letter(k);
+            if(k != "")
+            {
+              keyable.key_letter(k);
+              hit = true;
+            }
           }
         }
         break;
         case KEY_EVT_DOWN:
-          if(keyable.key_down) keyable.key_down(evts[i]);
+          if(keyable.key_down) { keyable.key_down(evts[i]); hit = true; }
         break;
         case KEY_EVT_UP:
-          if(keyable.key_up) keyable.key_up(evts[i]);
+          if(keyable.key_up) { keyable.key_up(evts[i]); hit = true; }
         break;
       }
     }
+    return hit;
   }
   self.flush = function()
   {

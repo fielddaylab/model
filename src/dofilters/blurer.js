@@ -28,13 +28,18 @@ var Blurer = function(init)
   }
   self.filter = function(blurable)
   {
+    var hit = false;
     var evt;
     for(var i = 0; i < evts.length; i++)
     {
       evt = evts[i];
       if((blurable.shouldBlur && blurable.shouldBlur(evt)) || (!blurable.shouldBlur && !doEvtWithinBB(evt, blurable)))
+      {
         blurable.blur(evt);
+        hit = true;
+      }
     }
+    return hit;
   }
   self.flush = function()
   {
