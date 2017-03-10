@@ -22,8 +22,6 @@ function TextBox(x,y,w,h,txt,callback)
   self.highlit = false;
   self.down = false;
 
-  self.delta = delta;
-
   self.key = function(evt)
   {
   }
@@ -93,6 +91,7 @@ function TextBox(x,y,w,h,txt,callback)
   }
   self.set = function(n)
   {
+    self.txt = n;
     callback(self.txt);
   }
 
@@ -108,10 +107,10 @@ function TextBox(x,y,w,h,txt,callback)
     else                  canv.context.strokeStyle = "#0000F4";
     canv.context.strokeRect(self.x,self.y,self.w,self.h);
     canv.context.fillStyle = "#000000";
-    if(self.value.length < 5)
-      canv.context.fillText(self.value,self.x+4,self.y+self.h*3/4,self.w-4);
+    if(self.txt.length < 5)
+      canv.context.fillText(self.txt,self.x+4,self.y+self.h*3/4,self.w-4);
     else
-      canv.context.fillText(self.value.substring(0,5)+"...",self.x+4,self.y+self.h*3/4,self.w-4);
+      canv.context.fillText(self.txt.substring(0,5)+"...",self.x+4,self.y+self.h*3/4,self.w-4);
   }
 
   self.print = function()
