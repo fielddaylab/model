@@ -693,6 +693,15 @@ var GamePlayScene = function(game, stage)
       }
     }
 
+    var glob_0 = {x:0,y:0};
+    var d_01 = 0;
+    var glob_1 = {x:0,y:0};
+    var d_12 = 0;
+    var glob_2 = {x:0,y:0};
+    var d_23 = 0;
+    var glob_3 = {x:0,y:0};
+    var d_t = 0;
+    var d_cur = 0;
     self.draw = function()
     {
       ctx.drawImage(module_img,self.x,self.y,self.w,self.h);
@@ -708,26 +717,62 @@ var GamePlayScene = function(game, stage)
         ctx.stroke();
         ctx.drawImage(dongle_img,self.x+self.w/2+self.input_dongle.off.x-self.input_dongle.r,self.y+self.h/2+self.input_dongle.off.y-self.input_dongle.r,self.input_dongle.r*2,self.input_dongle.r*2);
 
-        if(self.input_dongle.attachment && self.output_dongle.attachment)
+        if(self.output_dongle.attachment)
         {
-          var t = advance_timer/advance_timer_max;
-          var x = lerp(self.output_dongle.off.x,self.input_dongle.off.x,t);
-          var y = lerp(self.output_dongle.off.y,self.input_dongle.off.y,t);
-          ctx.drawImage(glob_img,self.x+self.w/2+x-5,self.y+self.h/2+y-5,10,10);
-        }
-        else if(self.input_dongle.attachment)
-        {
-          var t = advance_timer/advance_timer_max;
-          var x = lerp(0,self.input_dongle.off.x,t);
-          var y = lerp(0,self.input_dongle.off.y,t);
-          ctx.drawImage(glob_img,self.x+self.w/2+x-5,self.y+self.h/2+y-5,10,10);
-        }
-        else if(self.output_dongle.attachment)
-        {
-          var t = advance_timer/advance_timer_max;
-          var x = lerp(self.output_dongle.off.x,0,t);
-          var y = lerp(self.output_dongle.off.y,0,t);
-          ctx.drawImage(glob_img,self.x+self.w/2+x-5,self.y+self.h/2+y-5,10,10);
+          if(!self.input_dongle.attachment)
+          {
+            glob_0.x = self.x+self.w/2;
+            glob_0.y = self.y+self.h/2;
+            glob_1.x = self.x+self.w/2;
+            glob_1.y = self.y+self.h/2;
+          }
+          else
+          {
+            glob_0.x = self.input_dongle.attachment.x+self.input_dongle.attachment.w/2;
+            glob_0.y = self.input_dongle.attachment.y+self.input_dongle.attachment.h/2;
+            glob_1.x = self.x+self.w/2+self.input_dongle.off.x;
+            glob_1.y = self.y+self.h/2+self.input_dongle.off.y;
+          }
+          glob_2.x = self.x+self.w/2+self.output_dongle.off.x;
+          glob_2.y = self.y+self.h/2+self.output_dongle.off.y;
+          glob_3.x = self.output_dongle.attachment.x+self.output_dongle.attachment.w/2;
+          glob_3.y = self.output_dongle.attachment.y+self.output_dongle.attachment.h/2;
+          d_01 = tldist(glob_0,glob_1);
+          d_12 = tldist(glob_1,glob_2);
+          d_23 = tldist(glob_2,glob_3);
+          d_t = d_01+d_12+d_23;
+          d_cur = d_t*(1-(advance_timer/advance_timer_max));
+          var t;
+          var src;
+          var dst;
+          if(d_cur < d_01)
+          {
+            t = d_cur/d_01;
+            src = glob_0;
+            dst = glob_1;
+          }
+          else if(d_cur < d_01+d_12)
+          {
+            t = (d_cur-d_01)/d_12;
+            src = glob_1;
+            dst = glob_2;
+          }
+          else if(d_cur < d_01+d_12+d_23)
+          {
+            t = (d_cur-d_01-d_12)/d_23;
+            src = glob_2;
+            dst = glob_3;
+          }
+          else
+          {
+            t = 1;
+            src = glob_2;
+            dst = glob_2;
+          }
+
+          var x = lerp(src.x,dst.x,t);
+          var y = lerp(src.y,dst.y,t);
+          ctx.drawImage(glob_img,x-5,y-5,10,10);
         }
 
         if(!self.input_dongle.attachment)
