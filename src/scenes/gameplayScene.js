@@ -533,7 +533,11 @@ var GamePlayScene = function(game, stage)
       self.drag_start_y = evt.doY;
       self.drag_x = evt.doX;
       self.drag_y = evt.doY;
-      if(self.attachment) self.attachment = 0;
+      if(self.attachment)
+      {
+        self.attachment = 0;
+        resetGraph();
+      }
     }
     self.drag = function(evt)
     {
@@ -550,6 +554,7 @@ var GamePlayScene = function(game, stage)
         if(self.src != modules[i] && doEvtWithinBB(evt, modules[i]))
           self.attachment = modules[i];
       }
+      resetGraph();
     }
   }
 
