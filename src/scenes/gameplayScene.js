@@ -56,6 +56,17 @@ var GamePlayScene = function(game, stage)
   module_img.context.fill();
   module_img.context.stroke();
 
+  var w = 10;
+  var h = 10;
+  var glob_img = GenIcon(w,h)
+  glob_img.context.fillStyle = "#FF4444";
+  glob_img.context.strokeStyle = "#FFFFFF";
+  glob_img.context.lineWidth = 1;
+  glob_img.context.beginPath();
+  glob_img.context.arc(w/2,h/2,(w-5)/2,0,2*Math.PI);
+  glob_img.context.fill();
+  glob_img.context.stroke();
+
   var precision = 2;
 
   var graph = function()
@@ -90,7 +101,7 @@ var GamePlayScene = function(game, stage)
       if(!dragging_obj)
       {
         advance_timer_max--;
-        if(advance_timer_max <= 0) advance_timer_max = 10;
+        if(advance_timer_max <= 0) advance_timer_max = 100;
       }
     }
 
@@ -697,6 +708,28 @@ var GamePlayScene = function(game, stage)
         ctx.stroke();
         ctx.drawImage(dongle_img,self.x+self.w/2+self.input_dongle.off.x-self.input_dongle.r,self.y+self.h/2+self.input_dongle.off.y-self.input_dongle.r,self.input_dongle.r*2,self.input_dongle.r*2);
 
+        if(self.input_dongle.attachment && self.output_dongle.attachment)
+        {
+          var t = advance_timer/advance_timer_max;
+          var x = lerp(self.output_dongle.off.x,self.input_dongle.off.x,t);
+          var y = lerp(self.output_dongle.off.y,self.input_dongle.off.y,t);
+          ctx.drawImage(glob_img,self.x+self.w/2+x-5,self.y+self.h/2+y-5,10,10);
+        }
+        else if(self.input_dongle.attachment)
+        {
+          var t = advance_timer/advance_timer_max;
+          var x = lerp(0,self.input_dongle.off.x,t);
+          var y = lerp(0,self.input_dongle.off.y,t);
+          ctx.drawImage(glob_img,self.x+self.w/2+x-5,self.y+self.h/2+y-5,10,10);
+        }
+        else if(self.output_dongle.attachment)
+        {
+          var t = advance_timer/advance_timer_max;
+          var x = lerp(self.output_dongle.off.x,0,t);
+          var y = lerp(self.output_dongle.off.y,0,t);
+          ctx.drawImage(glob_img,self.x+self.w/2+x-5,self.y+self.h/2+y-5,10,10);
+        }
+
         if(!self.input_dongle.attachment)
         {
           ctx.fillStyle = "#000000";
@@ -862,7 +895,7 @@ var GamePlayScene = function(game, stage)
     full_pause = true;
     drag_pause = false;
     advance_timer = 0;
-    advance_timer_max = 10;
+    advance_timer_max = 100;
     t_i = 0;
     t_max = 100
 
