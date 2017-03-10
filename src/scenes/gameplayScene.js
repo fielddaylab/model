@@ -92,17 +92,7 @@ var GamePlayScene = function(game, stage)
     self.advance_btn = new btn();
     self.advance_btn.click = function(evt)
     {
-      if(!dragging_obj) flow();
-    }
-
-    self.speed_btn = new btn();
-    self.speed_btn.click = function(evt)
-    {
-      if(!dragging_obj)
-      {
-        advance_timer_max--;
-        if(advance_timer_max <= 0) advance_timer_max = 100;
-      }
+      if(!dragging_obj && advance_timer == advance_timer_max) advance_timer--;
     }
 
     self.reset_btn = new btn();
@@ -123,14 +113,9 @@ var GamePlayScene = function(game, stage)
       self.advance_btn.x = self.x + (playback_btn_size + 10)*1;
       self.advance_btn.y = self.y - playback_btn_size;
 
-      self.speed_btn.w = playback_btn_size;
-      self.speed_btn.h = playback_btn_size;
-      self.speed_btn.x = self.x + (playback_btn_size + 10)*2;
-      self.speed_btn.y = self.y - playback_btn_size;
-
       self.reset_btn.w = playback_btn_size;
       self.reset_btn.h = playback_btn_size;
-      self.reset_btn.x = self.x + (playback_btn_size + 10)*3;
+      self.reset_btn.x = self.x + (playback_btn_size + 10)*2;
       self.reset_btn.y = self.y - playback_btn_size;
 
       self.graph_x = self.x+10;
@@ -184,9 +169,6 @@ var GamePlayScene = function(game, stage)
       ctx.strokeRect(self.pause_btn.x,self.pause_btn.y,self.pause_btn.w,self.pause_btn.h);
       ctx.fillText(">",self.advance_btn.x+2,self.advance_btn.y+10);
       ctx.strokeRect(self.advance_btn.x,self.advance_btn.y,self.advance_btn.w,self.advance_btn.h);
-      ctx.fillText(">>",self.speed_btn.x+2,self.speed_btn.y+10);
-      ctx.fillText("("+advance_timer_max+")",self.speed_btn.x+2,self.speed_btn.y+30);
-      ctx.strokeRect(self.speed_btn.x,self.speed_btn.y,self.speed_btn.w,self.speed_btn.h);
       ctx.fillText("<",self.reset_btn.x+2,self.reset_btn.y+10);
       ctx.strokeRect(self.reset_btn.x,self.reset_btn.y,self.reset_btn.w,self.reset_btn.h);
     }
@@ -300,6 +282,7 @@ var GamePlayScene = function(game, stage)
     {
       dragging_obj = self;
       drag_pause = true;
+      advance_timer = advance_timer_max;
     }
     self.drag = function(evt)
     {
@@ -344,17 +327,17 @@ var GamePlayScene = function(game, stage)
 
       if(selected_module)
       {
-        self.title_box.draw(canv); ctx.fillStyle = "#000000"; ctx.fillText("title", self.title_box.x     + self.title_box.w     + 10, self.title_box.y);
-        self.v_box.draw(canv);     ctx.fillStyle = "#000000"; ctx.fillText("val",   self.v_box.x     + self.v_box.w     + 10, self.v_box.y);
-        self.min_box.draw(canv);   ctx.fillStyle = "#000000"; ctx.fillText("min",   self.min_box.x   + self.min_box.w   + 10, self.min_box.y);
-        self.max_box.draw(canv);   ctx.fillStyle = "#000000"; ctx.fillText("max",   self.max_box.x   + self.max_box.w   + 10, self.max_box.y);
-        self.pool_box.draw(canv);  ctx.fillStyle = "#000000"; ctx.fillText("pool",  self.pool_box.x  + self.pool_box.w  + 10, self.pool_box.y);
-        self.graph_box.draw(canv); ctx.fillStyle = "#000000"; ctx.fillText("graph", self.graph_box.x + self.graph_box.w + 10, self.graph_box.y);
+        self.title_box.draw(canv); ctx.fillStyle = "#000000"; ctx.fillText("title", self.title_box.x     + self.title_box.w     + 10, self.title_box.y+20);
+        self.v_box.draw(canv);     ctx.fillStyle = "#000000"; ctx.fillText("val",   self.v_box.x     + self.v_box.w     + 10, self.v_box.y+20);
+        self.min_box.draw(canv);   ctx.fillStyle = "#000000"; ctx.fillText("min",   self.min_box.x   + self.min_box.w   + 10, self.min_box.y+20);
+        self.max_box.draw(canv);   ctx.fillStyle = "#000000"; ctx.fillText("max",   self.max_box.x   + self.max_box.w   + 10, self.max_box.y+20);
+        self.pool_box.draw(canv);  ctx.fillStyle = "#000000"; ctx.fillText("pool",  self.pool_box.x  + self.pool_box.w  + 10, self.pool_box.y+20);
+        self.graph_box.draw(canv); ctx.fillStyle = "#000000"; ctx.fillText("graph", self.graph_box.x + self.graph_box.w + 10, self.graph_box.y+20);
 
         self.operator_box_mul.draw(canv);
-        self.operator_box_div.draw(canv); ctx.fillStyle = "#000000"; ctx.fillText("mul/div",  self.operator_box_div.x + self.operator_box_div.w + 10, self.operator_box_div.y);
+        self.operator_box_div.draw(canv); ctx.fillStyle = "#000000"; ctx.fillText("mul/div",  self.operator_box_div.x + self.operator_box_div.w + 10, self.operator_box_div.y+20);
         self.sign_box_pos.draw(canv);
-        self.sign_box_neg.draw(canv);     ctx.fillStyle = "#000000"; ctx.fillText("pos/nev",  self.sign_box_neg.x     + self.sign_box_neg.w     + 10, self.sign_box_neg.y);
+        self.sign_box_neg.draw(canv);     ctx.fillStyle = "#000000"; ctx.fillText("pos/nev",  self.sign_box_neg.x     + self.sign_box_neg.w     + 10, self.sign_box_neg.y+20);
       }
     }
   }
@@ -487,7 +470,7 @@ var GamePlayScene = function(game, stage)
       evt.hitUI = true;
       dragging_obj = self;
       drag_pause = true;
-      advance_timer = 0;
+      advance_timer = advance_timer_max;
       self.drag_start_x = evt.doX;
       self.drag_start_y = evt.doY;
     }
@@ -545,6 +528,7 @@ var GamePlayScene = function(game, stage)
     {
       dragging_obj = self;
       drag_pause = true;
+      advance_timer = advance_timer_max;
       self.drag_start_x = evt.doX;
       self.drag_start_y = evt.doY;
       self.drag_x = evt.doX;
@@ -1030,6 +1014,7 @@ var GamePlayScene = function(game, stage)
   var resetGraph = function()
   {
     t_i = 0;
+    advance_timer = advance_timer_max;
     for(var i = 0; i < modules.length; i++)
     {
       modules[i].v = modules[i].v_default;
@@ -1104,7 +1089,6 @@ var GamePlayScene = function(game, stage)
     var clicked = false;
     if(clicker.filter(s_graph.pause_btn))   clicked = true;
     if(clicker.filter(s_graph.advance_btn)) clicked = true;
-    if(clicker.filter(s_graph.speed_btn))   clicked = true;
     if(clicker.filter(s_graph.reset_btn))   clicked = true;
     if(clicker.filter(print_btn))           clicked = true;
     if(clicker.filter(load_btn))            clicked = true;
@@ -1121,14 +1105,16 @@ var GamePlayScene = function(game, stage)
     for(var i = 0; i < modules.length; i++)
       if(modules[i].output_dongle.attachment) modules[i].output_dongle.attachment.cache_const = 0;
 
-    var tmp_pause = false;
+    var should_pause = false;
     if(
       s_editor.v_box.focused ||
       s_editor.min_box.focused ||
       s_editor.max_box.focused
     )
-      tmp_pause = true;
-    if(!drag_pause && !full_pause && !tmp_pause)
+      should_pause = true;
+    if(drag_pause) should_pause = true;
+    if(full_pause && advance_timer == advance_timer_max) should_pause = true;
+    if(!should_pause)
     {
       advance_timer--;
       if(advance_timer <= 0)

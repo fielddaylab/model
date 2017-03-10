@@ -205,7 +205,7 @@ function NumberBox(x,y,w,h,val,delta,callback)
     self.deltaY = ((evt.doY-self.y)-self.offY);
     self.offX = evt.doX - self.x;
     self.offY = evt.doY - self.y;
-    self.number = validateNum(self.number + self.deltaX*self.delta);
+    self.number = validateNum(self.number + -self.deltaY*self.delta);
     self.value = ""+self.number;
 
     self.down = ptWithinObj(self, evt.doX, evt.doY);
