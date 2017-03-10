@@ -85,13 +85,19 @@ var GamePlayScene = function(game, stage)
     }
 
     self.speed_btn = new btn();
-    self.speed_btn.shouldDrag = function(evt)
+    self.speed_btn.click = function(evt)
     {
-      if(!dragging_obj) 
+      if(!dragging_obj)
       {
         advance_timer_max--;
         if(advance_timer_max <= 0) advance_timer_max = 10;
       }
+    }
+
+    self.reset_btn = new btn();
+    self.reset_btn.click = function(evt)
+    {
+      if(!dragging_obj) resetGraph();
     }
 
     self.calc_sub_params = function()
@@ -110,6 +116,11 @@ var GamePlayScene = function(game, stage)
       self.speed_btn.h = playback_btn_size;
       self.speed_btn.x = self.x + (playback_btn_size + 10)*2;
       self.speed_btn.y = self.y - playback_btn_size;
+
+      self.reset_btn.w = playback_btn_size;
+      self.reset_btn.h = playback_btn_size;
+      self.reset_btn.x = self.x + (playback_btn_size + 10)*3;
+      self.reset_btn.y = self.y - playback_btn_size;
 
       self.graph_x = self.x+10;
       self.graph_y = self.y+10;
@@ -164,6 +175,8 @@ var GamePlayScene = function(game, stage)
       ctx.strokeRect(self.advance_btn.x,self.advance_btn.y,self.advance_btn.w,self.advance_btn.h);
       ctx.fillText(">> ("+advance_timer_max+")",self.speed_btn.x+2,self.speed_btn.y+10);
       ctx.strokeRect(self.speed_btn.x,self.speed_btn.y,self.speed_btn.w,self.speed_btn.h);
+      ctx.fillText("<",self.reset_btn.x+2,self.reset_btn.y+10);
+      ctx.strokeRect(self.reset_btn.x,self.reset_btn.y,self.reset_btn.w,self.reset_btn.h);
     }
   }
 
@@ -175,16 +188,16 @@ var GamePlayScene = function(game, stage)
     self.w = 0;
     self.h = 0;
 
-    self.v_box   = new NumberBox(0,0,0,0,0,0,function(v){ var n = fdisp(clamp(selected_module.min,selected_module.max,v),2); selected_module.v   = n; if(n != v) self.v_box.set(n);   });
-    self.min_box = new NumberBox(0,0,0,0,0,0,function(v){ var n = fdisp(min(selected_module.max,v),2);                       selected_module.min = n; if(n != v) self.min_box.set(n); var delta = max((selected_module.max-selected_module.min),1)/100; self.v_box.delta = delta; self.min_box.delta = delta; self.max_box.delta = delta; });
-    self.max_box = new NumberBox(0,0,0,0,0,0,function(v){ var n = fdisp(max(selected_module.min,v),2);                       selected_module.max = n; if(n != v) self.max_box.set(n); var delta = max((selected_module.max-selected_module.min),1)/100; self.v_box.delta = delta; self.min_box.delta = delta; self.max_box.delta = delta; });
-    self.pool_box  = new ToggleBox(0,0,0,0,0,function(v){ selected_module.pool = v; });
-    self.graph_box = new ToggleBox(0,0,0,0,0,function(v){ selected_module.graph = v; });
+    self.v_box   = new NumberBox(0,0,0,0,0,0,function(v){ var new_v = fdisp(clamp(selected_module.min,selected_module.max,v),2); var old_v = selected_module.v_default; selected_module.v_default = new_v; if(new_v != old_v) resetGraph(); if(new_v != v) self.v_box.set(new_v); });
+    self.min_box = new NumberBox(0,0,0,0,0,0,function(v){ var new_v = fdisp(min(selected_module.max,v),2);                       var old_v = selected_module.min;       selected_module.min       = new_v; if(new_v != old_v) resetGraph(); if(new_v != v) self.min_box.set(new_v); else { var delta = max((selected_module.max-selected_module.min),1)/100; self.v_box.delta = delta; self.min_box.delta = delta; self.max_box.delta = delta; } });
+    self.max_box = new NumberBox(0,0,0,0,0,0,function(v){ var new_v = fdisp(max(selected_module.min,v),2);                       var old_v = selected_module.max;       selected_module.max       = new_v; if(new_v != old_v) resetGraph(); if(new_v != v) self.max_box.set(new_v); else { var delta = max((selected_module.max-selected_module.min),1)/100; self.v_box.delta = delta; self.min_box.delta = delta; self.max_box.delta = delta; } });
+    self.pool_box  = new ToggleBox(0,0,0,0,0,function(v){ var new_v = v;                                                         var old_v = selected_module.pool;      selected_module.pool      = new_v; if(new_v != old_v) resetGraph(); });
+    self.graph_box = new ToggleBox(0,0,0,0,0,function(v){ var new_v = v;                                                         var old_v = selected_module.graph;     selected_module.graph     = new_v; if(new_v != old_v) resetGraph(); });
 
-    self.operator_box_mul = new ToggleBox(0,0,0,0,0,function(v){ var new_operator; if(v) new_operator = OPERATOR_MUL; else new_operator = OPERATOR_DIV; if(selected_module.operator != new_operator) { selected_module.operator = new_operator; self.operator_box_div.set(!v); } });
-    self.operator_box_div = new ToggleBox(0,0,0,0,0,function(v){ self.operator_box_mul.set(!v); });
-    self.sign_box_pos = new ToggleBox(0,0,0,0,0,function(v){ var new_sign; if(v) new_sign = 1.; else new_sign = -1.; if(selected_module.sign != new_sign) { selected_module.sign = new_sign; self.sign_box_neg.set(!v); } });
-    self.sign_box_neg = new ToggleBox(0,0,0,0,0,function(v){ self.sign_box_pos.set(!v); });
+    self.operator_box_mul = new ToggleBox(0,0,0,0,0,function(v){ var new_v; if(v) new_v = OPERATOR_MUL; else new_v = OPERATOR_DIV; var old_v = selected_module.operator; selected_module.operator = new_v; if(new_v != old_v) resetGraph(); if(self.operator_box_div.on == v) self.operator_box_div.set(!v); });
+    self.sign_box_pos     = new ToggleBox(0,0,0,0,0,function(v){ var new_v; if(v) new_v = 1.;           else new_v = -1.;          var old_v = selected_module.sign;     selected_module.sign     = new_v; if(new_v != old_v) resetGraph(); if(self.sign_box_neg.on     == v) self.sign_box_neg.set(!v);     });
+    self.operator_box_div = new ToggleBox(0,0,0,0,0,function(v){ if(self.operator_box_div.on == v) self.operator_box_mul.set(!v); });
+    self.sign_box_neg     = new ToggleBox(0,0,0,0,0,function(v){ if(self.sign_box_pos.on     == v) self.sign_box_pos.set(!v);     });
 
     self.calc_sub_params = function()
     {
@@ -247,7 +260,7 @@ var GamePlayScene = function(game, stage)
 
     self.calc_sub_values = function()
     {
-      self.v_box.set(selected_module.v);
+      self.v_box.set(selected_module.v_default);
       self.min_box.set(selected_module.min);
       self.max_box.set(selected_module.max);
       self.pool_box.set(selected_module.pool);
@@ -369,7 +382,7 @@ var GamePlayScene = function(game, stage)
         for(var j = 0; j < modules.length; j++)
           if(m.output_dongle.attachment == modules[j]) adder = j;
       }
-      str += "{\"v\":"+m.v+",\"min\":"+m.min+",\"max\":"+m.max+",\"pool\":"+m.pool+",\"graph\":"+m.graph+",\"square\":"+m.square+",\"wx\":"+m.wx+",\"wy\":"+m.wy+",\"ww\":"+m.ww+",\"wh\":"+m.wh+",\"input\":"+input+",\"adder\":"+adder+"}";
+      str += "{\"v\":"+m.v_default+",\"min\":"+m.min+",\"max\":"+m.max+",\"pool\":"+m.pool+",\"graph\":"+m.graph+",\"square\":"+m.square+",\"wx\":"+m.wx+",\"wy\":"+m.wy+",\"ww\":"+m.ww+",\"wh\":"+m.wh+",\"input\":"+input+",\"adder\":"+adder+"}";
       if(i < modules.length-1) str += ",";
     }
     str += "]}";
@@ -390,7 +403,8 @@ var GamePlayScene = function(game, stage)
       var tm = t.modules[i];
       var m = new module(tm.wx,tm.wy,tm.ww,tm.wh);
       screenSpace(work_cam,canv,m);
-      m.v = tm.v;
+      m.v_default = tm.v;
+      m.v = m.v_default;
       m.min = tm.min;
       m.max = tm.max;
       m.pool = tm.pool;
@@ -552,6 +566,7 @@ var GamePlayScene = function(game, stage)
 
     self.selected = 0;
 
+    self.v_default = 0;
     self.v = 0;
     self.v_temp = 0;
     self.min = -10;
@@ -891,10 +906,23 @@ var GamePlayScene = function(game, stage)
     load_btn.y = 40;
     load_btn.click = function(evt)
     {
-      if(!dragging_obj) load_next_template();
+      if(!dragging_obj)
+      {
+        load_next_template();
+        resetGraph();
+      }
     }
-
   };
+
+  var resetGraph = function()
+  {
+    t_i = 0;
+    for(var i = 0; i < modules.length; i++)
+    {
+      modules[i].v = modules[i].v_default;
+      modules[i].plot[0] = modules[i].v;
+    }
+  }
 
   var flow = function()
   {
@@ -923,7 +951,6 @@ var GamePlayScene = function(game, stage)
       modules[i].v_temp = fdisp(clamp(modules[i].min,modules[i].max,modules[i].v_temp),2);
       modules[i].v = modules[i].v_temp;
       modules[i].plot[t_i] = modules[i].v;
-      if(modules[i] == selected_module) { s_editor.v_box.set(selected_module.v); }
     }
   }
 
@@ -944,6 +971,7 @@ var GamePlayScene = function(game, stage)
     if(clicker.filter(s_graph.pause_btn))   clicked = true;
     if(clicker.filter(s_graph.advance_btn)) clicked = true;
     if(clicker.filter(s_graph.speed_btn))   clicked = true;
+    if(clicker.filter(s_graph.reset_btn))   clicked = true;
     if(clicker.filter(print_btn))           clicked = true;
     if(clicker.filter(load_btn))            clicked = true;
     s_editor.filter();
