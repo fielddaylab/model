@@ -56,8 +56,8 @@ var GamePlayScene = function(game, stage)
   module_img.context.fill();
   module_img.context.stroke();
 
-  var w = 10;
-  var h = 10;
+  var w = 40;
+  var h = 40;
   var glob_img = GenIcon(w,h)
   glob_img.context.fillStyle = "#FF4444";
   glob_img.context.strokeStyle = "#FFFFFF";
@@ -702,6 +702,17 @@ var GamePlayScene = function(game, stage)
     var glob_3 = {x:0,y:0};
     var d_t = 0;
     var d_cur = 0;
+    var t_t = 0;
+    var bounce = [];
+    var bounce_s = 1;
+    var bounce_vel = 0.3;
+    for(var i = 0; i < 100; i++)
+    {
+      bounce[i] = bounce_s;
+      bounce_s += bounce_vel;
+      bounce_vel += (1-bounce_s)/8.;
+      bounce_vel *= 0.85;
+    }
     self.draw = function()
     {
       ctx.drawImage(module_img,self.x,self.y,self.w,self.h);
@@ -717,7 +728,8 @@ var GamePlayScene = function(game, stage)
         ctx.stroke();
         ctx.drawImage(dongle_img,self.x+self.w/2+self.input_dongle.off.x-self.input_dongle.r,self.y+self.h/2+self.input_dongle.off.y-self.input_dongle.r,self.input_dongle.r*2,self.input_dongle.r*2);
 
-        if(self.output_dongle.attachment)
+        t_t = 1-(advance_timer/advance_timer_max);
+        if(t_t > 0.1 && self.output_dongle.attachment)
         {
           if(!self.input_dongle.attachment)
           {
@@ -741,7 +753,10 @@ var GamePlayScene = function(game, stage)
           d_12 = tldist(glob_1,glob_2);
           d_23 = tldist(glob_2,glob_3);
           d_t = d_01+d_12+d_23;
-          d_cur = d_t*(1-(advance_timer/advance_timer_max));
+          d_cur = 0;
+          if(t_t < 0.1) t_t = 0;
+          else t_t = (t_t-0.1)/(1.-0.1);
+          d_cur = d_t*t_t;
           var t;
           var src;
           var dst;
@@ -772,7 +787,9 @@ var GamePlayScene = function(game, stage)
 
           var x = lerp(src.x,dst.x,t);
           var y = lerp(src.y,dst.y,t);
-          ctx.drawImage(glob_img,x-5,y-5,10,10);
+          var s = bounce[floor(t_t*bounce.length-0.001)];
+          var ts = 20;
+          ctx.drawImage(glob_img,x-s*ts/2,y-s*ts/2,s*ts,s*ts);
         }
 
         if(!self.input_dongle.attachment)
