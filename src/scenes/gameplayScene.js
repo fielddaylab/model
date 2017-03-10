@@ -382,7 +382,7 @@ var GamePlayScene = function(game, stage)
         for(var j = 0; j < modules.length; j++)
           if(m.output_dongle.attachment == modules[j]) adder = j;
       }
-      str += "{\"v\":"+m.v_default+",\"min\":"+m.min+",\"max\":"+m.max+",\"pool\":"+m.pool+",\"graph\":"+m.graph+",\"square\":"+m.square+",\"wx\":"+m.wx+",\"wy\":"+m.wy+",\"ww\":"+m.ww+",\"wh\":"+m.wh+",\"input\":"+input+",\"adder\":"+adder+"}";
+      str += "{\"v\":"+m.v_default+",\"min\":"+m.min+",\"max\":"+m.max+",\"pool\":"+m.pool+",\"graph\":"+m.graph+",\"wx\":"+m.wx+",\"wy\":"+m.wy+",\"ww\":"+m.ww+",\"wh\":"+m.wh+",\"input\":"+input+",\"adder\":"+adder+"}";
       if(i < modules.length-1) str += ",";
     }
     str += "]}";
@@ -409,7 +409,6 @@ var GamePlayScene = function(game, stage)
       m.max = tm.max;
       m.pool = tm.pool;
       m.graph = tm.graph;
-      m.square = tm.square;
       modules.push(m);
     }
     for(var i = 0; i < t.modules.length; i++)
@@ -578,11 +577,12 @@ var GamePlayScene = function(game, stage)
     self.sign = 1.;
 
     self.cache_const = 0;
+    self.cache_contributes = 0;
 
     self.plot = [];
 
-    self.square_dongle  = new toggle_dongle(0,-30,dongle_img.width/2,self);
-    self.square_dongle.dragStart = function(evt) { self.square = !self.square; self.square_dongle.dragging = false; }
+    //self.square_dongle  = new toggle_dongle(0,-30,dongle_img.width/2,self);
+    //self.square_dongle.dragStart = function(evt) { self.square = !self.square; self.square_dongle.dragging = false; }
 
     self.v_dongle = new dongle(0,0,dongle_img.width/2,self);
     self.v_dongle.drag = function(evt)
@@ -673,7 +673,7 @@ var GamePlayScene = function(game, stage)
 
       ctx.drawImage(module_img,self.x,self.y,self.w,self.h);
 
-      if(!self.square)
+      if(self.cache_contributes)
       {
         //input_dongle
         ctx.strokeStyle = "#668866";
@@ -751,11 +751,13 @@ var GamePlayScene = function(game, stage)
       if(self.v_dongle.dragging) ctx.fillText(fdisp(self.v_temp,2),self.x+self.w/2+self.v_dongle.off.x-self.v_dongle.r/2,self.y+self.h/2+self.v_dongle.off.y+self.v_dongle.r/2);
       else                       ctx.fillText(fdisp(self.v     ,2),self.x+self.w/2+self.v_dongle.off.x-self.v_dongle.r/2,self.y+self.h/2+self.v_dongle.off.y+self.v_dongle.r/2);
 
+      /*
       //square_dongle
       ctx.fillStyle = "#000000";
       //ctx.drawImage(dongle_img,self.x+self.w/2+self.square_dongle.off.x-self.square_dongle.r,self.y+self.h/2+self.square_dongle.off.y-self.square_dongle.r,self.square_dongle.r*2,self.square_dongle.r*2);
       if(self.square) ctx.fillText("o",self.x+self.w/2+self.square_dongle.off.x-self.square_dongle.r/2,self.y+self.h/2+self.square_dongle.off.y+self.square_dongle.r/2);
       else          ctx.fillText("-",self.x+self.w/2+self.square_dongle.off.x-self.square_dongle.r/2,self.y+self.h/2+self.square_dongle.off.y+self.square_dongle.r/2);
+      */
     }
 
     var from = {x:0,y:0};
@@ -851,10 +853,10 @@ var GamePlayScene = function(game, stage)
     load_template_i = 0;
     templates = [];
     /*empty*/            templates.push("{\"modules\":[]}");
-    /*feedback loop*/    templates.push("{\"modules\":[{\"v\":0,\"min\":0,\"max\":100,\"pool\":0,\"graph\":true,\"square\":true,\"wx\":-0.35,\"wy\":0.18749999999999994,\"ww\":0.15625,\"wh\":0.15625,\"input\":-1,\"adder\":-1},{\"v\":0,\"min\":0,\"max\":100,\"pool\":0,\"graph\":true,\"square\":true,\"wx\":0.1656249999999999,\"wy\":0.184375,\"ww\":0.15625,\"wh\":0.15625,\"input\":-1,\"adder\":-1},{\"v\":1.1,\"min\":0,\"max\":100,\"pool\":true,\"graph\":0,\"square\":0,\"wx\":-0.13124999999999998,\"wy\":0.38125,\"ww\":0.15625,\"wh\":0.15625,\"input\":1,\"adder\":0},{\"v\":1.1,\"min\":0,\"max\":100,\"pool\":true,\"graph\":0,\"square\":0,\"wx\":-0.13124999999999998,\"wy\":0.021874999999999978,\"ww\":0.15625,\"wh\":0.15625,\"input\":0,\"adder\":1}]}");
-    /*normalizing loop*/ templates.push("{\"modules\":[{\"v\":55.56,\"min\":0,\"max\":100,\"pool\":true,\"graph\":true,\"square\":true,\"wx\":-0.10624999999999996,\"wy\":0.06874999999999998,\"ww\":0.15625,\"wh\":0.15625,\"input\":-1,\"adder\":-1},{\"v\":50,\"min\":0,\"max\":100,\"pool\":0,\"graph\":true,\"square\":true,\"wx\":0.5125,\"wy\":0.09687499999999999,\"ww\":0.15625,\"wh\":0.15625,\"input\":-1,\"adder\":-1},{\"v\":50,\"min\":0,\"max\":100,\"pool\":true,\"graph\":true,\"square\":true,\"wx\":-0.44687500000000013,\"wy\":0.43125,\"ww\":0.15625,\"wh\":0.15625,\"input\":-1,\"adder\":-1},{\"v\":-1,\"min\":-1,\"max\":1,\"pool\":true,\"graph\":0,\"square\":0,\"wx\":0.1875,\"wy\":0.11249999999999999,\"ww\":0.15625,\"wh\":0.15625,\"input\":1,\"adder\":0},{\"v\":1,\"min\":0,\"max\":100,\"pool\":true,\"graph\":0,\"square\":0,\"wx\":-0.43437499999999996,\"wy\":0.19374999999999998,\"ww\":0.15625,\"wh\":0.15625,\"input\":2,\"adder\":0},{\"v\":0.9,\"min\":0,\"max\":100,\"pool\":true,\"graph\":0,\"square\":0,\"wx\":0.1968749999999999,\"wy\":-0.10312500000000002,\"ww\":0.15625,\"wh\":0.15625,\"input\":0,\"adder\":1}]}");
-    /*cycle*/            templates.push("{\"modules\":[{\"v\":59.82,\"min\":0,\"max\":100,\"pool\":true,\"graph\":true,\"square\":true,\"wx\":-0.31875,\"wy\":0.184375,\"ww\":0.15625,\"wh\":0.15625,\"input\":-1,\"adder\":-1},{\"v\":91.74,\"min\":0,\"max\":100,\"pool\":true,\"graph\":true,\"square\":true,\"wx\":0.2437499999999999,\"wy\":0.175,\"ww\":0.15625,\"wh\":0.15625,\"input\":-1,\"adder\":-1},{\"v\":-0.3,\"min\":-1,\"max\":1,\"pool\":true,\"graph\":0,\"square\":0,\"wx\":-0.078125,\"wy\":0.384375,\"ww\":0.15625,\"wh\":0.15625,\"input\":1,\"adder\":0},{\"v\":0.3,\"min\":0,\"max\":100,\"pool\":true,\"graph\":0,\"square\":0,\"wx\":-0.050000000000000044,\"wy\":0.003124999999999989,\"ww\":0.15625,\"wh\":0.15625,\"input\":0,\"adder\":1},{\"v\":10,\"min\":0,\"max\":100,\"pool\":true,\"graph\":0,\"square\":0,\"wx\":-0.6,\"wy\":0.21875,\"ww\":0.15625,\"wh\":0.15625,\"input\":-1,\"adder\":0},{\"v\":-10,\"min\":-10,\"max\":10,\"pool\":true,\"graph\":0,\"square\":0,\"wx\":0.48124999999999996,\"wy\":0.203125,\"ww\":0.15625,\"wh\":0.15625,\"input\":-1,\"adder\":1}]}");
-    /*proportion cycle*/ templates.push("{\"modules\":[{\"v\":100,\"min\":0,\"max\":100,\"pool\":true,\"graph\":true,\"square\":true,\"wx\":-0.31875,\"wy\":0.184375,\"ww\":0.15625,\"wh\":0.15625,\"input\":-1,\"adder\":-1},{\"v\":50,\"min\":0,\"max\":100,\"pool\":true,\"graph\":true,\"square\":true,\"wx\":0.2437499999999999,\"wy\":0.175,\"ww\":0.15625,\"wh\":0.15625,\"input\":-1,\"adder\":-1},{\"v\":-0.4,\"min\":-1,\"max\":1,\"pool\":true,\"graph\":0,\"square\":0,\"wx\":-0.078125,\"wy\":0.384375,\"ww\":0.15625,\"wh\":0.15625,\"input\":1,\"adder\":0},{\"v\":0.1,\"min\":0,\"max\":100,\"pool\":true,\"graph\":0,\"square\":0,\"wx\":-0.050000000000000044,\"wy\":0.003124999999999989,\"ww\":0.15625,\"wh\":0.15625,\"input\":0,\"adder\":1},{\"v\":0.3,\"min\":0,\"max\":100,\"pool\":true,\"graph\":0,\"square\":0,\"wx\":-0.6,\"wy\":0.21875,\"ww\":0.15625,\"wh\":0.15625,\"input\":0,\"adder\":0},{\"v\":-0.2,\"min\":-1,\"max\":1,\"pool\":true,\"graph\":0,\"square\":0,\"wx\":0.48124999999999996,\"wy\":0.203125,\"ww\":0.15625,\"wh\":0.15625,\"input\":1,\"adder\":1}]}");
+    /*feedback loop*/    templates.push("{\"modules\":[{\"v\":0,\"min\":0,\"max\":100,\"pool\":0,\"graph\":true,\"wx\":-0.35,\"wy\":0.18749999999999994,\"ww\":0.15625,\"wh\":0.15625,\"input\":-1,\"adder\":-1},{\"v\":0,\"min\":0,\"max\":100,\"pool\":0,\"graph\":true,\"wx\":0.1656249999999999,\"wy\":0.184375,\"ww\":0.15625,\"wh\":0.15625,\"input\":-1,\"adder\":-1},{\"v\":1.1,\"min\":0,\"max\":100,\"pool\":true,\"graph\":0,\"wx\":-0.13124999999999998,\"wy\":0.38125,\"ww\":0.15625,\"wh\":0.15625,\"input\":1,\"adder\":0},{\"v\":1.1,\"min\":0,\"max\":100,\"pool\":true,\"graph\":0,\"wx\":-0.13124999999999998,\"wy\":0.021874999999999978,\"ww\":0.15625,\"wh\":0.15625,\"input\":0,\"adder\":1}]}");
+    /*normalizing loop*/ templates.push("{\"modules\":[{\"v\":55.56,\"min\":0,\"max\":100,\"pool\":true,\"graph\":true,\"wx\":-0.10624999999999996,\"wy\":0.06874999999999998,\"ww\":0.15625,\"wh\":0.15625,\"input\":-1,\"adder\":-1},{\"v\":50,\"min\":0,\"max\":100,\"pool\":0,\"graph\":true,\"wx\":0.5125,\"wy\":0.09687499999999999,\"ww\":0.15625,\"wh\":0.15625,\"input\":-1,\"adder\":-1},{\"v\":50,\"min\":0,\"max\":100,\"pool\":true,\"graph\":true,\"wx\":-0.44687500000000013,\"wy\":0.43125,\"ww\":0.15625,\"wh\":0.15625,\"input\":-1,\"adder\":-1},{\"v\":-1,\"min\":-1,\"max\":1,\"pool\":true,\"graph\":0,\"wx\":0.1875,\"wy\":0.11249999999999999,\"ww\":0.15625,\"wh\":0.15625,\"input\":1,\"adder\":0},{\"v\":1,\"min\":0,\"max\":100,\"pool\":true,\"graph\":0,\"wx\":-0.43437499999999996,\"wy\":0.19374999999999998,\"ww\":0.15625,\"wh\":0.15625,\"input\":2,\"adder\":0},{\"v\":0.9,\"min\":0,\"max\":100,\"pool\":true,\"graph\":0,\"wx\":0.1968749999999999,\"wy\":-0.10312500000000002,\"ww\":0.15625,\"wh\":0.15625,\"input\":0,\"adder\":1}]}");
+    /*cycle*/            templates.push("{\"modules\":[{\"v\":59.82,\"min\":0,\"max\":100,\"pool\":true,\"graph\":true,\"wx\":-0.31875,\"wy\":0.184375,\"ww\":0.15625,\"wh\":0.15625,\"input\":-1,\"adder\":-1},{\"v\":91.74,\"min\":0,\"max\":100,\"pool\":true,\"graph\":true,\"wx\":0.2437499999999999,\"wy\":0.175,\"ww\":0.15625,\"wh\":0.15625,\"input\":-1,\"adder\":-1},{\"v\":-0.3,\"min\":-1,\"max\":1,\"pool\":true,\"graph\":0,\"wx\":-0.078125,\"wy\":0.384375,\"ww\":0.15625,\"wh\":0.15625,\"input\":1,\"adder\":0},{\"v\":0.3,\"min\":0,\"max\":100,\"pool\":true,\"graph\":0,\"wx\":-0.050000000000000044,\"wy\":0.003124999999999989,\"ww\":0.15625,\"wh\":0.15625,\"input\":0,\"adder\":1},{\"v\":10,\"min\":0,\"max\":100,\"pool\":true,\"graph\":0,\"wx\":-0.6,\"wy\":0.21875,\"ww\":0.15625,\"wh\":0.15625,\"input\":-1,\"adder\":0},{\"v\":-10,\"min\":-10,\"max\":10,\"pool\":true,\"graph\":0,\"wx\":0.48124999999999996,\"wy\":0.203125,\"ww\":0.15625,\"wh\":0.15625,\"input\":-1,\"adder\":1}]}");
+    /*proportion cycle*/ templates.push("{\"modules\":[{\"v\":100,\"min\":0,\"max\":100,\"pool\":true,\"graph\":true,\"wx\":-0.31875,\"wy\":0.184375,\"ww\":0.15625,\"wh\":0.15625,\"input\":-1,\"adder\":-1},{\"v\":50,\"min\":0,\"max\":100,\"pool\":true,\"graph\":true,\"wx\":0.2437499999999999,\"wy\":0.175,\"ww\":0.15625,\"wh\":0.15625,\"input\":-1,\"adder\":-1},{\"v\":-0.4,\"min\":-1,\"max\":1,\"pool\":true,\"graph\":0,\"wx\":-0.078125,\"wy\":0.384375,\"ww\":0.15625,\"wh\":0.15625,\"input\":1,\"adder\":0},{\"v\":0.1,\"min\":0,\"max\":100,\"pool\":true,\"graph\":0,\"wx\":-0.050000000000000044,\"wy\":0.003124999999999989,\"ww\":0.15625,\"wh\":0.15625,\"input\":0,\"adder\":1},{\"v\":0.3,\"min\":0,\"max\":100,\"pool\":true,\"graph\":0,\"wx\":-0.6,\"wy\":0.21875,\"ww\":0.15625,\"wh\":0.15625,\"input\":0,\"adder\":0},{\"v\":-0.2,\"min\":-1,\"max\":1,\"pool\":true,\"graph\":0,\"wx\":0.48124999999999996,\"wy\":0.203125,\"ww\":0.15625,\"wh\":0.15625,\"input\":1,\"adder\":1}]}");
 
     s_dragger = new screen_dragger();
     s_graph = new graph();
@@ -924,6 +926,23 @@ var GamePlayScene = function(game, stage)
     }
   }
 
+  var calc_caches = function()
+  {
+    for(var i = 0; i < modules.length; i++)
+    {
+      modules[i].cache_const = 1;
+      modules[i].cache_contributes = 0;
+    }
+    for(var i = 0; i < modules.length; i++)
+    {
+      if(modules[i].output_dongle.attachment)
+      {
+        modules[i].cache_contributes = 1;
+        modules[i].output_dongle.attachment.cache_const = 0;
+      }
+    }
+  }
+
   var flow = function()
   {
     t_i = (t_i+1)%t_max;
@@ -956,8 +975,8 @@ var GamePlayScene = function(game, stage)
 
   self.tick = function()
   {
-    for(var i = 0; i < modules.length; i++)
-      dragger.filter(modules[i].square_dongle);
+    //for(var i = 0; i < modules.length; i++)
+      //dragger.filter(modules[i].square_dongle);
     for(var i = 0; i < modules.length; i++)
       dragger.filter(modules[i].v_dongle);
     for(var i = 0; i < modules.length; i++)
@@ -1007,6 +1026,7 @@ var GamePlayScene = function(game, stage)
 
   self.draw = function()
   {
+    calc_caches();
     ctx.fillStyle = "#EEEEEE";
     ctx.fillRect(0,0,canv.width,canv.height);
 
