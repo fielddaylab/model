@@ -8,6 +8,7 @@ var GamePlayScene = function(game, stage)
 
   var clicker;
   var dragger;
+  var hoverer;
   var keyer;
   var blurer;
 
@@ -184,8 +185,8 @@ var GamePlayScene = function(game, stage)
 
     self.title_box = new TextBox(0,0,0,0,"",   function(v){ var new_v = v;                                                         var old_v = selected_module.title;     selected_module.title     = new_v; });
     self.v_box     = new NumberBox(0,0,0,0,0,0,function(v){ var new_v = fdisp(clamp(selected_module.min,selected_module.max,v),2); var old_v = selected_module.v_default; selected_module.v_default = new_v; if(new_v != old_v) resetGraph(); if(new_v != v) self.v_box.set(new_v); });
-    self.min_box   = new NumberBox(0,0,0,0,0,0,function(v){ var new_v = fdisp(min(selected_module.max,v),2);                       var old_v = selected_module.min;       selected_module.min       = new_v; if(new_v != old_v) resetGraph(); if(new_v != v) self.min_box.set(new_v); else { var delta = max((selected_module.max-selected_module.min),1)/100; self.v_box.delta = delta; self.min_box.delta = delta; self.max_box.delta = delta; } });
-    self.max_box   = new NumberBox(0,0,0,0,0,0,function(v){ var new_v = fdisp(max(selected_module.min,v),2);                       var old_v = selected_module.max;       selected_module.max       = new_v; if(new_v != old_v) resetGraph(); if(new_v != v) self.max_box.set(new_v); else { var delta = max((selected_module.max-selected_module.min),1)/100; self.v_box.delta = delta; self.min_box.delta = delta; self.max_box.delta = delta; } });
+    self.min_box   = new NumberBox(0,0,0,0,0,0,function(v){ var new_v = fdisp(min(selected_module.max,v),2);                       var old_v = selected_module.min;       selected_module.min       = new_v; if(new_v != old_v) resetGraph(); if(new_v != v) { self.min_box.set(new_v); self.v_box.set(max(selected_module.v,new_v)); } else { var delta = max((selected_module.max-selected_module.min),1)/100; self.v_box.delta = delta; self.min_box.delta = delta; self.max_box.delta = delta; } });
+    self.max_box   = new NumberBox(0,0,0,0,0,0,function(v){ var new_v = fdisp(max(selected_module.min,v),2);                       var old_v = selected_module.max;       selected_module.max       = new_v; if(new_v != old_v) resetGraph(); if(new_v != v) { self.max_box.set(new_v); self.v_box.set(min(selected_module.v,new_v)); } else { var delta = max((selected_module.max-selected_module.min),1)/100; self.v_box.delta = delta; self.min_box.delta = delta; self.max_box.delta = delta; } });
     self.pool_box  = new ToggleBox(0,0,0,0,0,  function(v){ var new_v = v;                                                         var old_v = selected_module.pool;      selected_module.pool      = new_v; if(new_v != old_v) resetGraph(); });
     self.graph_box = new ToggleBox(0,0,0,0,0,  function(v){ var new_v = v;                                                         var old_v = selected_module.graph;     selected_module.graph     = new_v; });
 
@@ -645,6 +646,9 @@ var GamePlayScene = function(game, stage)
       if(dragging_obj == self) dragging_obj = 0;
     }
 
+    self.hover   = function(){}
+    self.unhover = function(){}
+
     self.draw_bg = function()
     {
       //input_dongle_line
@@ -702,13 +706,100 @@ var GamePlayScene = function(game, stage)
       bounce_vel += (1-bounce_s)/8.;
       bounce_vel *= 0.85;
     }
+
+    self.drawBlob = function()
+    {
+      t_t = 1-(advance_timer/advance_timer_max);
+      if(t_t > 0.1 && self.output_dongle.attachment)
+      {
+        if(!self.input_dongle.attachment)
+        {
+          glob_0.x = self.x+self.w/2;
+          glob_0.y = self.y+self.h/2;
+          glob_1.x = self.x+self.w/2;
+          glob_1.y = self.y+self.h/2;
+        }
+        else
+        {
+          glob_0.x = self.input_dongle.attachment.x+self.input_dongle.attachment.w/2;
+          glob_0.y = self.input_dongle.attachment.y+self.input_dongle.attachment.h/2;
+          glob_1.x = self.x+self.w/2+self.input_dongle.off.x;
+          glob_1.y = self.y+self.h/2+self.input_dongle.off.y;
+        }
+        glob_2.x = self.x+self.w/2+self.output_dongle.off.x;
+        glob_2.y = self.y+self.h/2+self.output_dongle.off.y;
+        glob_3.x = self.output_dongle.attachment.x+self.output_dongle.attachment.w/2;
+        glob_3.y = self.output_dongle.attachment.y+self.output_dongle.attachment.h/2;
+        d_01 = tldist(glob_0,glob_1);
+        d_12 = tldist(glob_1,glob_2);
+        d_23 = tldist(glob_2,glob_3);
+        d_t = d_01+d_12+d_23;
+        d_cur = 0;
+        if(t_t < 0.1) t_t = 0;
+        else t_t = (t_t-0.1)/(1.-0.1);
+        d_cur = d_t*t_t;
+        var t;
+        var src;
+        var dst;
+        if(d_cur < d_01)
+        {
+          t = d_cur/d_01;
+          src = glob_0;
+          dst = glob_1;
+        }
+        else if(d_cur < d_01+d_12)
+        {
+          t = (d_cur-d_01)/d_12;
+          src = glob_1;
+          dst = glob_2;
+        }
+        else if(d_cur < d_01+d_12+d_23)
+        {
+          t = (d_cur-d_01-d_12)/d_23;
+          src = glob_2;
+          dst = glob_3;
+        }
+        else
+        {
+          t = 1;
+          src = glob_2;
+          dst = glob_2;
+        }
+
+        var x = lerp(src.x,dst.x,t);
+        var y = lerp(src.y,dst.y,t);
+        var s = bounce[floor(t_t*bounce.length-0.001)];
+        var ts = 20;
+        ctx.drawImage(glob_img,x-s*ts/2,y-s*ts/2,s*ts,s*ts);
+      }
+    }
+
     self.draw = function()
     {
       ctx.drawImage(module_img,self.x,self.y,self.w,self.h);
 
-      if(self.cache_contributes)
+      //fill
+      ctx.fillStyle = "#FFFFFF";
+      ctx.fillRect(self.x,self.y,self.w,self.h);
+      ctx.fillStyle = self.color;
+      var p  = 1;
+      var zp = 0;
+      if(self.min != self.max)
       {
-        //input_dongle
+        p  = mapVal(self.min,self.max,0,1,self.v);
+        zp = mapVal(self.min,self.max,0,1,clamp(self.min,self.max,0));
+      }
+      ctx.fillRect(self.x,self.y+self.h*(1-zp),self.w,-self.h*(p-zp));
+      if(self.v_dongle.dragging)
+      {
+        ctx.fillStyle = self.damp_color;
+        var p = self.v_temp/max(abs(self.min),abs(self.max));
+        ctx.fillRect(self.x,self.y+self.h*(1-p),self.w,self.h*p);
+      }
+
+      //input_dongle
+      if(self.input_dongle.attachment || self.input_dongle.dragging || (self.output_dongle.attachment && self.hovering && !dragging_obj))
+      {
         ctx.strokeStyle = "#668866";
         ctx.lineWidth = 2;
         ctx.beginPath();
@@ -716,78 +807,13 @@ var GamePlayScene = function(game, stage)
         ctx.lineTo(self.x+self.w/2+self.input_dongle.off.x,self.y+self.h/2+self.input_dongle.off.y);
         ctx.stroke();
         ctx.drawImage(dongle_img,self.x+self.w/2+self.input_dongle.off.x-self.input_dongle.r,self.y+self.h/2+self.input_dongle.off.y-self.input_dongle.r,self.input_dongle.r*2,self.input_dongle.r*2);
+      }
 
-        t_t = 1-(advance_timer/advance_timer_max);
-        if(t_t > 0.1 && self.output_dongle.attachment)
-        {
-          if(!self.input_dongle.attachment)
-          {
-            glob_0.x = self.x+self.w/2;
-            glob_0.y = self.y+self.h/2;
-            glob_1.x = self.x+self.w/2;
-            glob_1.y = self.y+self.h/2;
-          }
-          else
-          {
-            glob_0.x = self.input_dongle.attachment.x+self.input_dongle.attachment.w/2;
-            glob_0.y = self.input_dongle.attachment.y+self.input_dongle.attachment.h/2;
-            glob_1.x = self.x+self.w/2+self.input_dongle.off.x;
-            glob_1.y = self.y+self.h/2+self.input_dongle.off.y;
-          }
-          glob_2.x = self.x+self.w/2+self.output_dongle.off.x;
-          glob_2.y = self.y+self.h/2+self.output_dongle.off.y;
-          glob_3.x = self.output_dongle.attachment.x+self.output_dongle.attachment.w/2;
-          glob_3.y = self.output_dongle.attachment.y+self.output_dongle.attachment.h/2;
-          d_01 = tldist(glob_0,glob_1);
-          d_12 = tldist(glob_1,glob_2);
-          d_23 = tldist(glob_2,glob_3);
-          d_t = d_01+d_12+d_23;
-          d_cur = 0;
-          if(t_t < 0.1) t_t = 0;
-          else t_t = (t_t-0.1)/(1.-0.1);
-          d_cur = d_t*t_t;
-          var t;
-          var src;
-          var dst;
-          if(d_cur < d_01)
-          {
-            t = d_cur/d_01;
-            src = glob_0;
-            dst = glob_1;
-          }
-          else if(d_cur < d_01+d_12)
-          {
-            t = (d_cur-d_01)/d_12;
-            src = glob_1;
-            dst = glob_2;
-          }
-          else if(d_cur < d_01+d_12+d_23)
-          {
-            t = (d_cur-d_01-d_12)/d_23;
-            src = glob_2;
-            dst = glob_3;
-          }
-          else
-          {
-            t = 1;
-            src = glob_2;
-            dst = glob_2;
-          }
+      self.drawBlob();
 
-          var x = lerp(src.x,dst.x,t);
-          var y = lerp(src.y,dst.y,t);
-          var s = bounce[floor(t_t*bounce.length-0.001)];
-          var ts = 20;
-          ctx.drawImage(glob_img,x-s*ts/2,y-s*ts/2,s*ts,s*ts);
-        }
-
-        if(!self.input_dongle.attachment)
-        {
-          ctx.fillStyle = "#000000";
-          ctx.fillText("1",self.x+self.w/2+self.input_dongle.off.x-self.input_dongle.r/2,self.y+self.h/2+self.input_dongle.off.y+self.input_dongle.r/2);
-        }
-
-        //output_dongle
+      //output_dongle
+      if(self.output_dongle.attachment || self.output_dongle.dragging || (self.hovering && !dragging_obj))
+      {
         ctx.lineWidth = self.v/max(abs(self.min),abs(self.max))*dongle_img.width/2;
         if(self.v > 0)
           ctx.strokeStyle = "#6666FF";
@@ -800,6 +826,7 @@ var GamePlayScene = function(game, stage)
           ctx.lineTo(self.x+self.w/2+self.output_dongle.off.x,self.y+self.h/2+self.output_dongle.off.y);
           ctx.stroke();
         }
+        ctx.drawImage(dongle_img,self.x+self.w/2+self.output_dongle.off.x-self.output_dongle.r,self.y+self.h/2+self.output_dongle.off.y-self.output_dongle.r,self.output_dongle.r*2,self.output_dongle.r*2);
 
         if(self.v_dongle.dragging)
         {
@@ -819,26 +846,6 @@ var GamePlayScene = function(game, stage)
             ctx.stroke();
           }
           ctx.globalAlpha = 1.;
-        }
-        ctx.drawImage(dongle_img,self.x+self.w/2+self.output_dongle.off.x-self.output_dongle.r,self.y+self.h/2+self.output_dongle.off.y-self.output_dongle.r,self.output_dongle.r*2,self.output_dongle.r*2);
-      }
-      else
-      {
-        //title
-        //ctx.fillStyle = "#000000";
-        //ctx.fillText(self.title,self.x,self.y-10);
-
-        //fill
-        ctx.fillStyle = "#FFFFFF";
-        ctx.fillRect(self.x,self.y,self.w,self.h);
-        ctx.fillStyle = self.color;
-        var p = self.v/max(abs(self.min),abs(self.max));
-        ctx.fillRect(self.x,self.y+self.h*(1-p),self.w,self.h*p);
-        if(self.v_dongle.dragging)
-        {
-          ctx.fillStyle = self.damp_color;
-          var p = self.v_temp/max(abs(self.min),abs(self.max));
-          ctx.fillRect(self.x,self.y+self.h*(1-p),self.w,self.h*p);
         }
       }
 
@@ -911,14 +918,25 @@ var GamePlayScene = function(game, stage)
       subvec(self.input_dongle.off,ave,self.input_dongle.off);
       subvec(self.output_dongle.off,ave,self.output_dongle.off);
 
-      safenormvec(self.input_dongle.off, 1,self.input_dongle.off);
-      safenormvec(self.output_dongle.off,-1,self.output_dongle.off);
+      safenormvec(self.input_dongle.off, -1,self.input_dongle.off);
+      safenormvec(self.output_dongle.off, 1,self.output_dongle.off);
 
       mulvec(self.input_dongle.off,dongle_r,self.input_dongle.off);
       mulvec(self.output_dongle.off,dongle_r,self.output_dongle.off);
 
       mulvec(self.input_dongle_vel,0.9,self.input_dongle_vel);
       mulvec(self.output_dongle_vel,0.9,self.output_dongle_vel);
+
+      if(!self.output_dongle.attachment && !self.output_dongle.dragging && self.hovering && !dragging_obj)
+      {
+        self.output_dongle.off.x = 20;
+        self.output_dongle.off.y = 0;
+      }
+      if(!self.input_dongle.attachment && !self.input_dongle.dragging && self.output_dongle.attachment && self.hovering && !dragging_obj)
+      {
+        self.input_dongle.off.x = -20;
+        self.input_dongle.off.y = 0;
+      }
     }
   }
 
@@ -926,6 +944,7 @@ var GamePlayScene = function(game, stage)
   {
     clicker = new Clicker({source:stage.dispCanv.canvas});
     dragger = new Dragger({source:stage.dispCanv.canvas});
+    hoverer = new Hoverer({source:stage.dispCanv.canvas});
     keyer   = new Keyer(  {source:stage.dispCanv.canvas});
     blurer  = new Blurer( {source:stage.dispCanv.canvas});
 
@@ -1089,7 +1108,10 @@ var GamePlayScene = function(game, stage)
     for(var i = 0; i < modules.length; i++)
       dragger.filter(modules[i].output_dongle);
     for(var i = 0; i < modules.length; i++)
+    {
       dragger.filter(modules[i]);
+      hoverer.filter(modules[i]);
+    }
     dragger.filter(add_module_btn);
     var clicked = false;
     if(clicker.filter(s_graph.pause_btn))   clicked = true;
@@ -1102,6 +1124,7 @@ var GamePlayScene = function(game, stage)
 
     clicker.flush();
     dragger.flush();
+    hoverer.flush();
     keyer.flush();
     blurer.flush();
 
