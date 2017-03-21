@@ -122,7 +122,6 @@ var Dragger = function(init)
         }
         break;
       }
-
     }
     return hit;
   }
