@@ -945,8 +945,8 @@ var GamePlayScene = function(game, stage)
     dragging_obj = 0;
     full_pause = true;
     drag_pause = false;
-    advance_timer = 0;
     advance_timer_max = 100;
+    advance_timer = advance_timer_max;
     t_i = 0;
     t_max = 100
 
@@ -1023,8 +1023,18 @@ var GamePlayScene = function(game, stage)
     for(var i = 0; i < modules.length; i++)
     {
       modules[i].v = modules[i].v_default;
-      modules[i].prev_plot = modules[i].plot[0];
       modules[i].plot[0] = modules[i].v;
+      modules[i].prev_plot = modules[i].plot[0];
+    }
+    //for(var i = 0; i < 100; i++)
+      //flow();
+    t_i = 0;
+    advance_timer = advance_timer_max;
+    for(var i = 0; i < modules.length; i++)
+    {
+      modules[i].v = modules[i].v_default;
+      modules[i].plot[0] = modules[i].v;
+      modules[i].prev_plot = modules[i].plot[0];
     }
   }
 
