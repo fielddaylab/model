@@ -35,6 +35,7 @@ var GamePlayScene = function(game, stage)
   var s_dragger;
   var s_graph;
   var s_editor;
+  var speed_slider;
 
   var w;
   var h;
@@ -925,6 +926,20 @@ var GamePlayScene = function(game, stage)
         var s = bounce[floor(t_t*bounce.length-0.001)];
         var ts = 20;
         ctx.drawImage(glob_img,x-s*ts/2,y-s*ts/2,s*ts,s*ts);
+        ctx.fillStyle = "#000000";
+        ctx.textAlign = "center";
+        var txt;
+        if(self.input_dongle.attachment)
+        {
+          if(t_t < 0.5)
+            txt = fdisp(self.input_dongle.attachment.v,2);
+          else
+            txt = fdisp(self.input_dongle.attachment.v*self.v,2);
+        }
+        else
+          txt = fdisp(self.v,2);
+
+        ctx.fillText(txt,x,y+3);
       }
     }
     self.drawValue = function()
@@ -1061,6 +1076,15 @@ var GamePlayScene = function(game, stage)
     s_editor.w = 100;
     s_editor.h = canv.height-100;
     s_editor.calc_sub_params();
+
+    speed_slider = new SliderBox(s_graph.x+100,s_graph.y-20,100,20,1,200,20,
+      function(v)
+      {
+        var t = advance_timer/advance_timer_max;
+        advance_timer_max = v;
+        advance_timer = floor(advance_timer_max * t);
+      }
+    )
 
     add_module_btn = new btn();
     add_module_btn.w = 20;
@@ -1205,6 +1229,7 @@ var GamePlayScene = function(game, stage)
     if(clicker.filter(print_btn))           clicked = true;
     if(clicker.filter(load_btn))            clicked = true;
     s_editor.filter();
+    if(dragger.filter(speed_slider))        clicked = true;
     if(!clicked) dragger.filter(s_dragger);
 
     clicker.flush();
@@ -1291,6 +1316,7 @@ var GamePlayScene = function(game, stage)
     s_graph.draw();
     ctx.textAlign = "left";
     s_editor.draw();
+    speed_slider.draw(canv);
   };
 
   self.cleanup = function()
