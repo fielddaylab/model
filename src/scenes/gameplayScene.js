@@ -38,6 +38,11 @@ var GamePlayScene = function(game, stage)
   var w;
   var h;
 
+  var module_outline_s = 60;
+  var module_s = 50;
+  var module_fill_s = 45;
+  var module_inner_s = 30;
+
   w = 20;
   h = 20;
   var dongle_img = GenIcon(w,h)
@@ -49,8 +54,8 @@ var GamePlayScene = function(game, stage)
   dongle_img.context.fill();
   dongle_img.context.stroke();
 
-  w = 30;
-  h = 30;
+  w = module_inner_s;
+  h = module_inner_s;
   var inner_module_img = GenIcon(w,h)
   inner_module_img.context.fillStyle = "#FFFFFF";
   inner_module_img.context.lineWidth = 1;
@@ -58,9 +63,17 @@ var GamePlayScene = function(game, stage)
   inner_module_img.context.arc(w/2,h/2,(w-5)/2,0,2*Math.PI);
   inner_module_img.context.fill();
 
+  w = module_outline_s;
+  h = module_outline_s;
+  var selected_module_img = GenIcon(w,h)
+  selected_module_img.context.strokeStyle = "#000000";
+  selected_module_img.context.lineWidth = 1;
+  selected_module_img.context.beginPath();
+  selected_module_img.context.arc(w/2,h/2,(w-5)/2,0,2*Math.PI);
+  selected_module_img.context.stroke();
 
-  w = 50;
-  h = 50;
+  w = module_s;
+  h = module_s;
   var module_img = GenIcon(w,h)
   module_img.context.fillStyle = "#BBBBBB";
   module_img.context.lineWidth = 1;
@@ -68,8 +81,8 @@ var GamePlayScene = function(game, stage)
   module_img.context.arc(w/2,h/2,(w-5)/2,0,2*Math.PI);
   module_img.context.fill();
 
-  w = 50;
-  h = 50;
+  w = module_fill_s;
+  h = module_fill_s;
   var module_pos_img = GenIcon(w,h)
   module_pos_img.context.fillStyle = "#00FF00";
   module_pos_img.context.lineWidth = 1;
@@ -77,8 +90,8 @@ var GamePlayScene = function(game, stage)
   module_pos_img.context.arc(w/2,h/2,(w-5)/2,0,2*Math.PI);
   module_pos_img.context.fill();
 
-  w = 50;
-  h = 50;
+  w = module_fill_s;
+  h = module_fill_s;
   var module_neg_img = GenIcon(w,h)
   module_neg_img.context.fillStyle = "#FF0000";
   module_neg_img.context.lineWidth = 1;
@@ -666,8 +679,32 @@ var GamePlayScene = function(game, stage)
     self.hover   = function(){}
     self.unhover = function(){}
 
-    self.draw_bg = function()
+    var glob_0 = {x:0,y:0};
+    var d_01 = 0;
+    var glob_1 = {x:0,y:0};
+    var d_12 = 0;
+    var glob_2 = {x:0,y:0};
+    var d_23 = 0;
+    var glob_3 = {x:0,y:0};
+    var d_t = 0;
+    var d_cur = 0;
+    var t_t = 0;
+    var bounce = [];
+    var bounce_s = 1;
+    var bounce_vel = 0.3;
+    for(var i = 0; i < 100; i++)
     {
+      bounce[i] = bounce_s;
+      bounce_s += bounce_vel;
+      bounce_vel += (1-bounce_s)/8.;
+      bounce_vel *= 0.85;
+    }
+
+    self.drawLines = function()
+    {
+      ctx.lineWidth = 2;
+
+      //away from dongles
       //input_dongle_line
       ctx.strokeStyle = "#000000"
       if(self.input_dongle.dragging)
@@ -701,29 +738,86 @@ var GamePlayScene = function(game, stage)
         ctx.lineTo(self.output_dongle.attachment.x+self.output_dongle.attachment.w/2,self.output_dongle.attachment.y+self.output_dongle.attachment.h/2);
         ctx.stroke();
       }
-    }
 
-    var glob_0 = {x:0,y:0};
-    var d_01 = 0;
-    var glob_1 = {x:0,y:0};
-    var d_12 = 0;
-    var glob_2 = {x:0,y:0};
-    var d_23 = 0;
-    var glob_3 = {x:0,y:0};
-    var d_t = 0;
-    var d_cur = 0;
-    var t_t = 0;
-    var bounce = [];
-    var bounce_s = 1;
-    var bounce_vel = 0.3;
-    for(var i = 0; i < 100; i++)
+      //to dongle
+      //input_dongle
+      if(self.input_dongle.attachment || self.input_dongle.dragging || (self.output_dongle.attachment && self.hovering && !dragging_obj))
+      {
+        ctx.strokeStyle = "#668866";
+        ctx.beginPath();
+        ctx.moveTo(self.x+self.w/2,                        self.y+self.h/2);
+        ctx.lineTo(self.x+self.w/2+self.input_dongle.off.x,self.y+self.h/2+self.input_dongle.off.y);
+        ctx.stroke();
+      }
+
+      //output_dongle
+      if(self.output_dongle.attachment || self.output_dongle.dragging || (self.hovering && !dragging_obj))
+      {
+        ctx.strokeStyle = "#668866";
+        ctx.beginPath();
+        ctx.moveTo(self.x+self.w/2,                         self.y+self.h/2);
+        ctx.lineTo(self.x+self.w/2+self.output_dongle.off.x,self.y+self.h/2+self.output_dongle.off.y);
+        ctx.stroke();
+      }
+    }
+    self.drawBody = function()
     {
-      bounce[i] = bounce_s;
-      bounce_s += bounce_vel;
-      bounce_vel += (1-bounce_s)/8.;
-      bounce_vel *= 0.85;
-    }
+      if(selected_module == self)
+      {
+        var s = module_outline_s;
+        ctx.drawImage(selected_module_img,self.x+self.w/2-s/2,self.y+self.h/2-s/2,s,s);
+      }
 
+      //body
+      var s = module_s;
+      ctx.drawImage(module_img,self.x+self.w/2-s/2,self.y+self.h/2-s/2,s,s);
+      var p  = 1;
+      var zp = 0;
+      if(self.min != self.max)
+      {
+        p  = clamp(0,1,mapVal(self.min,self.max,0,1,self.v));
+        zp = mapVal(self.min,self.max,0,1,clamp(self.min,self.max,0));
+      }
+      var ymin;
+      var ymax;
+      var img = 0;
+      if(p > zp)
+      {
+        ymin = self.y+self.h*(1-p);
+        ymax = self.y+self.h*(1-zp);
+        img = module_pos_img;
+      }
+      else if(zp > p)
+      {
+        ymin = self.y+self.h*(1-zp);
+        ymax = self.y+self.h*(1-p);
+        img = module_neg_img;
+      }
+
+      if(img)
+      {
+        ctx.save();
+        ctx.beginPath();
+        ctx.moveTo(self.x,       ymin);
+        ctx.lineTo(self.x+self.w,ymin);
+        ctx.lineTo(self.x+self.w,ymax);
+        ctx.lineTo(self.x,       ymax);
+        ctx.closePath();
+        ctx.clip();
+        var s = module_fill_s;
+        ctx.drawImage(img,self.x+self.w/2-s/2,self.y+self.h/2-s/2,s,s);
+        ctx.restore();
+      }
+    }
+    self.drawDongles = function()
+    {
+      //input_dongle
+      if(self.input_dongle.attachment || self.input_dongle.dragging || (self.output_dongle.attachment && self.hovering && !dragging_obj))
+        ctx.drawImage(dongle_img,self.x+self.w/2+self.input_dongle.off.x-self.input_dongle.r,self.y+self.h/2+self.input_dongle.off.y-self.input_dongle.r,self.input_dongle.r*2,self.input_dongle.r*2);
+      //output_dongle
+      if(self.output_dongle.attachment || self.output_dongle.dragging || (self.hovering && !dragging_obj))
+        ctx.drawImage(dongle_img,self.x+self.w/2+self.output_dongle.off.x-self.output_dongle.r,self.y+self.h/2+self.output_dongle.off.y-self.output_dongle.r,self.output_dongle.r*2,self.output_dongle.r*2);
+    }
     self.drawBlob = function()
     {
       t_t = 1-(advance_timer/advance_timer_max);
@@ -790,89 +884,12 @@ var GamePlayScene = function(game, stage)
         ctx.drawImage(glob_img,x-s*ts/2,y-s*ts/2,s*ts,s*ts);
       }
     }
-
-    self.draw = function()
+    self.drawValue = function()
     {
-      //fill
-      ctx.drawImage(module_img,self.x,self.y,self.w,self.h);
-
-      var p  = 1;
-      var zp = 0;
-      if(self.min != self.max)
-      {
-        p  = clamp(0,1,mapVal(self.min,self.max,0,1,self.v));
-        zp = mapVal(self.min,self.max,0,1,clamp(self.min,self.max,0));
-      }
-      var ymin;
-      var ymax;
-      var img = 0;
-      if(p > zp)
-      {
-        ymin = self.y+self.h*(1-p);
-        ymax = self.y+self.h*(1-zp);
-        img = module_pos_img;
-      }
-      else if(zp > p)
-      {
-        ymin = self.y+self.h*(1-zp);
-        ymax = self.y+self.h*(1-p);
-        img = module_neg_img;
-      }
-
-      if(img)
-      {
-        ctx.save();
-        ctx.beginPath();
-        ctx.moveTo(self.x,       ymin);
-        ctx.lineTo(self.x+self.w,ymin);
-        ctx.lineTo(self.x+self.w,ymax);
-        ctx.lineTo(self.x,       ymax);
-        ctx.closePath();
-        ctx.clip();
-        ctx.drawImage(img,self.x,self.y,self.w,self.h);
-        ctx.drawImage(img, 0, 0);
-        ctx.restore();
-      }
-
-      //ctx.fillRect(self.x,self.y+self.h*(1-zp),self.w,-self.h*(p-zp));
-
-      //input_dongle
-      if(self.input_dongle.attachment || self.input_dongle.dragging || (self.output_dongle.attachment && self.hovering && !dragging_obj))
-      {
-        ctx.strokeStyle = "#668866";
-        ctx.lineWidth = 2;
-        ctx.beginPath();
-        ctx.moveTo(self.x+self.w/2,                        self.y+self.h/2);
-        ctx.lineTo(self.x+self.w/2+self.input_dongle.off.x,self.y+self.h/2+self.input_dongle.off.y);
-        ctx.stroke();
-        ctx.drawImage(dongle_img,self.x+self.w/2+self.input_dongle.off.x-self.input_dongle.r,self.y+self.h/2+self.input_dongle.off.y-self.input_dongle.r,self.input_dongle.r*2,self.input_dongle.r*2);
-      }
-
-      self.drawBlob();
-
-      //output_dongle
-      if(self.output_dongle.attachment || self.output_dongle.dragging || (self.hovering && !dragging_obj))
-      {
-        ctx.lineWidth = self.v/max(abs(self.min),abs(self.max))*dongle_img.width/2;
-        if(self.v > 0)
-          ctx.strokeStyle = "#6666FF";
-        else if(self.v < 0)
-          ctx.strokeStyle = "#FF6666";
-        if(self.v != 0)
-        {
-          ctx.beginPath();
-          ctx.moveTo(self.x+self.w/2,                         self.y+self.h/2);
-          ctx.lineTo(self.x+self.w/2+self.output_dongle.off.x,self.y+self.h/2+self.output_dongle.off.y);
-          ctx.stroke();
-        }
-        ctx.drawImage(dongle_img,self.x+self.w/2+self.output_dongle.off.x-self.output_dongle.r,self.y+self.h/2+self.output_dongle.off.y-self.output_dongle.r,self.output_dongle.r*2,self.output_dongle.r*2);
-      }
-
-      var r = 15;
-      //v_dongle
-      ctx.drawImage(inner_module_img,self.x+self.w/2-r,self.y+self.h/2-r,r*2,r*2);
+      var s = module_inner_s;
+      ctx.drawImage(inner_module_img,self.x+self.w/2-s/2,self.y+self.h/2-s/2,s,s);
       ctx.fillStyle = "#000000"
-      ctx.fillText(fdisp(self.v,2),self.x+self.w/2,self.y+self.h/2+r/2-3);
+      ctx.fillText(fdisp(self.v,2),self.x+self.w/2,self.y+self.h/2+5);
 
       ctx.fillStyle = "#000000";
       ctx.fillText(self.title,self.x+self.w/2,self.y-10);
@@ -1195,9 +1212,15 @@ var GamePlayScene = function(game, stage)
       screenSpace(work_cam,canv,modules[i]);
 
     for(var i = 0; i < modules.length; i++)
-      modules[i].draw_bg();
+      modules[i].drawLines();
     for(var i = 0; i < modules.length; i++)
-      modules[i].draw();
+      modules[i].drawBody();
+    for(var i = 0; i < modules.length; i++)
+      modules[i].drawDongles();
+    for(var i = 0; i < modules.length; i++)
+      modules[i].drawBlob();
+    for(var i = 0; i < modules.length; i++)
+      modules[i].drawValue();
 
     var tmp_pause = false;
     if(
