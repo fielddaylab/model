@@ -1,2 +1,8 @@
 highlighting editor ui should pause
 highlighting editor ui shouldn't pass through to screen dragger
+selected module
+colored modules/graphs
+random color on create
+auto-select title on create
+mask and draw circle modules
+
