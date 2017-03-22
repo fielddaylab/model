@@ -1077,12 +1077,13 @@ var GamePlayScene = function(game, stage)
     s_editor.h = canv.height-100;
     s_editor.calc_sub_params();
 
-    speed_slider = new SliderBox(s_graph.x+100,s_graph.y-20,100,20,1,200,20,
+    speed_slider = new SliderBox(s_graph.x+100,s_graph.y-20,100,15,1,250,advance_timer_max,
       function(v)
       {
+        v = round(v);
         var t = advance_timer/advance_timer_max;
         advance_timer_max = v;
-        advance_timer = floor(advance_timer_max * t);
+        advance_timer = ceil(advance_timer_max * t);
       }
     )
 
