@@ -35,8 +35,11 @@ var GamePlayScene = function(game, stage)
   var s_graph;
   var s_editor;
 
-  var w = 20;
-  var h = 20;
+  var w;
+  var h;
+
+  w = 20;
+  h = 20;
   var dongle_img = GenIcon(w,h)
   dongle_img.context.fillStyle = "#FF4444";
   dongle_img.context.strokeStyle = "#FFFFFF";
@@ -46,19 +49,45 @@ var GamePlayScene = function(game, stage)
   dongle_img.context.fill();
   dongle_img.context.stroke();
 
-  var w = 50;
-  var h = 50;
+  w = 30;
+  h = 30;
+  var inner_module_img = GenIcon(w,h)
+  inner_module_img.context.fillStyle = "#FFFFFF";
+  inner_module_img.context.lineWidth = 1;
+  inner_module_img.context.beginPath();
+  inner_module_img.context.arc(w/2,h/2,(w-5)/2,0,2*Math.PI);
+  inner_module_img.context.fill();
+
+
+  w = 50;
+  h = 50;
   var module_img = GenIcon(w,h)
   module_img.context.fillStyle = "#BBBBBB";
-  module_img.context.strokeStyle = "#FFFFFF";
   module_img.context.lineWidth = 1;
   module_img.context.beginPath();
   module_img.context.arc(w/2,h/2,(w-5)/2,0,2*Math.PI);
   module_img.context.fill();
-  module_img.context.stroke();
 
-  var w = 40;
-  var h = 40;
+  w = 50;
+  h = 50;
+  var module_pos_img = GenIcon(w,h)
+  module_pos_img.context.fillStyle = "#00FF00";
+  module_pos_img.context.lineWidth = 1;
+  module_pos_img.context.beginPath();
+  module_pos_img.context.arc(w/2,h/2,(w-5)/2,0,2*Math.PI);
+  module_pos_img.context.fill();
+
+  w = 50;
+  h = 50;
+  var module_neg_img = GenIcon(w,h)
+  module_neg_img.context.fillStyle = "#FF0000";
+  module_neg_img.context.lineWidth = 1;
+  module_neg_img.context.beginPath();
+  module_neg_img.context.arc(w/2,h/2,(w-5)/2,0,2*Math.PI);
+  module_neg_img.context.fill();
+
+  w = 40;
+  h = 40;
   var glob_img = GenIcon(w,h)
   glob_img.context.fillStyle = "#FF4444";
   glob_img.context.strokeStyle = "#FFFFFF";
@@ -764,12 +793,9 @@ var GamePlayScene = function(game, stage)
 
     self.draw = function()
     {
+      //fill
       ctx.drawImage(module_img,self.x,self.y,self.w,self.h);
 
-      //fill
-      ctx.fillStyle = "#FFFFFF";
-      ctx.fillRect(self.x,self.y,self.w,self.h);
-      ctx.fillStyle = self.color;
       var p  = 1;
       var zp = 0;
       if(self.min != self.max)
@@ -777,7 +803,38 @@ var GamePlayScene = function(game, stage)
         p  = clamp(0,1,mapVal(self.min,self.max,0,1,self.v));
         zp = mapVal(self.min,self.max,0,1,clamp(self.min,self.max,0));
       }
-      ctx.fillRect(self.x,self.y+self.h*(1-zp),self.w,-self.h*(p-zp));
+      var ymin;
+      var ymax;
+      var img = 0;
+      if(p > zp)
+      {
+        ymin = self.y+self.h*(1-p);
+        ymax = self.y+self.h*(1-zp);
+        img = module_pos_img;
+      }
+      else if(zp > p)
+      {
+        ymin = self.y+self.h*(1-zp);
+        ymax = self.y+self.h*(1-p);
+        img = module_neg_img;
+      }
+
+      if(img)
+      {
+        ctx.save();
+        ctx.beginPath();
+        ctx.moveTo(self.x,       ymin);
+        ctx.lineTo(self.x+self.w,ymin);
+        ctx.lineTo(self.x+self.w,ymax);
+        ctx.lineTo(self.x,       ymax);
+        ctx.closePath();
+        ctx.clip();
+        ctx.drawImage(img,self.x,self.y,self.w,self.h);
+        ctx.drawImage(img, 0, 0);
+        ctx.restore();
+      }
+
+      //ctx.fillRect(self.x,self.y+self.h*(1-zp),self.w,-self.h*(p-zp));
 
       //input_dongle
       if(self.input_dongle.attachment || self.input_dongle.dragging || (self.output_dongle.attachment && self.hovering && !dragging_obj))
@@ -811,11 +868,11 @@ var GamePlayScene = function(game, stage)
         ctx.drawImage(dongle_img,self.x+self.w/2+self.output_dongle.off.x-self.output_dongle.r,self.y+self.h/2+self.output_dongle.off.y-self.output_dongle.r,self.output_dongle.r*2,self.output_dongle.r*2);
       }
 
-      var r = 10;
+      var r = 15;
       //v_dongle
-      ctx.drawImage(dongle_img,self.x+self.w/2-r,self.y+self.h/2-r,r*2,r*2);
+      ctx.drawImage(inner_module_img,self.x+self.w/2-r,self.y+self.h/2-r,r*2,r*2);
       ctx.fillStyle = "#000000"
-      ctx.fillText(fdisp(self.v,2),self.x+self.w/2-r/2,self.y+self.h/2+r/2);
+      ctx.fillText(fdisp(self.v,2),self.x+self.w/2,self.y+self.h/2+r/2-3);
 
       ctx.fillStyle = "#000000";
       ctx.fillText(self.title,self.x+self.w/2,self.y-10);
@@ -1118,6 +1175,7 @@ var GamePlayScene = function(game, stage)
 
   self.draw = function()
   {
+    ctx.textAlign = "center";
     calc_caches();
     ctx.fillStyle = "#EEEEEE";
     ctx.fillRect(0,0,canv.width,canv.height);
@@ -1155,6 +1213,7 @@ var GamePlayScene = function(game, stage)
     }
 
     s_graph.draw();
+    ctx.textAlign = "left";
     s_editor.draw();
   };
 
