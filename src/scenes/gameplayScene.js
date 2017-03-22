@@ -26,6 +26,7 @@ var GamePlayScene = function(game, stage)
   var t_i;
 
   var add_module_btn;
+  var remove_module_btn;
   var print_btn;
   var load_btn;
   var load_template_i;
@@ -700,6 +701,18 @@ var GamePlayScene = function(game, stage)
       if(dragging_obj == self)
       {
         dragging_obj = 0;
+        if(rectCollide(self.x,self.y,self.w,self.h,remove_module_btn.x,remove_module_btn.y,remove_module_btn.w,remove_module_btn.h))
+        {
+          if(selected_module == self)
+            selected_module = 0;
+          for(var i = 0; i < modules.length; i++)
+          {
+            if(modules[i].input_dongle.attachment  == self) modules[i].input_dongle.attachment = 0;
+            if(modules[i].output_dongle.attachment == self) modules[i].output_dongle.attachment = 0;
+          }
+          for(var i = 0; i < modules.length; i++)
+            if(modules[i] == self) modules.splice(i,1);
+        }
         if(self.title == "") s_editor.title_box.focus();
       }
     }
@@ -1025,7 +1038,7 @@ var GamePlayScene = function(game, stage)
     advance_timer_max = 100;
     advance_timer = advance_timer_max;
     t_i = 0;
-    t_max = 100
+    t_max = 50;
 
     load_template_i = 0;
     templates = [];
@@ -1064,9 +1077,17 @@ var GamePlayScene = function(game, stage)
 
         if(m.shouldDrag(evt)) { m.dragStart(evt); m.dragging = true; }
         modules.push(m);
+        resetGraph();
       }
       return false;
     }
+
+    //kind of a hack- just placeholder that gets checked by modules themselves
+    remove_module_btn = new btn();
+    remove_module_btn.w = 20;
+    remove_module_btn.h = 20;
+    remove_module_btn.x = 10;
+    remove_module_btn.y = add_module_btn.y+add_module_btn.h+10;
 
     print_btn = new btn();
     print_btn.w = 20;
@@ -1089,6 +1110,7 @@ var GamePlayScene = function(game, stage)
       {
         load_next_template();
         resetGraph();
+        selected_module = 0;
       }
     }
   };
@@ -1172,8 +1194,8 @@ var GamePlayScene = function(game, stage)
       dragger.filter(modules[i].output_dongle);
     for(var i = 0; i < modules.length; i++)
     {
-      dragger.filter(modules[i]);
       hoverer.filter(modules[i]);
+      dragger.filter(modules[i]);
     }
     dragger.filter(add_module_btn);
     var clicked = false;
@@ -1218,7 +1240,6 @@ var GamePlayScene = function(game, stage)
 
   self.draw = function()
   {
-    ctx.textAlign = "center";
     calc_caches();
     ctx.fillStyle = "#EEEEEE";
     ctx.fillRect(0,0,canv.width,canv.height);
@@ -1226,13 +1247,19 @@ var GamePlayScene = function(game, stage)
     ctx.fillStyle = "#000000";
     ctx.strokeStyle = "#000000";
     ctx.lineWidth = 1;
-    ctx.fillText("Add Module",add_module_btn.x+2,add_module_btn.y+10);
+    ctx.textAlign = "left";
+    ctx.fillText("Create",add_module_btn.x+2,add_module_btn.y+10);
     ctx.strokeRect(add_module_btn.x,add_module_btn.y,add_module_btn.w,add_module_btn.h);
-    ctx.fillText("Save",print_btn.x+2,print_btn.y+10);
+    ctx.fillText("Remove",remove_module_btn.x+2,remove_module_btn.y+10);
+    ctx.strokeRect(remove_module_btn.x,remove_module_btn.y,remove_module_btn.w,remove_module_btn.h);
+    ctx.textAlign = "right";
+    ctx.fillText("Save",print_btn.x+print_btn.w-2,print_btn.y+10);
     ctx.strokeRect(print_btn.x,print_btn.y,print_btn.w,print_btn.h);
-    ctx.fillText("Load Next",load_btn.x+2,load_btn.y+10);
+    ctx.fillText("Load Next",load_btn.x+load_btn.w-2,load_btn.y+10);
     ctx.fillText("("+load_template_i+"/"+(templates.length-1)+")",load_btn.x+2,load_btn.y+30);
     ctx.strokeRect(load_btn.x,load_btn.y,load_btn.w,load_btn.h);
+
+    ctx.textAlign = "center";
 
     for(var i = 0; i < modules.length; i++)
       screenSpace(work_cam,canv,modules[i]);
