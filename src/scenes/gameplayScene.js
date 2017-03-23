@@ -133,7 +133,7 @@ var GamePlayScene = function(game, stage)
   glob_img.context.stroke();
 
   var precision = 2;
-  var predict = false;
+  var predict = true;
 
   var graph = function()
   {
@@ -1199,7 +1199,7 @@ var GamePlayScene = function(game, stage)
       }
       if(predict && j == 0)
       {
-        for(var i = 0; i < 100; i++)
+        for(var i = 0; i < t_max; i++)
           flow();
       }
     }
