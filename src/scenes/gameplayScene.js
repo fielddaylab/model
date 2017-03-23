@@ -667,6 +667,7 @@ var GamePlayScene = function(game, stage)
     self.sign = 1.;
 
     self.cache_const = 0;
+    self.cache_delta = 0;
 
     self.prev_plot = 0;
     self.plot = [];
@@ -979,9 +980,19 @@ var GamePlayScene = function(game, stage)
       ctx.drawImage(inner_module_img,self.x+self.w/2-s/2,self.y+self.h/2-s/2,s,s);
       ctx.fillStyle = "#000000"
       ctx.fillText(fdisp(self.v,2),self.x+self.w/2,self.y+self.h/2+5);
-
-      ctx.fillStyle = "#000000";
       ctx.fillText(self.title,self.x+self.w/2,self.y-10);
+
+      var t = 1-(advance_timer/advance_timer_max);
+      if(self.cache_delta > 0)
+      {
+        ctx.fillStyle = "rgba(0,255,0,"+(1-t)+")"
+        ctx.fillText("+"+self.cache_delta,self.x+sin(t*5*pi),self.y-t*20);
+      }
+      else if(self.cache_delta < 0)
+      {
+        ctx.fillStyle = "rgba(255,0,0,"+(1-t)+")"
+        ctx.fillText(self.cache_delta,self.x+sin(t*5*pi),self.y-t*20);
+      }
     }
 
     var base = {x:0,y:0};
@@ -1175,26 +1186,22 @@ var GamePlayScene = function(game, stage)
 
   var resetGraph = function()
   {
-    t_i = 0;
-    advance_timer = advance_timer_max;
-    for(var i = 0; i < modules.length; i++)
+    for(var j = 0; j < 1 || (predict && j < 2); j++)
     {
-      modules[i].v = modules[i].v_default;
-      modules[i].plot[0] = modules[i].v;
-      modules[i].prev_plot = modules[i].plot[0];
-    }
-    if(predict)
-    {
-      for(var i = 0; i < 100; i++)
-        flow();
-    }
-    t_i = 0;
-    advance_timer = advance_timer_max;
-    for(var i = 0; i < modules.length; i++)
-    {
-      modules[i].v = modules[i].v_default;
-      modules[i].plot[0] = modules[i].v;
-      modules[i].prev_plot = modules[i].plot[0];
+      t_i = 0;
+      advance_timer = advance_timer_max;
+      for(var i = 0; i < modules.length; i++)
+      {
+        modules[i].v = modules[i].v_default;
+        modules[i].cache_delta = 0;
+        modules[i].plot[0] = modules[i].v;
+        modules[i].prev_plot = modules[i].plot[0];
+      }
+      if(predict && j == 0)
+      {
+        for(var i = 0; i < 100; i++)
+          flow();
+      }
     }
   }
 
@@ -1239,6 +1246,7 @@ var GamePlayScene = function(game, stage)
     for(var i = 0; i < modules.length; i++)
     {
       modules[i].v_temp = fdisp(clamp(modules[i].min,modules[i].max,modules[i].v_temp),2);
+      modules[i].cache_delta = fdisp(modules[i].v_temp-modules[i].v,2);
       modules[i].v = modules[i].v_temp;
       modules[i].plot[t_i] = modules[i].v;
     }
