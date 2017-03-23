@@ -971,7 +971,7 @@ var GamePlayScene = function(game, stage)
 
         var x = lerp(src.x,dst.x,t);
         var y = lerp(src.y,dst.y,t);
-        var s = bounce[floor(t_t*bounce.length-0.001)];
+        var s = bounce[floor(t_t*bounce.length)];
         var ts = 20;
         ctx.drawImage(glob_img,x-s*ts/2,y-s*ts/2,s*ts,s*ts);
         ctx.fillStyle = "#000000";
@@ -993,6 +993,16 @@ var GamePlayScene = function(game, stage)
     self.drawValue = function()
     {
       var s = module_inner_s;
+      if(self.input_dongle.attachment && self.output_dongle.attachment)
+      {
+        t_t = clamp(0,1,(1-(advance_timer/advance_timer_max))-0.5);
+        s *= bounce[floor(t_t*bounce.length)];
+      }
+      else
+      {
+        t_t = 1-(advance_timer/advance_timer_max);
+        s *= bounce[floor(t_t*bounce.length)];
+      }
       ctx.drawImage(inner_module_img,self.x+self.w/2-s/2,self.y+self.h/2-s/2,s,s);
       ctx.fillStyle = "#000000"
       ctx.fillText(fdisp(self.v,2),self.x+self.w/2,self.y+self.h/2+5);
