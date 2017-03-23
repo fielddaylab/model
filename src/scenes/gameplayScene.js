@@ -857,10 +857,41 @@ var GamePlayScene = function(game, stage)
     {
       //input_dongle
       if(self.input_dongle.attachment || self.input_dongle.dragging || (self.output_dongle.attachment && self.hovering && !dragging_obj))
-        ctx.drawImage(dongle_img,self.x+self.w/2+self.input_dongle.off.x-self.input_dongle.r,self.y+self.h/2+self.input_dongle.off.y-self.input_dongle.r,self.input_dongle.r*2,self.input_dongle.r*2);
+      {
+        base.x = self.x+self.w/2+self.input_dongle.off.x;
+        base.y = self.y+self.h/2+self.input_dongle.off.y;
+        from.x = self.input_dongle.off.x;
+        from.y = self.input_dongle.off.y;
+        safenormvec(from,1,from);
+        from.x = -from.x;
+        from.y = -from.y;
+        target.x = -from.y;
+        target.y = from.x;
+        ctx.drawImage(dongle_img,base.x-self.input_dongle.r,base.y-self.input_dongle.r,self.input_dongle.r*2,self.input_dongle.r*2);
+        ctx.beginPath();
+        ctx.moveTo(base.x+target.x*5,base.y+target.y*5);
+        ctx.lineTo(base.x+  from.x*5,base.y+  from.y*5);
+        ctx.lineTo(base.x-target.x*5,base.y-target.y*5);
+        ctx.stroke();
+      }
       //output_dongle
       if(self.output_dongle.attachment || self.output_dongle.dragging || (self.hovering && !dragging_obj))
-        ctx.drawImage(dongle_img,self.x+self.w/2+self.output_dongle.off.x-self.output_dongle.r,self.y+self.h/2+self.output_dongle.off.y-self.output_dongle.r,self.output_dongle.r*2,self.output_dongle.r*2);
+      {
+        //ctx.drawImage(dongle_img,self.x+self.w/2+self.output_dongle.off.x-self.output_dongle.r,self.y+self.h/2+self.output_dongle.off.y-self.output_dongle.r,self.output_dongle.r*2,self.output_dongle.r*2);
+        base.x = self.x+self.w/2+self.output_dongle.off.x;
+        base.y = self.y+self.h/2+self.output_dongle.off.y;
+        from.x = self.output_dongle.off.x;
+        from.y = self.output_dongle.off.y;
+        safenormvec(from,1,from);
+        target.x = -from.y;
+        target.y = from.x;
+        ctx.drawImage(dongle_img,base.x-self.output_dongle.r,base.y-self.output_dongle.r,self.output_dongle.r*2,self.output_dongle.r*2);
+        ctx.beginPath();
+        ctx.moveTo(base.x+target.x*5,base.y+target.y*5);
+        ctx.lineTo(base.x+  from.x*5,base.y+  from.y*5);
+        ctx.lineTo(base.x-target.x*5,base.y-target.y*5);
+        ctx.stroke();
+      }
     }
     self.drawBlob = function()
     {
@@ -953,6 +984,7 @@ var GamePlayScene = function(game, stage)
       ctx.fillText(self.title,self.x+self.w/2,self.y-10);
     }
 
+    var base = {x:0,y:0};
     var from = {x:0,y:0};
     var target = {x:0,y:0};
     var vel = {x:0,y:0};
