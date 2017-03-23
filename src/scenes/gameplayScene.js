@@ -239,11 +239,14 @@ var GamePlayScene = function(game, stage)
       ctx.strokeRect(self.graph_x,self.graph_y,self.graph_w,self.graph_h);
 
       ctx.lineWidth = 1;
-      ctx.fillText("||",self.pause_btn.x+2,self.pause_btn.y+10);
+      if(full_pause)
+      ctx.fillText("||",self.pause_btn.x+10,self.pause_btn.y+10);
+      else
+      ctx.fillText(">",self.pause_btn.x+10,self.pause_btn.y+10);
       ctx.strokeRect(self.pause_btn.x,self.pause_btn.y,self.pause_btn.w,self.pause_btn.h);
-      ctx.fillText(">",self.advance_btn.x+2,self.advance_btn.y+10);
+      ctx.fillText("->",self.advance_btn.x+10,self.advance_btn.y+10);
       ctx.strokeRect(self.advance_btn.x,self.advance_btn.y,self.advance_btn.w,self.advance_btn.h);
-      ctx.fillText("<",self.reset_btn.x+2,self.reset_btn.y+10);
+      ctx.fillText("<-",self.reset_btn.x+10,self.reset_btn.y+10);
       ctx.strokeRect(self.reset_btn.x,self.reset_btn.y,self.reset_btn.w,self.reset_btn.h);
     }
   }
@@ -369,32 +372,45 @@ var GamePlayScene = function(game, stage)
 
     self.filter = function()
     {
-      if(!selected_module) return;
-      dragger.filter(self);
+      var hit = false;
+      if(!selected_module) return false;
 
-      keyer.filter(self.title_box);
-      dragger.filter(self.title_box);
+      if(dragger.filter(self)) hit = true;
+
+      if(keyer.filter(self.title_box)) hit = true;
+      if(dragger.filter(self.title_box)) hit = true;
       blurer.filter(self.title_box);
 
-      keyer.filter(self.v_box);
-      dragger.filter(self.v_box);
+      if(keyer.filter(self.v_box)) hit = true;
+      if(dragger.filter(self.v_box)) hit = true;
       blurer.filter(self.v_box);
 
-      keyer.filter(self.min_box);
-      dragger.filter(self.min_box);
+      if(keyer.filter(self.min_box)) hit = true;
+      if(dragger.filter(self.min_box)) hit = true;
       blurer.filter(self.min_box);
 
-      keyer.filter(self.max_box);
-      dragger.filter(self.max_box);
+      if(keyer.filter(self.max_box)) hit = true;
+      if(dragger.filter(self.max_box)) hit = true;
       blurer.filter(self.max_box);
 
-      clicker.filter(self.pool_box);
-      clicker.filter(self.graph_box);
-      clicker.filter(self.operator_box_mul);
-      clicker.filter(self.operator_box_div);
-      clicker.filter(self.sign_box_pos);
-      clicker.filter(self.sign_box_neg);
+      if(clicker.filter(self.pool_box)) hit = true;
+      if(clicker.filter(self.graph_box)) hit = true;
+      if(clicker.filter(self.operator_box_mul)) hit = true;
+      if(clicker.filter(self.operator_box_div)) hit = true;
+      if(clicker.filter(self.sign_box_pos)) hit = true;
+      if(clicker.filter(self.sign_box_neg)) hit = true;
+
+      return hit;
     }
+
+    self.unfocus = function()
+    {
+      if(self.title_box.focused) self.title_box.blur();
+      if(self.v_box.focused)     self.v_box.blur();
+      if(self.min_box.focused)   self.min_box.blur();
+      if(self.max_box.focused)   self.max_box.blur();
+    }
+
     self.draw = function()
     {
       ctx.strokeRect(self.x,self.y,self.w,self.h);
@@ -1132,7 +1148,7 @@ var GamePlayScene = function(game, stage)
     )
 
     add_module_btn = new btn();
-    add_module_btn.w = 20;
+    add_module_btn.w = 50;
     add_module_btn.h = 20;
     add_module_btn.x = 10;
     add_module_btn.y = 10;
@@ -1153,15 +1169,15 @@ var GamePlayScene = function(game, stage)
 
     //kind of a hack- just placeholder that gets checked by modules themselves
     remove_module_btn = new btn();
-    remove_module_btn.w = 20;
+    remove_module_btn.w = 50;
     remove_module_btn.h = 20;
     remove_module_btn.x = 10;
     remove_module_btn.y = add_module_btn.y+add_module_btn.h+10;
 
     print_btn = new btn();
-    print_btn.w = 20;
+    print_btn.w = 60;
     print_btn.h = 20;
-    print_btn.x = canv.width-30;
+    print_btn.x = canv.width-print_btn.w-10;
     print_btn.y = 10;
     print_btn.click = function(evt)
     {
@@ -1169,9 +1185,9 @@ var GamePlayScene = function(game, stage)
     }
 
     load_btn = new btn();
-    load_btn.w = 20;
-    load_btn.h = 20;
-    load_btn.x = canv.width-30;
+    load_btn.w = 60;
+    load_btn.h = 40;
+    load_btn.x = canv.width-load_btn.w-10;
     load_btn.y = 40;
     load_btn.click = function(evt)
     {
@@ -1180,6 +1196,7 @@ var GamePlayScene = function(game, stage)
         load_next_template();
         resetGraph();
         selected_module = 0;
+        s_editor.unfocus();
       }
     }
   };
@@ -1254,24 +1271,27 @@ var GamePlayScene = function(game, stage)
 
   self.tick = function()
   {
-    for(var i = 0; i < modules.length; i++)
-      dragger.filter(modules[i].input_dongle);
-    for(var i = 0; i < modules.length; i++)
-      dragger.filter(modules[i].output_dongle);
-    for(var i = 0; i < modules.length; i++)
-    {
-      hoverer.filter(modules[i]);
-      dragger.filter(modules[i]);
-    }
-    dragger.filter(add_module_btn);
     var clicked = false;
+    if(s_editor.filter())                   clicked = true;
+    if(dragger.filter(speed_slider))        clicked = true;
     if(clicker.filter(s_graph.pause_btn))   clicked = true;
     if(clicker.filter(s_graph.advance_btn)) clicked = true;
     if(clicker.filter(s_graph.reset_btn))   clicked = true;
     if(clicker.filter(print_btn))           clicked = true;
     if(clicker.filter(load_btn))            clicked = true;
-    s_editor.filter();
-    if(dragger.filter(speed_slider))        clicked = true;
+    if(dragger.filter(add_module_btn))      clicked = true;
+    if(!clicked)
+    {
+      for(var i = 0; i < modules.length; i++)
+        dragger.filter(modules[i].input_dongle);
+      for(var i = 0; i < modules.length; i++)
+        dragger.filter(modules[i].output_dongle);
+      for(var i = 0; i < modules.length; i++)
+      {
+        hoverer.filter(modules[i]);
+        dragger.filter(modules[i]);
+      }
+    }
     if(!clicked) dragger.filter(s_dragger);
 
     clicker.flush();
@@ -1323,7 +1343,7 @@ var GamePlayScene = function(game, stage)
     ctx.fillText("Save",print_btn.x+print_btn.w-2,print_btn.y+10);
     ctx.strokeRect(print_btn.x,print_btn.y,print_btn.w,print_btn.h);
     ctx.fillText("Load Next",load_btn.x+load_btn.w-2,load_btn.y+10);
-    ctx.fillText("("+load_template_i+"/"+(templates.length-1)+")",load_btn.x+2,load_btn.y+30);
+    ctx.fillText("("+load_template_i+"/"+(templates.length-1)+")",load_btn.x+load_btn.w-2,load_btn.y+30);
     ctx.strokeRect(load_btn.x,load_btn.y,load_btn.w,load_btn.h);
 
     ctx.textAlign = "center";
