@@ -133,7 +133,7 @@ var GamePlayScene = function(game, stage)
   glob_img.context.stroke();
 
   var precision = 2;
-  var predict = true;
+  var predict = false;
 
   var graph = function()
   {
@@ -152,7 +152,13 @@ var GamePlayScene = function(game, stage)
     self.pause_btn = new btn();
     self.pause_btn.click = function(evt)
     {
-      if(!dragging_obj) full_pause = !full_pause;
+      if(!dragging_obj)
+      {
+        if(!full_pause && t_i >= t_max-1)
+          resetGraph();
+        else
+          full_pause = !full_pause;
+      }
     }
 
     self.advance_btn = new btn();
@@ -203,16 +209,16 @@ var GamePlayScene = function(game, stage)
         x = self.graph_x;
         y = self.graph_y+self.graph_h;
         ctx.beginPath();
-        if(!isNaN(modules[i].plot[0])) y = self.graph_y+self.graph_h - mapVal(modules[i].min,modules[i].max,0,1,modules[i].plot[0])*self.graph_h;
+        if(!isNaN(modules[i].plot[0])) y = self.graph_y+self.graph_h - clamp(0,1,mapVal(modules[i].min,modules[i].max,0,1,modules[i].plot[0]))*self.graph_h;
         ctx.moveTo(x,y);
-        for(var j = 0; j < t_max; j++)
+        for(var j = 0; j <= t_i; j++)
         {
           x = self.graph_x + (j/(t_max-1)) * self.graph_w;
-          if(!isNaN(modules[i].plot[j])) y = self.graph_y+self.graph_h - (mapVal(modules[i].min,modules[i].max,0,1,modules[i].plot[j])*self.graph_h);
+          if(!isNaN(modules[i].plot[j])) y = self.graph_y+self.graph_h - (clamp(0,1,mapVal(modules[i].min,modules[i].max,0,1,modules[i].plot[j]))*self.graph_h);
           ctx.lineTo(x,y);
           if(j == t_i)
           {
-            if(!isNaN(modules[i].prev_plot)) y = self.graph_y+self.graph_h - (mapVal(modules[i].min,modules[i].max,0,1,modules[i].prev_plot)*self.graph_h);
+            if(!isNaN(modules[i].prev_plot)) y = self.graph_y+self.graph_h - (clamp(0,1,mapVal(modules[i].min,modules[i].max,0,1,modules[i].prev_plot))*self.graph_h);
             ctx.lineTo(x,y);
           }
         }
@@ -674,6 +680,8 @@ var GamePlayScene = function(game, stage)
     self.v_default = 1;
     self.v = 1;
     self.v_temp = 1;
+    self.v_lag = self.v;
+    self.v_vel = 0;
     self.min = 0;
     self.max =  10;
     self.pool = 1;
@@ -833,7 +841,7 @@ var GamePlayScene = function(game, stage)
       var zp = 0;
       if(self.min != self.max)
       {
-        p  = clamp(0,1,mapVal(self.min,self.max,0,1,self.v));
+        p  = clamp(0,1,mapVal(self.min,self.max,0,1,self.v_lag));
         zp = mapVal(self.min,self.max,0,1,clamp(self.min,self.max,0));
       }
 
@@ -998,7 +1006,7 @@ var GamePlayScene = function(game, stage)
         t_t = clamp(0,1,(1-(advance_timer/advance_timer_max))-0.5);
         s *= bounce[floor(t_t*bounce.length)];
       }
-      else
+      else if(self.output_dongle.attachment)
       {
         t_t = 1-(advance_timer/advance_timer_max);
         s *= bounce[floor(t_t*bounce.length)];
@@ -1100,6 +1108,11 @@ var GamePlayScene = function(game, stage)
         self.input_dongle.off.x = -20;
         self.input_dongle.off.y = 0;
       }
+
+      //v bounce
+      self.v_vel += (self.v-self.v_lag)/5.;
+      self.v_lag += self.v_vel;
+      self.v_vel *= 0.9;
     }
   }
 
@@ -1245,7 +1258,8 @@ var GamePlayScene = function(game, stage)
 
   var flow = function()
   {
-    t_i = (t_i+1)%t_max;
+    if(t_i < t_max) t_i++;
+    //t_i = (t_i+1)%t_max;
 
     for(var i = 0; i < modules.length; i++)
       modules[i].prev_plot = modules[i].plot[t_i];
@@ -1322,6 +1336,7 @@ var GamePlayScene = function(game, stage)
       s_editor.max_box.focused
     )
       should_pause = true;
+    if(t_i >= t_max-1) should_pause = true;
     if(drag_pause) should_pause = true;
     if(full_pause && advance_timer == advance_timer_max) should_pause = true;
     if(!should_pause)
@@ -1379,6 +1394,7 @@ var GamePlayScene = function(game, stage)
       s_editor.max_box.focused
     )
       tmp_pause = true;
+    if(t_i >= t_max-1) tmp_pause = true;
     if(drag_pause || full_pause || tmp_pause)
     {
       ctx.fillStyle = "rgba(0,0,0,0.05)";
