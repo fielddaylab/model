@@ -927,18 +927,43 @@ var GamePlayScene = function(game, stage)
           glob_0.y = self.y+self.h/2;
           glob_1.x = self.x+self.w/2;
           glob_1.y = self.y+self.h/2;
+
+          glob_2.x = self.x+self.w/2+self.output_dongle.off.x;
+          glob_2.y = self.y+self.h/2+self.output_dongle.off.y;
+          glob_3.x = self.output_dongle.attachment.x+self.output_dongle.attachment.w/2;
+          glob_3.y = self.output_dongle.attachment.y+self.output_dongle.attachment.h/2;
         }
         else
         {
-          glob_0.x = self.input_dongle.attachment.x+self.input_dongle.attachment.w/2;
-          glob_0.y = self.input_dongle.attachment.y+self.input_dongle.attachment.h/2;
-          glob_1.x = self.x+self.w/2+self.input_dongle.off.x;
-          glob_1.y = self.y+self.h/2+self.input_dongle.off.y;
+          if(t_t < 0.5)
+          {
+            t_t *= 2;
+            glob_0.x = self.input_dongle.attachment.x+self.input_dongle.attachment.w/2;
+            glob_0.y = self.input_dongle.attachment.y+self.input_dongle.attachment.h/2;
+            glob_1.x = self.x+self.w/2+self.input_dongle.off.x;
+            glob_1.y = self.y+self.h/2+self.input_dongle.off.y;
+
+            glob_2.x = self.x+self.w/2;
+            glob_2.y = self.y+self.h/2;
+            glob_3.x = self.x+self.w/2;
+            glob_3.y = self.y+self.h/2;
+          }
+          else
+          {
+            t_t = (t_t-0.5)*2;
+
+            glob_0.x = self.x+self.w/2;
+            glob_0.y = self.y+self.h/2;
+            glob_1.x = self.x+self.w/2;
+            glob_1.y = self.y+self.h/2;
+
+            glob_2.x = self.x+self.w/2+self.output_dongle.off.x;
+            glob_2.y = self.y+self.h/2+self.output_dongle.off.y;
+            glob_3.x = self.output_dongle.attachment.x+self.output_dongle.attachment.w/2;
+            glob_3.y = self.output_dongle.attachment.y+self.output_dongle.attachment.h/2;
+          }
         }
-        glob_2.x = self.x+self.w/2+self.output_dongle.off.x;
-        glob_2.y = self.y+self.h/2+self.output_dongle.off.y;
-        glob_3.x = self.output_dongle.attachment.x+self.output_dongle.attachment.w/2;
-        glob_3.y = self.output_dongle.attachment.y+self.output_dongle.attachment.h/2;
+
         d_01 = tldist(glob_0,glob_1);
         d_12 = tldist(glob_1,glob_2);
         d_23 = tldist(glob_2,glob_3);
@@ -1109,7 +1134,6 @@ var GamePlayScene = function(game, stage)
         (!self.input_dongle.attachment && self.output_dongle.attachment && (t < self.last_t || t == 0))
       )
       {
-        console.log("a");
         self.val_s = 0.75;
         self.val_s_vel = 0.25;
       }
