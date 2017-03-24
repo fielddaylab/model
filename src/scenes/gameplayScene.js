@@ -164,7 +164,7 @@ var GamePlayScene = function(game, stage)
     self.advance_btn = new btn();
     self.advance_btn.click = function(evt)
     {
-      if(!dragging_obj && advance_timer == advance_timer_max) advance_timer--;
+      if(!dragging_obj && advance_timer == advance_timer_max && t_i < t_max-1) advance_timer--;
     }
 
     self.reset_btn = new btn();
@@ -693,6 +693,14 @@ var GamePlayScene = function(game, stage)
     self.cache_const = 0;
     self.cache_delta = 0;
 
+    self.blob_s = 0;
+    self.blob_s_vel = 0.5;
+
+    self.val_s = 0.75;
+    self.val_s_vel = 0.25;
+
+    self.last_t = 1;
+
     self.prev_plot = 0;
     self.plot = [];
 
@@ -756,16 +764,6 @@ var GamePlayScene = function(game, stage)
     var d_t = 0;
     var d_cur = 0;
     var t_t = 0;
-    var bounce = [];
-    var bounce_s = 1;
-    var bounce_vel = 0.3;
-    for(var i = 0; i < 100; i++)
-    {
-      bounce[i] = bounce_s;
-      bounce_s += bounce_vel;
-      bounce_vel += (1-bounce_s)/8.;
-      bounce_vel *= 0.85;
-    }
 
     self.drawLines = function()
     {
@@ -979,7 +977,7 @@ var GamePlayScene = function(game, stage)
 
         var x = lerp(src.x,dst.x,t);
         var y = lerp(src.y,dst.y,t);
-        var s = bounce[floor(t_t*bounce.length)];
+        var s = self.blob_s;
         var ts = 20;
         ctx.drawImage(glob_img,x-s*ts/2,y-s*ts/2,s*ts,s*ts);
         ctx.fillStyle = "#000000";
@@ -1000,17 +998,7 @@ var GamePlayScene = function(game, stage)
     }
     self.drawValue = function()
     {
-      var s = module_inner_s;
-      if(self.input_dongle.attachment && self.output_dongle.attachment)
-      {
-        t_t = clamp(0,1,(1-(advance_timer/advance_timer_max))-0.5);
-        s *= bounce[floor(t_t*bounce.length)];
-      }
-      else if(self.output_dongle.attachment)
-      {
-        t_t = 1-(advance_timer/advance_timer_max);
-        s *= bounce[floor(t_t*bounce.length)];
-      }
+      var s = module_inner_s*self.val_s;
       ctx.drawImage(inner_module_img,self.x+self.w/2-s/2,self.y+self.h/2-s/2,s,s);
       ctx.fillStyle = "#000000"
       ctx.fillText(fdisp(self.v,2),self.x+self.w/2,self.y+self.h/2+5);
@@ -1109,10 +1097,36 @@ var GamePlayScene = function(game, stage)
         self.input_dongle.off.y = 0;
       }
 
-      //v bounce
+      //bounce
+      var t = 1-(advance_timer/advance_timer_max);
+
       self.v_vel += (self.v-self.v_lag)/5.;
       self.v_lag += self.v_vel;
       self.v_vel *= 0.9;
+
+      if(
+        ( self.input_dongle.attachment && self.output_dongle.attachment && self.last_t < 0.5 && t >= 0.5) ||
+        (!self.input_dongle.attachment && self.output_dongle.attachment && (t < self.last_t || t == 0))
+      )
+      {
+        console.log("a");
+        self.val_s = 0.75;
+        self.val_s_vel = 0.25;
+      }
+      self.val_s_vel += (1-self.val_s)/5.;
+      self.val_s += self.val_s_vel;
+      self.val_s_vel *= 0.9;
+
+      if(t < self.last_t || t == 0)
+      {
+        self.blob_s = 0;
+        self.blob_s_vel = 0.5;
+      }
+      self.blob_s_vel += (1-self.blob_s)/5.;
+      self.blob_s += self.blob_s_vel;
+      self.blob_s_vel *= 0.9;
+
+      self.last_t = t;
     }
   }
 
