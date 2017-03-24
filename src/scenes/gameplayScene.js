@@ -225,7 +225,7 @@ var GamePlayScene = function(game, stage)
         ctx.beginPath();
         if(!isNaN(modules[i].plot[0])) y = self.graph_y+self.graph_h - clamp(0,1,mapVal(modules[i].min,modules[i].max,0,1,modules[i].plot[0]))*self.graph_h;
         ctx.moveTo(x,y);
-        for(var j = 0; j <= t_i; j++)
+        for(var j = 0; j <= t_i || (predict && j < t_max); j++)
         {
           x = self.graph_x + (j/(t_max-1)) * self.graph_w;
           if(!isNaN(modules[i].plot[j])) y = self.graph_y+self.graph_h - (clamp(0,1,mapVal(modules[i].min,modules[i].max,0,1,modules[i].plot[j]))*self.graph_h);
@@ -1200,7 +1200,7 @@ var GamePlayScene = function(game, stage)
     modules = [];
     selected_module = 0;
     dragging_obj = 0;
-    full_pause = true;
+    full_pause = false;
     drag_pause = false;
     advance_timer_max = 100;
     advance_timer = advance_timer_max;
@@ -1475,6 +1475,8 @@ var GamePlayScene = function(game, stage)
     s_graph.draw();
     ctx.textAlign = "left";
     s_editor.draw();
+    ctx.fillStyle = "#000000";
+    ctx.fillText("Speed:",speed_slider.x,speed_slider.y-10);
     speed_slider.draw(canv);
   };
 
