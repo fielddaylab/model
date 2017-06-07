@@ -150,6 +150,38 @@ var GamePlayScene = function(game, stage)
   var precision = 2;
   var predict = false;
 
+  var level = function()
+  {
+    var self = this;
+    self.primary_module_template = "";
+    self.primary_module_target_vals = [];
+    self.setup = noop;
+    self.gen_modules = function()
+    {
+      load_template(self.primary_module_template);
+      for(var i = 0; i < modules.length; i++)
+        modules[i].permanent = true;
+    }
+  }
+
+  var nextLevel = function()
+  {
+    cur_level_i++;
+    if(cur_level_i >= levels.length) cur_level_i = 0;
+    levels[cur_level_i].gen_modules();
+    levels[cur_level_i].setup();
+  }
+
+  var levels = [];
+  var cur_level_i = -1; //call nextLevel once!
+  var l;
+
+  l = new level();
+  l.primary_module_template = "{\"modules\":[{\"title\":\"Tree Height (M)\",\"type\":1,\"v\":1,\"min\":0,\"max\":10,\"pool\":1,\"graph\":1,\"wx\":-0.06874999999999998,\"wy\":0.1875,\"ww\":0.15625,\"wh\":0.15625,\"input\":-1,\"adder\":-1}]}";
+  l.primary_module_target_vals.push([1,2,3,4,5]);
+  l.setup = function() { selected_module = modules[0]; }
+  levels.push(l);
+
   var graph = function()
   {
     var self = this;
@@ -549,6 +581,8 @@ var GamePlayScene = function(game, stage)
       m.max = tm.max;
       m.pool = tm.pool;
       m.graph = tm.graph;
+      m.plot[0] = m.v;
+      m.prev_plot = m.v;
       modules.push(m);
     }
     for(var i = 0; i < t.modules.length; i++)
@@ -711,6 +745,7 @@ var GamePlayScene = function(game, stage)
 
     self.title = "";
     self.color = good_colors[randIntBelow(good_colors.length)];
+    self.permanent = false;
 
     self.type = MODULE_TYPE_BOTH;
     self.v_default = 1;
@@ -1426,6 +1461,8 @@ var GamePlayScene = function(game, stage)
         full_pause = true;
       }
     }
+
+    nextLevel();
   };
 
   var resetGraph = function()
@@ -1609,6 +1646,25 @@ var GamePlayScene = function(game, stage)
     {
       ctx.fillStyle = "rgba(0,0,0,0.05)";
       ctx.fillRect(0,0,canv.width,canv.height);
+    }
+
+    var targets = levels[cur_level_i].primary_module_target_vals;
+    var targets_x = 100;
+    var targets_y = 100;
+    var xpad = 30;
+    var ypad = 20;
+    if(targets && targets.length)
+    {
+      ctx.fillStyle = "#000000";
+      for(var i = 0; i < targets[0].length; i++) //inverted loop
+      {
+        ctx.fillText("Tick "+i+":",targets_x,targets_y+ypad*i);
+        for(var j = 0; j < targets.length; j++)
+        {
+          ctx.fillText(targets[j][i],targets_x+xpad*(j+1),targets_y+ypad*i);
+          ctx.fillText(modules[j].plot[i],targets_x+xpad*(j+1.5),targets_y+ypad*i);
+        }
+      }
     }
 
     s_graph.draw();
