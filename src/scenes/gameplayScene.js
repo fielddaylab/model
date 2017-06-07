@@ -1659,14 +1659,20 @@ var GamePlayScene = function(game, stage)
     var ypad = 20;
     if(targets && targets.length)
     {
-      ctx.fillStyle = "#000000";
       for(var i = 0; i < targets[0].length; i++) //inverted loop
       {
+        ctx.fillStyle = "#000000";
         ctx.fillText("Tick "+i+":",targets_x,targets_y+ypad*i);
         for(var j = 0; j < targets.length; j++)
         {
+          ctx.fillStyle = "#000000";
           ctx.fillText(targets[j][i],targets_x+xpad*(j+1),targets_y+ypad*i);
-          ctx.fillText(modules[j].plot[i],targets_x+xpad*(j+1.5),targets_y+ypad*i);
+          if(t_i >= i)
+          {
+            if(modules[j].plot[i] == targets[j][i]) ctx.fillStyle = "#00FF00";
+            else                                    ctx.fillStyle = "#FF0000";
+            ctx.fillText(modules[j].plot[i],targets_x+xpad*(j+1.5),targets_y+ypad*i);
+          }
         }
       }
     }
