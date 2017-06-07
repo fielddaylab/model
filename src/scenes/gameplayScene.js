@@ -179,7 +179,11 @@ var GamePlayScene = function(game, stage)
   l = new level();
   l.primary_module_template = "{\"modules\":[{\"title\":\"Tree Height (M)\",\"type\":1,\"v\":1,\"min\":0,\"max\":10,\"pool\":1,\"graph\":1,\"wx\":-0.06874999999999998,\"wy\":0.1875,\"ww\":0.15625,\"wh\":0.15625,\"input\":-1,\"adder\":-1}]}";
   l.primary_module_target_vals.push([1,2,3,4,5]);
-  l.setup = function() { selected_module = modules[0]; }
+  l.setup = function()
+  {
+    selected_module = modules[0];
+    s_editor.calc_sub_values();
+  }
   levels.push(l);
 
   var graph = function()
