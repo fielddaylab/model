@@ -1655,27 +1655,76 @@ var GamePlayScene = function(game, stage)
     var targets = levels[cur_level_i].primary_module_target_vals;
     var targets_x = 100;
     var targets_y = 100;
-    var xpad = 30;
+    var xpad = 40;
     var ypad = 20;
     if(targets && targets.length)
     {
+      ctx.textAlign = "left";
+      ctx.strokeRect(targets_x, targets_y, xpad*5, ypad*(targets[0].length+1));
       for(var i = 0; i < targets[0].length; i++) //inverted loop
       {
         ctx.fillStyle = "#000000";
-        ctx.fillText("Tick "+i+":",targets_x,targets_y+ypad*i);
+        ctx.fillText("Tick "+i+":",targets_x+xpad,targets_y+ypad*(i+1));
         for(var j = 0; j < targets.length; j++)
         {
           ctx.fillStyle = "#000000";
-          ctx.fillText(targets[j][i],targets_x+xpad*(j+1),targets_y+ypad*i);
+          ctx.fillText(targets[j][i],targets_x+xpad*(j+2),targets_y+ypad*(i+1));
           if(t_i >= i)
           {
             if(modules[j].plot[i] == targets[j][i]) ctx.fillStyle = "#00FF00";
             else                                    ctx.fillStyle = "#FF0000";
-            ctx.fillText(modules[j].plot[i],targets_x+xpad*(j+1.5),targets_y+ypad*i);
+            ctx.fillText(modules[j].plot[i],targets_x+xpad*(j+2.5),targets_y+ypad*(i+1));
           }
         }
       }
+
+      ctx.lineWidth = 3;
+      var ini_from_x = 350;
+      var ini_from_y = 220;
+      var len = function(i){return (modules[0].plot[i]*10); };
+
+      var from_x = ini_from_x;
+      var from_y = ini_from_y;
+      var to_x = ini_from_x;
+      var to_y = ini_from_y-len(t_i);
+
+      var next_from_x = from_x;
+      var next_from_y = from_y;
+      var next_to_x = to_x;
+      var next_to_y = to_y;
+
+      var t;
+      ctx.beginPath();
+      ctx.moveTo(from_x,from_y);
+      ctx.lineTo(to_x,to_y);
+      for(var i = 1; i < modules[0].plot.length; i++)
+      {
+        next_from_x = ini_from_x;
+        next_from_y = ini_from_y-lerp(len(i-1),len(i),0.5);
+        next_to_y =   next_from_y-10;
+        if(i%2) next_to_x = next_from_x+len(i)*pow(0.9,i*2)*2;
+        else    next_to_x = next_from_x-len(i)*pow(0.9,i*2)*2;
+
+        from_x = ini_from_x;
+        from_y = ini_from_y-len(t_i-1);
+        to_x = ini_from_x;
+        to_y = ini_from_y-len(t_i);
+
+        if(i < t_i) t = 1;
+        else if (i == t_i) t = 1-(advance_timer/advance_timer_max)
+        else t = 0;
+
+        from_x = lerp(from_x, next_from_x, t);
+        from_y = lerp(from_y, next_from_y, t);
+        to_x = lerp(to_x, next_to_x, t);
+        to_y = lerp(to_y, next_to_y, t);
+
+        ctx.moveTo(from_x,from_y);
+        ctx.lineTo(to_x,to_y);
+      }
+      ctx.stroke();
     }
+    ctx.lineWidth = 1;
 
     s_graph.draw();
     ctx.textAlign = "left";
