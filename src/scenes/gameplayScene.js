@@ -177,6 +177,16 @@ var GamePlayScene = function(game, stage)
   var l;
 
   l = new level();
+  l.primary_module_template = "{\"modules\":[{\"title\":\"Tree Height (M)\",\"type\":1,\"v\":1,\"min\":0,\"max\":40,\"pool\":1,\"graph\":1,\"wx\":-0.05312499999999998,\"wy\":-0.19062500000000004,\"ww\":0.15625,\"wh\":0.15625,\"input\":-1,\"adder\":-1},{\"title\":\"Growth Rate (M/T)\",\"type\":2,\"v\":1,\"min\":0,\"max\":10,\"pool\":1,\"graph\":0,\"wx\":0.49687499999999996,\"wy\":-0.19374999999999987,\"ww\":0.15625,\"wh\":0.15625,\"input\":-1,\"adder\":0}]}";
+  l.primary_module_target_vals.push([1,3,5,7,9]);
+  l.setup = function()
+  {
+    selected_module = modules[0];
+    s_editor.calc_sub_values();
+  }
+  levels.push(l);
+
+  l = new level();
   l.primary_module_template = "{\"modules\":[{\"title\":\"Tree Height (M)\",\"type\":1,\"v\":1,\"min\":0,\"max\":10,\"pool\":1,\"graph\":1,\"wx\":-0.06874999999999998,\"wy\":0.1875,\"ww\":0.15625,\"wh\":0.15625,\"input\":-1,\"adder\":-1}]}";
   l.primary_module_target_vals.push([1,2,3,4,5]);
   l.setup = function()
@@ -185,6 +195,7 @@ var GamePlayScene = function(game, stage)
     s_editor.calc_sub_values();
   }
   levels.push(l);
+
 
   var graph = function()
   {
@@ -1656,24 +1667,31 @@ var GamePlayScene = function(game, stage)
     var targets_x = 100;
     var targets_y = 100;
     var xpad = 40;
-    var ypad = 20;
+    var ypad = 14;
     if(targets && targets.length)
     {
-      ctx.textAlign = "left";
-      ctx.strokeRect(targets_x, targets_y, xpad*5, ypad*(targets[0].length+1));
+      ctx.textAlign = "center";
+      ctx.fillStyle = "#000000";
+      ctx.strokeRect(targets_x, targets_y, xpad*5, ypad*(targets[0].length+2));
+      ctx.fillText("time",targets_x+xpad,targets_y+ypad);
+      for(var j = 0; j < targets.length; j++)
+      {
+        ctx.fillText("target",targets_x+xpad*(2+2*j),targets_y+ypad);
+        ctx.fillText("value",targets_x+xpad*(2+2*j+1),targets_y+ypad);
+      }
       for(var i = 0; i < targets[0].length; i++) //inverted loop
       {
         ctx.fillStyle = "#000000";
-        ctx.fillText("Tick "+i+":",targets_x+xpad,targets_y+ypad*(i+1));
+        ctx.fillText(i+":",targets_x+xpad,targets_y+ypad*(i+2)); //time
         for(var j = 0; j < targets.length; j++)
         {
           ctx.fillStyle = "#000000";
-          ctx.fillText(targets[j][i],targets_x+xpad*(j+2),targets_y+ypad*(i+1));
+          ctx.fillText(targets[j][i],targets_x+xpad*(2+2*j),targets_y+ypad*(i+2)); //target
           if(t_i >= i)
           {
             if(modules[j].plot[i] == targets[j][i]) ctx.fillStyle = "#00FF00";
             else                                    ctx.fillStyle = "#FF0000";
-            ctx.fillText(modules[j].plot[i],targets_x+xpad*(j+2.5),targets_y+ypad*(i+1));
+            ctx.fillText(modules[j].plot[i],targets_x+xpad*(2+2*j+1),targets_y+ypad*(i+2)); //value
           }
         }
       }
@@ -1681,7 +1699,7 @@ var GamePlayScene = function(game, stage)
       ctx.lineWidth = 3;
       var ini_from_x = 350;
       var ini_from_y = 220;
-      var len = function(i){return (modules[0].plot[i]*10); };
+      var len = function(i){return (modules[0].plot[i]*5); };
 
       var from_x = ini_from_x;
       var from_y = ini_from_y;
