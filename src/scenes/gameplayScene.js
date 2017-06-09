@@ -28,6 +28,7 @@ var GamePlayScene = function(game, stage)
   var add_object_btn;
   var add_object_btn;
   var remove_module_btn;
+  var next_level_btn;
   var print_btn;
   var load_btn;
   var load_template_i;
@@ -170,6 +171,9 @@ var GamePlayScene = function(game, stage)
     if(cur_level_i >= levels.length) cur_level_i = 0;
     levels[cur_level_i].gen_modules();
     levels[cur_level_i].setup();
+    t_i = 0;
+    advance_timer = advance_timer_max;
+    full_pause = true;
   }
 
   var levels = [];
@@ -181,7 +185,6 @@ var GamePlayScene = function(game, stage)
   l.primary_module_target_vals.push([1,3,5,7,9]);
   l.setup = function()
   {
-    modules[0].lock_move = true;
     modules[0].lock_input = true;
     modules[0].lock_output = true;
     modules[0].lock_value = true;
@@ -189,6 +192,13 @@ var GamePlayScene = function(game, stage)
     modules[0].lock_max = true;
     modules[0].lock_pool = true;
     modules[0].lock_graph = true;
+
+    modules[1].lock_input = true;
+    modules[1].lock_output = true;
+    modules[1].lock_min = true;
+    modules[1].lock_max = true;
+    modules[1].lock_pool = true;
+
     selected_module = modules[0];
     s_editor.calc_sub_values();
   }
@@ -199,11 +209,67 @@ var GamePlayScene = function(game, stage)
   l.primary_module_target_vals.push([1,2,3,4,5]);
   l.setup = function()
   {
+    modules[0].lock_input = true;
+    modules[0].lock_output = true;
+    modules[0].lock_value = true;
+    modules[0].lock_min = true;
+    modules[0].lock_max = true;
+    modules[0].lock_pool = true;
+    modules[0].lock_graph = true;
+
     selected_module = modules[0];
     s_editor.calc_sub_values();
   }
   levels.push(l);
 
+  var draw_tree = function(x,y,tick,t,module)
+  {
+    ctx.lineWidth = 3;
+    var ini_from_x = x;
+    var ini_from_y = y;
+    var len = function(i){return (module.plot[i]*5); };
+
+    var from_x = ini_from_x;
+    var from_y = ini_from_y;
+    var to_x = ini_from_x;
+    var to_y = ini_from_y-len(tick);
+
+    var next_from_x = from_x;
+    var next_from_y = from_y;
+    var next_to_x = to_x;
+    var next_to_y = to_y;
+
+    var frame_t;
+    ctx.beginPath();
+    ctx.moveTo(from_x,from_y);
+    ctx.lineTo(to_x,to_y);
+    for(var i = 1; i < module.plot.length; i++)
+    {
+      next_from_x = ini_from_x;
+      next_from_y = ini_from_y-lerp(len(i-1),len(i),0.5);
+      next_to_y =   next_from_y-10;
+      if(i%2) next_to_x = next_from_x+len(i)*pow(0.9,i*2)*2;
+      else    next_to_x = next_from_x-len(i)*pow(0.9,i*2)*2;
+
+      from_x = ini_from_x;
+      from_y = ini_from_y-len(tick-1);
+      to_x = ini_from_x;
+      to_y = ini_from_y-len(tick);
+
+      if(i < tick) frame_t = 1;
+      else if (i == tick) frame_t = t;
+      else frame_t = 0;
+
+      from_x = lerp(from_x, next_from_x, frame_t);
+      from_y = lerp(from_y, next_from_y, frame_t);
+      to_x = lerp(to_x, next_to_x, frame_t);
+      to_y = lerp(to_y, next_to_y, frame_t);
+
+      ctx.moveTo(from_x,from_y);
+      ctx.lineTo(to_x,to_y);
+    }
+    ctx.stroke();
+  }
 
   var graph = function()
   {
@@ -506,15 +572,15 @@ var GamePlayScene = function(game, stage)
 
       if(selected_module)
       {
-        self.title_box.draw(canv); ctx.fillStyle = "#000000"; ctx.fillText("title", self.title_box.x     + self.title_box.w     + 10, self.title_box.y+20);
-        self.v_box.draw(canv);     ctx.fillStyle = "#000000"; ctx.fillText("val",   self.v_box.x     + self.v_box.w     + 10, self.v_box.y+20);
+        if(!selected_module.primary)    { self.title_box.draw(canv); ctx.fillStyle = "#000000"; ctx.fillText("title", self.title_box.x + self.title_box.w + 10, self.title_box.y+20); }
+        if(!selected_module.lock_value) { self.v_box.draw(canv);     ctx.fillStyle = "#000000"; ctx.fillText("val",   self.v_box.x     + self.v_box.w     + 10, self.v_box.y    +20); }
         if(!selected_module.cache_const)
         {
-          self.min_box.draw(canv);   ctx.fillStyle = "#000000"; ctx.fillText("min",   self.min_box.x   + self.min_box.w   + 10, self.min_box.y+20);
-          self.max_box.draw(canv);   ctx.fillStyle = "#000000"; ctx.fillText("max",   self.max_box.x   + self.max_box.w   + 10, self.max_box.y+20);
+          if(!selected_module.lock_min) { self.min_box.draw(canv);   ctx.fillStyle = "#000000"; ctx.fillText("min",   self.min_box.x   + self.min_box.w   + 10, self.min_box.y+20); }
+          if(!selected_module.lock_max) { self.max_box.draw(canv);   ctx.fillStyle = "#000000"; ctx.fillText("max",   self.max_box.x   + self.max_box.w   + 10, self.max_box.y+20); }
         }
-        if(!selected_module.cache_const) { self.pool_box.draw(canv);  ctx.fillStyle = "#000000"; ctx.fillText("pool",  self.pool_box.x  + self.pool_box.w  + 10, self.pool_box.y+20); }
-        self.graph_box.draw(canv); ctx.fillStyle = "#000000"; ctx.fillText("graph", self.graph_box.x + self.graph_box.w + 10, self.graph_box.y+20);
+        if(!selected_module.cache_const && !selected_module.lock_pool) { self.pool_box.draw(canv);  ctx.fillStyle = "#000000"; ctx.fillText("pool",  self.pool_box.x  + self.pool_box.w  + 10, self.pool_box.y+20); }
+        if(!selected_module.lock_graph)                                { self.graph_box.draw(canv); ctx.fillStyle = "#000000"; ctx.fillText("graph", self.graph_box.x + self.graph_box.w + 10, self.graph_box.y+20); }
 
         if(selected_module.input_dongle.attachment && !selected_module.cache_const)
         {
@@ -838,7 +904,7 @@ var GamePlayScene = function(game, stage)
       if(dragging_obj == self)
       {
         dragging_obj = 0;
-        if(rectCollide(self.x,self.y,self.w,self.h,remove_module_btn.x,remove_module_btn.y,remove_module_btn.w,remove_module_btn.h))
+        if(!self.primary && rectCollide(self.x,self.y,self.w,self.h,remove_module_btn.x,remove_module_btn.y,remove_module_btn.w,remove_module_btn.h))
         {
           if(selected_module == self)
             selected_module = 0;
@@ -1467,6 +1533,25 @@ var GamePlayScene = function(game, stage)
     remove_module_btn.x = 10;
     remove_module_btn.y = add_module_btn.y+add_module_btn.h+10;
 
+    next_level_btn = new btn();
+    next_level_btn.w = 60;
+    next_level_btn.h = 20;
+    next_level_btn.x = 100;
+    next_level_btn.y = 30;
+    next_level_btn.click = function(evt)
+    {
+      var targets = levels[cur_level_i].primary_module_target_vals;
+      var complete = true;
+      if(targets && targets.length)
+      {
+        for(var i = 0; i < targets[0].length; i++) //inverted loop
+          for(var j = 0; j < targets.length; j++)
+            if(t_i < i || modules[j].plot[i] != targets[j][i]) complete = false;
+      }
+      else complete = false;
+      if(complete) nextLevel();
+    }
+
     print_btn = new btn();
     print_btn.w = 60;
     print_btn.h = 20;
@@ -1574,6 +1659,7 @@ var GamePlayScene = function(game, stage)
     if(clicker.filter(s_graph.pause_btn))    clicked = true;
     if(clicker.filter(s_graph.advance_btn))  clicked = true;
     if(clicker.filter(s_graph.reset_btn))    clicked = true;
+    if(clicker.filter(next_level_btn))       clicked = true;
     if(clicker.filter(print_btn))            clicked = true;
     if(clicker.filter(load_btn))             clicked = true;
     if(dragger.filter(add_object_btn))       clicked = true;
@@ -1582,13 +1668,13 @@ var GamePlayScene = function(game, stage)
     if(!clicked)
     {
       for(var i = 0; i < modules.length; i++)
-        dragger.filter(modules[i].input_dongle);
+        if(!modules[i].lock_input) dragger.filter(modules[i].input_dongle);
       for(var i = 0; i < modules.length; i++)
-        dragger.filter(modules[i].output_dongle);
+        if(!modules[i].lock_output) dragger.filter(modules[i].output_dongle);
       for(var i = 0; i < modules.length; i++)
       {
         hoverer.filter(modules[i]);
-        dragger.filter(modules[i]);
+        if(!modules[i].lock_move) dragger.filter(modules[i]);
       }
     }
     if(!clicked) dragger.filter(s_dragger);
@@ -1644,6 +1730,8 @@ var GamePlayScene = function(game, stage)
     ctx.fillText("Remove",remove_module_btn.x+2,remove_module_btn.y+10);
     ctx.strokeRect(remove_module_btn.x,remove_module_btn.y,remove_module_btn.w,remove_module_btn.h);
     ctx.textAlign = "right";
+    ctx.fillText("Next Level",next_level_btn.x+next_level_btn.w-2,next_level_btn.y+10);
+    ctx.strokeRect(next_level_btn.x,next_level_btn.y,next_level_btn.w,next_level_btn.h);
     ctx.fillText("Save",print_btn.x+print_btn.w-2,print_btn.y+10);
     ctx.strokeRect(print_btn.x,print_btn.y,print_btn.w,print_btn.h);
     ctx.fillText("Load Next",load_btn.x+load_btn.w-2,load_btn.y+10);
@@ -1713,51 +1801,7 @@ var GamePlayScene = function(game, stage)
         }
       }
 
-      ctx.lineWidth = 3;
-      var ini_from_x = 350;
-      var ini_from_y = 220;
-      var len = function(i){return (modules[0].plot[i]*5); };
-
-      var from_x = ini_from_x;
-      var from_y = ini_from_y;
-      var to_x = ini_from_x;
-      var to_y = ini_from_y-len(t_i);
-
-      var next_from_x = from_x;
-      var next_from_y = from_y;
-      var next_to_x = to_x;
-      var next_to_y = to_y;
-
-      var t;
-      ctx.beginPath();
-      ctx.moveTo(from_x,from_y);
-      ctx.lineTo(to_x,to_y);
-      for(var i = 1; i < modules[0].plot.length; i++)
-      {
-        next_from_x = ini_from_x;
-        next_from_y = ini_from_y-lerp(len(i-1),len(i),0.5);
-        next_to_y =   next_from_y-10;
-        if(i%2) next_to_x = next_from_x+len(i)*pow(0.9,i*2)*2;
-        else    next_to_x = next_from_x-len(i)*pow(0.9,i*2)*2;
-
-        from_x = ini_from_x;
-        from_y = ini_from_y-len(t_i-1);
-        to_x = ini_from_x;
-        to_y = ini_from_y-len(t_i);
-
-        if(i < t_i) t = 1;
-        else if (i == t_i) t = 1-(advance_timer/advance_timer_max)
-        else t = 0;
-
-        from_x = lerp(from_x, next_from_x, t);
-        from_y = lerp(from_y, next_from_y, t);
-        to_x = lerp(to_x, next_to_x, t);
-        to_y = lerp(to_y, next_to_y, t);
-
-        ctx.moveTo(from_x,from_y);
-        ctx.lineTo(to_x,to_y);
-      }
-      ctx.stroke();
+      draw_tree(350,220,t_i,1-(advance_timer/advance_timer_max),modules[0]);
     }
     ctx.lineWidth = 1;
 
