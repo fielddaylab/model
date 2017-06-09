@@ -156,7 +156,9 @@ var GamePlayScene = function(game, stage)
     var self = this;
     self.primary_module_template = "";
     self.primary_module_target_vals = [];
-    self.setup = noop;
+    self.ready = noop;
+    self.tick = noop;
+    self.draw = noop;
     self.gen_modules = function()
     {
       load_template(self.primary_module_template);
@@ -170,9 +172,8 @@ var GamePlayScene = function(game, stage)
     cur_level_i++;
     if(cur_level_i >= levels.length) cur_level_i = 0;
     levels[cur_level_i].gen_modules();
-    levels[cur_level_i].setup();
-    t_i = 0;
-    advance_timer = advance_timer_max;
+    levels[cur_level_i].ready();
+    resetGraph();
     full_pause = true;
   }
 
@@ -183,7 +184,7 @@ var GamePlayScene = function(game, stage)
   l = new level();
   l.primary_module_template = "{\"modules\":[{\"title\":\"Tree Height (M)\",\"type\":1,\"v\":1,\"min\":0,\"max\":40,\"pool\":1,\"graph\":1,\"wx\":-0.05312499999999998,\"wy\":-0.19062500000000004,\"ww\":0.15625,\"wh\":0.15625,\"input\":-1,\"adder\":-1},{\"title\":\"Growth Rate (M/T)\",\"type\":2,\"v\":1,\"min\":0,\"max\":10,\"pool\":1,\"graph\":0,\"wx\":0.49687499999999996,\"wy\":-0.19374999999999987,\"ww\":0.15625,\"wh\":0.15625,\"input\":-1,\"adder\":0}]}";
   l.primary_module_target_vals.push([1,3,5,7,9]);
-  l.setup = function()
+  l.ready = function()
   {
     modules[0].lock_input = true;
     modules[0].lock_output = true;
@@ -202,12 +203,21 @@ var GamePlayScene = function(game, stage)
     selected_module = modules[0];
     s_editor.calc_sub_values();
   }
+  l.draw = function()
+  {
+    var targets = levels[cur_level_i].primary_module_target_vals[0];
+    for(var i = 0; i < targets.length; i++)
+    {
+      draw_tree(lerp(250,500,i/(targets.length-1)),120,i,0,targets);
+    }
+    draw_tree(lerp(250,500,(t_i+(1-(advance_timer/advance_timer_max)))/(targets.length-1)),120,t_i,1-(advance_timer/advance_timer_max),modules[0].plot);
+  }
   levels.push(l);
 
   l = new level();
   l.primary_module_template = "{\"modules\":[{\"title\":\"Tree Height (M)\",\"type\":1,\"v\":1,\"min\":0,\"max\":10,\"pool\":1,\"graph\":1,\"wx\":-0.06874999999999998,\"wy\":0.1875,\"ww\":0.15625,\"wh\":0.15625,\"input\":-1,\"adder\":-1}]}";
   l.primary_module_target_vals.push([1,2,3,4,5]);
-  l.setup = function()
+  l.ready = function()
   {
     modules[0].lock_input = true;
     modules[0].lock_output = true;
@@ -222,17 +232,21 @@ var GamePlayScene = function(game, stage)
   }
   levels.push(l);
 
-  var draw_tree = function(x,y,tick,t,module)
+  var draw_tree = function(x,y,tick,t,plot)
   {
     ctx.lineWidth = 3;
     var ini_from_x = x;
     var ini_from_y = y;
-    var len = function(i){return (module.plot[i]*5); };
+    var len = function(i){return (plot[i]*5); };
 
     var from_x = ini_from_x;
     var from_y = ini_from_y;
     var to_x = ini_from_x;
-    var to_y = ini_from_y-len(tick);
+    var to_y;
+    if(!isNaN(len(tick+1)))
+      to_y = ini_from_y-lerp(len(tick),len(tick+1),t);
+    else
+      to_y = ini_from_y-len(tick);
 
     var next_from_x = from_x;
     var next_from_y = from_y;
@@ -243,7 +257,7 @@ var GamePlayScene = function(game, stage)
     ctx.beginPath();
     ctx.moveTo(from_x,from_y);
     ctx.lineTo(to_x,to_y);
-    for(var i = 1; i < module.plot.length; i++)
+    for(var i = 1; i < plot.length; i++)
     {
       next_from_x = ini_from_x;
       next_from_y = ini_from_y-lerp(len(i-1),len(i),0.5);
@@ -1584,6 +1598,8 @@ var GamePlayScene = function(game, stage)
 
   var resetGraph = function()
   {
+    var old_predict = predict;
+    predict = true;
     for(var j = 0; j < 1 || (predict && j < 2); j++)
     {
       t_i = 0;
@@ -1601,6 +1617,7 @@ var GamePlayScene = function(game, stage)
           flow();
       }
     }
+    predict = old_predict;
   }
 
   var calc_caches = function()
@@ -1800,9 +1817,8 @@ var GamePlayScene = function(game, stage)
           }
         }
       }
-
-      draw_tree(350,220,t_i,1-(advance_timer/advance_timer_max),modules[0]);
     }
+    levels[cur_level_i].draw();
     ctx.lineWidth = 1;
 
     s_graph.draw();
