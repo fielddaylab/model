@@ -169,7 +169,10 @@ var GamePlayScene = function(game, stage)
     {
       load_template(self.primary_module_template);
       for(var i = 0; i < modules.length; i++)
+      {
         modules[i].primary = true;
+        modules[i].primary_index = i;
+      }
     }
   }
 
@@ -876,6 +879,7 @@ var GamePlayScene = function(game, stage)
     self.title = "";
     self.color = good_colors[randIntBelow(good_colors.length)];
     self.primary = false;
+    self.primary_index = 0;
     self.lock_move = false;
     self.lock_input = false;
     self.lock_output = false;
@@ -1298,9 +1302,17 @@ var GamePlayScene = function(game, stage)
     {
       var s = module_inner_s*self.val_s;
       ctx.drawImage(inner_module_img,self.x+self.w/2-s/2,self.y+self.h/2-s/2,s,s);
+      var targets = levels[cur_level_i].primary_module_target_vals;
       ctx.fillStyle = "#000000"
-      ctx.fillText(fdisp(self.v,2),self.x+self.w/2,self.y+self.h/2+5);
       ctx.fillText(self.title,self.x+self.w/2,self.y-10);
+      if(self.primary && targets[self.primary_index])
+      {
+        if(targets[self.primary_index][t_i] == self.v)
+          ctx.fillStyle = "#00FF00";
+        else
+          ctx.fillStyle = "#FF0000";
+      }
+      ctx.fillText(fdisp(self.v,2),self.x+self.w/2,self.y+self.h/2+5);
 
       var t = 1-(advance_timer/advance_timer_max);
       if(self.cache_delta > 0)
