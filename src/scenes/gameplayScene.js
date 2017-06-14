@@ -159,6 +159,12 @@ var GamePlayScene = function(game, stage)
     self.ready = noop;
     self.tick = noop;
     self.draw = noop;
+    self.add_object_enabled = true;
+    self.add_relationship_enabled = true;
+    self.add_module_enabled = true;
+    self.remove_enabled = true;
+    self.save_enabled = false;
+    self.load_enabled = false;
     self.gen_modules = function()
     {
       load_template(self.primary_module_template);
@@ -197,6 +203,10 @@ var GamePlayScene = function(game, stage)
   l = new level();
   l.primary_module_template = "{\"modules\":[{\"title\":\"Tree Height (M)\",\"type\":1,\"v\":1,\"min\":0,\"max\":40,\"pool\":1,\"graph\":1,\"wx\":-0.05312499999999998,\"wy\":-0.19062500000000004,\"ww\":0.15625,\"wh\":0.15625,\"input\":-1,\"adder\":-1},{\"title\":\"Growth Rate (M/T)\",\"type\":2,\"v\":1,\"min\":0,\"max\":10,\"pool\":1,\"graph\":0,\"wx\":0.49687499999999996,\"wy\":-0.19374999999999987,\"ww\":0.15625,\"wh\":0.15625,\"input\":-1,\"adder\":0}]}";
   l.primary_module_target_vals.push([1,3,5,7,9]);
+  l.add_object_enabled = false;
+  l.add_relationship_enabled = false;
+  l.add_module_enabled = false;
+  l.remove_enabled = false;
   l.ready = function()
   {
     modules[0].lock_input = true;
@@ -1533,6 +1543,7 @@ var GamePlayScene = function(game, stage)
     add_object_btn.y = 10;
     add_object_btn.shouldDrag = function(evt)
     {
+      if(levels[cur_level_i] && !levels[cur_level_i].add_object_enabled) return false;
       return dragOutModule(MODULE_TYPE_OBJECT,add_object_btn,evt);
     }
 
@@ -1543,6 +1554,7 @@ var GamePlayScene = function(game, stage)
     add_relationship_btn.y = add_object_btn.y+add_object_btn.h+10;
     add_relationship_btn.shouldDrag = function(evt)
     {
+      if(levels[cur_level_i] && !levels[cur_level_i].add_relationship_enabled) return false;
       return dragOutModule(MODULE_TYPE_RELATIONSHIP,add_relationship_btn,evt);
     }
 
@@ -1553,6 +1565,7 @@ var GamePlayScene = function(game, stage)
     add_module_btn.y = add_relationship_btn.y+add_relationship_btn.h+10;
     add_module_btn.shouldDrag = function(evt)
     {
+      if(levels[cur_level_i] && !levels[cur_level_i].add_module_enabled) return false;
       return dragOutModule(MODULE_TYPE_BOTH,add_module_btn,evt);
     }
 
@@ -1570,6 +1583,7 @@ var GamePlayScene = function(game, stage)
     next_level_btn.y = 80;
     next_level_btn.click = function(evt)
     {
+      if(levels[cur_level_i] && !levels[cur_level_i].load_enabled) return false;
       if(levelComplete()) nextLevel();
     }
 
@@ -1580,6 +1594,7 @@ var GamePlayScene = function(game, stage)
     print_btn.y = 10;
     print_btn.click = function(evt)
     {
+      if(levels[cur_level_i] && !levels[cur_level_i].save_enabled) return false;
       if(!dragging_obj) print_template();
     }
 
@@ -1745,14 +1760,26 @@ var GamePlayScene = function(game, stage)
     ctx.strokeStyle = "#000000";
     ctx.lineWidth = 1;
     ctx.textAlign = "left";
-    ctx.fillText("+Object",add_object_btn.x+2,add_object_btn.y+10);
-    ctx.strokeRect(add_object_btn.x,add_object_btn.y,add_object_btn.w,add_object_btn.h);
-    ctx.fillText("+Action",add_relationship_btn.x+2,add_relationship_btn.y+10);
-    ctx.strokeRect(add_relationship_btn.x,add_relationship_btn.y,add_relationship_btn.w,add_relationship_btn.h);
-    //ctx.fillText("+Module",add_module_btn.x+2,add_module_btn.y+10);
-    //ctx.strokeRect(add_module_btn.x,add_module_btn.y,add_module_btn.w,add_module_btn.h);
-    ctx.fillText("Remove",remove_module_btn.x+2,remove_module_btn.y+10);
-    ctx.strokeRect(remove_module_btn.x,remove_module_btn.y,remove_module_btn.w,remove_module_btn.h);
+    if(!levels[cur_level_i] || levels[cur_level_i].add_object_enabled)
+    {
+      ctx.fillText("+Object",add_object_btn.x+2,add_object_btn.y+10);
+      ctx.strokeRect(add_object_btn.x,add_object_btn.y,add_object_btn.w,add_object_btn.h);
+    }
+    if(!levels[cur_level_i] || levels[cur_level_i].add_relationship_enabled)
+    {
+      ctx.fillText("+Action",add_relationship_btn.x+2,add_relationship_btn.y+10);
+      ctx.strokeRect(add_relationship_btn.x,add_relationship_btn.y,add_relationship_btn.w,add_relationship_btn.h);
+    }
+    if(!levels[cur_level_i] || levels[cur_level_i].add_module_enabled)
+    {
+      ctx.fillText("+Module",add_module_btn.x+2,add_module_btn.y+10);
+      ctx.strokeRect(add_module_btn.x,add_module_btn.y,add_module_btn.w,add_module_btn.h);
+    }
+    if(!levels[cur_level_i] || levels[cur_level_i].remove_enabled)
+    {
+      ctx.fillText("Remove",remove_module_btn.x+2,remove_module_btn.y+10);
+      ctx.strokeRect(remove_module_btn.x,remove_module_btn.y,remove_module_btn.w,remove_module_btn.h);
+    }
     ctx.fillStyle = "#AAAAAA";
     if(!levelComplete())
       ctx.fillRect(next_level_btn.x,next_level_btn.y,next_level_btn.w,next_level_btn.h);
@@ -1760,11 +1787,17 @@ var GamePlayScene = function(game, stage)
     ctx.textAlign = "right";
     ctx.fillText("Next Level",next_level_btn.x+next_level_btn.w-2,next_level_btn.y+10);
     ctx.strokeRect(next_level_btn.x,next_level_btn.y,next_level_btn.w,next_level_btn.h);
-    ctx.fillText("Save",print_btn.x+print_btn.w-2,print_btn.y+10);
-    ctx.strokeRect(print_btn.x,print_btn.y,print_btn.w,print_btn.h);
-    ctx.fillText("Load Next",load_btn.x+load_btn.w-2,load_btn.y+10);
-    ctx.fillText("("+load_template_i+"/"+(templates.length-1)+")",load_btn.x+load_btn.w-2,load_btn.y+30);
-    ctx.strokeRect(load_btn.x,load_btn.y,load_btn.w,load_btn.h);
+    if(!levels[cur_level_i] || levels[cur_level_i].save_enabled)
+    {
+      ctx.fillText("Save",print_btn.x+print_btn.w-2,print_btn.y+10);
+      ctx.strokeRect(print_btn.x,print_btn.y,print_btn.w,print_btn.h);
+    }
+    if(!levels[cur_level_i] || levels[cur_level_i].load_enabled)
+    {
+      ctx.fillText("Load Next",load_btn.x+load_btn.w-2,load_btn.y+10);
+      ctx.fillText("("+load_template_i+"/"+(templates.length-1)+")",load_btn.x+load_btn.w-2,load_btn.y+30);
+      ctx.strokeRect(load_btn.x,load_btn.y,load_btn.w,load_btn.h);
+    }
 
     ctx.textAlign = "center";
 
