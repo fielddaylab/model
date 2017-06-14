@@ -167,6 +167,19 @@ var GamePlayScene = function(game, stage)
     }
   }
 
+  var levelComplete = function()
+  {
+    var targets = levels[cur_level_i].primary_module_target_vals;
+    if(targets && targets.length)
+    {
+      for(var i = 0; i < targets[0].length; i++) //inverted loop
+        for(var j = 0; j < targets.length; j++)
+          if(t_i < i || modules[j].plot[i] != targets[j][i]) return false
+    }
+    else return false
+    return true;
+  }
+
   var nextLevel = function()
   {
     cur_level_i++;
@@ -206,11 +219,14 @@ var GamePlayScene = function(game, stage)
   l.draw = function()
   {
     var targets = levels[cur_level_i].primary_module_target_vals[0];
+    var minx = 80;
+    var maxx = 280;
+    var y = 160;
+    ctx.strokeStyle = "#AAAAAA";
     for(var i = 0; i < targets.length; i++)
-    {
-      draw_tree(lerp(250,500,i/(targets.length-1)),120,i,0,targets);
-    }
-    draw_tree(lerp(250,500,(t_i+(1-(advance_timer/advance_timer_max)))/(targets.length-1)),120,t_i,1-(advance_timer/advance_timer_max),modules[0].plot);
+      draw_tree(lerp(minx,maxx,i/(targets.length-1)),y,i,0,targets);
+    ctx.strokeStyle = "#000000";
+    draw_tree(min(maxx+70,lerp(minx,maxx,(t_i+(1-(advance_timer/advance_timer_max)))/(targets.length-1))),y,t_i,1-(advance_timer/advance_timer_max),modules[0].plot);
   }
   levels.push(l);
 
@@ -1550,20 +1566,11 @@ var GamePlayScene = function(game, stage)
     next_level_btn = new btn();
     next_level_btn.w = 60;
     next_level_btn.h = 20;
-    next_level_btn.x = 100;
-    next_level_btn.y = 30;
+    next_level_btn.x = 210;
+    next_level_btn.y = 80;
     next_level_btn.click = function(evt)
     {
-      var targets = levels[cur_level_i].primary_module_target_vals;
-      var complete = true;
-      if(targets && targets.length)
-      {
-        for(var i = 0; i < targets[0].length; i++) //inverted loop
-          for(var j = 0; j < targets.length; j++)
-            if(t_i < i || modules[j].plot[i] != targets[j][i]) complete = false;
-      }
-      else complete = false;
-      if(complete) nextLevel();
+      if(levelComplete()) nextLevel();
     }
 
     print_btn = new btn();
@@ -1746,6 +1753,10 @@ var GamePlayScene = function(game, stage)
     //ctx.strokeRect(add_module_btn.x,add_module_btn.y,add_module_btn.w,add_module_btn.h);
     ctx.fillText("Remove",remove_module_btn.x+2,remove_module_btn.y+10);
     ctx.strokeRect(remove_module_btn.x,remove_module_btn.y,remove_module_btn.w,remove_module_btn.h);
+    ctx.fillStyle = "#AAAAAA";
+    if(!levelComplete())
+      ctx.fillRect(next_level_btn.x,next_level_btn.y,next_level_btn.w,next_level_btn.h);
+    ctx.fillStyle = "#000000";
     ctx.textAlign = "right";
     ctx.fillText("Next Level",next_level_btn.x+next_level_btn.w-2,next_level_btn.y+10);
     ctx.strokeRect(next_level_btn.x,next_level_btn.y,next_level_btn.w,next_level_btn.h);
@@ -1786,34 +1797,37 @@ var GamePlayScene = function(game, stage)
     }
 
     var targets = levels[cur_level_i].primary_module_target_vals;
-    var targets_x = 100;
-    var targets_y = 100;
+    var targets_x = 80;
+    var targets_y = 10;
     var xpad = 40;
     var ypad = 14;
     if(targets && targets.length)
     {
+      ctx.lineWidth = 1;
       ctx.textAlign = "center";
       ctx.fillStyle = "#000000";
       ctx.strokeRect(targets_x, targets_y, xpad*5, ypad*(targets[0].length+2));
-      ctx.fillText("time",targets_x+xpad,targets_y+ypad);
+      ctx.fillText("time",targets_x+xpad/2,targets_y+ypad);
+      var window_y = min(targets_y+ypad*((t_i+(1-(advance_timer/advance_timer_max)))+1)+4,targets_y+ypad*(targets[0].length+2)-12);
+      ctx.strokeRect(targets_x, window_y, xpad*5, 20-8);
       for(var j = 0; j < targets.length; j++)
       {
-        ctx.fillText("target",targets_x+xpad*(2+2*j),targets_y+ypad);
-        ctx.fillText("value",targets_x+xpad*(2+2*j+1),targets_y+ypad);
+        ctx.fillText("target",targets_x+xpad*(1+2*j)+xpad/2,targets_y+ypad);
+        ctx.fillText("value",targets_x+xpad*(1+2*j+1)+xpad/2,targets_y+ypad);
       }
       for(var i = 0; i < targets[0].length; i++) //inverted loop
       {
         ctx.fillStyle = "#000000";
-        ctx.fillText(i+":",targets_x+xpad,targets_y+ypad*(i+2)); //time
+        ctx.fillText(i+":",targets_x+xpad/2,targets_y+ypad*(i+2)); //time
         for(var j = 0; j < targets.length; j++)
         {
           ctx.fillStyle = "#000000";
-          ctx.fillText(targets[j][i],targets_x+xpad*(2+2*j),targets_y+ypad*(i+2)); //target
+          ctx.fillText(targets[j][i],targets_x+xpad*(1+2*j)+xpad/2,targets_y+ypad*(i+2)); //target
           if(t_i >= i)
           {
             if(modules[j].plot[i] == targets[j][i]) ctx.fillStyle = "#00FF00";
             else                                    ctx.fillStyle = "#FF0000";
-            ctx.fillText(modules[j].plot[i],targets_x+xpad*(2+2*j+1),targets_y+ypad*(i+2)); //value
+            ctx.fillText(modules[j].plot[i],targets_x+xpad*(1+2*j+1)+xpad/2,targets_y+ypad*(i+2)); //value
           }
         }
       }
