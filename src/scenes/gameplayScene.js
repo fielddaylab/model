@@ -154,6 +154,10 @@ var GamePlayScene = function(game, stage)
   var level = function()
   {
     var self = this;
+    self.x = 0;
+    self.y = 0;
+    self.w = canv.width;
+    self.h = canv.height;
     self.primary_module_template = "";
     self.primary_module_target_vals = [];
     self.ready = noop;
@@ -165,6 +169,8 @@ var GamePlayScene = function(game, stage)
     self.remove_enabled = true;
     self.save_enabled = false;
     self.load_enabled = false;
+    self.dismissed = false;
+    self.click = function(){ self.dismissed = true; };
     self.gen_modules = function()
     {
       load_template(self.primary_module_template);
@@ -174,6 +180,8 @@ var GamePlayScene = function(game, stage)
         modules[i].primary_index = i;
       }
     }
+    self.draw = function() {};
+    self.draw_predismiss = function() {};
   }
 
   var levelComplete = function()
@@ -240,6 +248,12 @@ var GamePlayScene = function(game, stage)
       draw_tree(lerp(minx,maxx,i/(targets.length-1)),y,i,0,targets);
     ctx.strokeStyle = "#000000";
     draw_tree(min(maxx+70,lerp(minx,maxx,(t_i+(1-(advance_timer/advance_timer_max)))/(targets.length-1))),y,t_i,1-(advance_timer/advance_timer_max),modules[0].plot);
+  }
+  l.draw_predismiss = function()
+  {
+    ctx.font = "20px Arial";
+    ctx.fillText("Click Play",50,260);
+    ctx.font = "12px Arial";
   }
   levels.push(l);
 
@@ -597,6 +611,8 @@ var GamePlayScene = function(game, stage)
       if(clicker.filter(self.operator_box_div)) hit = true;
       if(clicker.filter(self.sign_box_pos)) hit = true;
       if(clicker.filter(self.sign_box_neg)) hit = true;
+
+      clicker.filter(levels[cur_level_i]);
 
       return hit;
     }
@@ -1878,6 +1894,8 @@ var GamePlayScene = function(game, stage)
       }
     }
     levels[cur_level_i].draw();
+    if(!levels[cur_level_i].dismissed)
+      levels[cur_level_i].draw_predismiss();
     ctx.lineWidth = 1;
 
     s_graph.draw();
