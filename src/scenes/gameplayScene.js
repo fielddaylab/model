@@ -169,6 +169,7 @@ var GamePlayScene = function(game, stage)
     self.remove_enabled = true;
     self.save_enabled = false;
     self.load_enabled = false;
+    self.speed_enabled = true;
     self.dismissed = false;
     self.click = function(){ self.dismissed = true; };
     self.gen_modules = function()
@@ -213,11 +214,64 @@ var GamePlayScene = function(game, stage)
 
   l = new level();
   l.primary_module_template = "{\"modules\":[{\"title\":\"Tree Height (M)\",\"type\":1,\"v\":1,\"min\":0,\"max\":40,\"pool\":1,\"graph\":1,\"wx\":0.2,\"wy\":-0.08,\"ww\":0.15625,\"wh\":0.15625,\"input\":-1,\"adder\":-1},{\"title\":\"Growth Rate (M/T)\",\"type\":2,\"v\":1,\"min\":0,\"max\":10,\"pool\":1,\"graph\":0,\"wx\":-0.2,\"wy\":-0.08,\"ww\":0.15625,\"wh\":0.15625,\"input\":-1,\"adder\":0}]}";
+  l.primary_module_target_vals.push([1,2,3,4,5]);
+  l.add_object_enabled = false;
+  l.add_relationship_enabled = false;
+  l.add_module_enabled = false;
+  l.remove_enabled = false;
+  l.speed_enabled = false;
+  l.ready = function()
+  {
+    modules[0].lock_input = true;
+    modules[0].lock_output = true;
+    modules[0].lock_value = true;
+    modules[0].lock_min = true;
+    modules[0].lock_max = true;
+    modules[0].lock_pool = true;
+    modules[0].lock_graph = true;
+
+    modules[1].lock_input = true;
+    modules[1].lock_output = true;
+    modules[1].lock_value = true;
+    modules[1].lock_min = true;
+    modules[1].lock_max = true;
+    modules[1].lock_pool = true;
+
+    selected_module = modules[0];
+    s_editor.calc_sub_values();
+  }
+  l.draw = function()
+  {
+    var targets = levels[cur_level_i].primary_module_target_vals[0];
+    var minx = 80;
+    var maxx = 280;
+    var y = 160;
+    ctx.strokeStyle = "#AAAAAA";
+    for(var i = 0; i < targets.length; i++)
+      draw_tree(lerp(minx,maxx,i/(targets.length-1)),y,i,0,targets);
+    ctx.strokeStyle = "#000000";
+    draw_tree(min(maxx+70,lerp(minx,maxx,(t_i+(1-(advance_timer/advance_timer_max)))/(targets.length-1))),y,t_i,1-(advance_timer/advance_timer_max),modules[0].plot);
+  }
+  l.draw_predismiss = function()
+  {
+    ctx.font = "20px Arial";
+    ctx.fillText("Click Play",50,260);
+    ctx.font = "12px Arial";
+  }
+  l.click = function(evt)
+  {
+    if(doEvtWithinBB(evt, s_graph.pause_btn)) levels[cur_level_i].dismissed = true;
+  }
+  levels.push(l);
+
+  l = new level();
+  l.primary_module_template = "{\"modules\":[{\"title\":\"Tree Height (M)\",\"type\":1,\"v\":1,\"min\":0,\"max\":40,\"pool\":1,\"graph\":1,\"wx\":0.2,\"wy\":-0.08,\"ww\":0.15625,\"wh\":0.15625,\"input\":-1,\"adder\":-1},{\"title\":\"Growth Rate (M/T)\",\"type\":2,\"v\":1,\"min\":0,\"max\":10,\"pool\":1,\"graph\":0,\"wx\":-0.2,\"wy\":-0.08,\"ww\":0.15625,\"wh\":0.15625,\"input\":-1,\"adder\":0}]}";
   l.primary_module_target_vals.push([1,3,5,7,9]);
   l.add_object_enabled = false;
   l.add_relationship_enabled = false;
   l.add_module_enabled = false;
   l.remove_enabled = false;
+  l.speed_enabled = false;
   l.ready = function()
   {
     modules[0].lock_input = true;
@@ -252,18 +306,22 @@ var GamePlayScene = function(game, stage)
   l.draw_predismiss = function()
   {
     ctx.font = "20px Arial";
-    ctx.fillText("Click Play",50,260);
+    ctx.fillText("Click Module",modules[1].x+modules[1].w/2,modules[1].y+modules[1].h+20);
     ctx.font = "12px Arial";
   }
   l.click = function(evt)
   {
-    if(doEvtWithinBB(evt, s_graph.pause_btn)) levels[cur_level_i].dismissed = true;
+    if(doEvtWithinBB(evt, modules[1])) levels[cur_level_i].dismissed = true;
   }
   levels.push(l);
 
   l = new level();
-  l.primary_module_template = "{\"modules\":[{\"title\":\"Tree Height (M)\",\"type\":1,\"v\":1,\"min\":0,\"max\":10,\"pool\":1,\"graph\":1,\"wx\":-0.06874999999999998,\"wy\":0.1875,\"ww\":0.15625,\"wh\":0.15625,\"input\":-1,\"adder\":-1}]}";
+  l.primary_module_template = "{\"modules\":[{\"title\":\"Tree Height (M)\",\"type\":1,\"v\":1,\"min\":0,\"max\":10,\"pool\":1,\"graph\":1,\"wx\":0,\"wy\":0,\"ww\":0.15625,\"wh\":0.15625,\"input\":-1,\"adder\":-1}]}";
   l.primary_module_target_vals.push([1,2,3,4,5]);
+  l.add_object_enabled = false;
+  l.add_module_enabled = false;
+  l.remove_enabled = false;
+  l.speed_enabled = false;
   l.ready = function()
   {
     modules[0].lock_input = true;
@@ -447,8 +505,11 @@ var GamePlayScene = function(game, stage)
       else
       ctx.fillText(">",self.pause_btn.x+10,self.pause_btn.y+10);
       ctx.strokeRect(self.pause_btn.x,self.pause_btn.y,self.pause_btn.w,self.pause_btn.h);
-      ctx.fillText("->",self.advance_btn.x+10,self.advance_btn.y+10);
-      ctx.strokeRect(self.advance_btn.x,self.advance_btn.y,self.advance_btn.w,self.advance_btn.h);
+      if(full_pause)
+      {
+        ctx.fillText("->",self.advance_btn.x+10,self.advance_btn.y+10);
+        ctx.strokeRect(self.advance_btn.x,self.advance_btn.y,self.advance_btn.w,self.advance_btn.h);
+      }
       ctx.fillText("<-",self.reset_btn.x+10,self.reset_btn.y+10);
       ctx.strokeRect(self.reset_btn.x,self.reset_btn.y,self.reset_btn.w,self.reset_btn.h);
     }
@@ -615,8 +676,6 @@ var GamePlayScene = function(game, stage)
       if(clicker.filter(self.operator_box_div)) hit = true;
       if(clicker.filter(self.sign_box_pos)) hit = true;
       if(clicker.filter(self.sign_box_neg)) hit = true;
-
-      clicker.filter(levels[cur_level_i]);
 
       return hit;
     }
@@ -1543,6 +1602,7 @@ var GamePlayScene = function(game, stage)
     speed_slider = new SliderBox(s_graph.x+100,s_graph.y-20,100,15,1,250,advance_timer_max,
       function(v)
       {
+        if(!levels[cur_level_i].speed_enabled) return;
         v = round(v);
         var t = advance_timer/advance_timer_max;
         advance_timer_max = v;
@@ -1615,7 +1675,6 @@ var GamePlayScene = function(game, stage)
     next_level_btn.y = 80;
     next_level_btn.click = function(evt)
     {
-      if(levels[cur_level_i] && !levels[cur_level_i].load_enabled) return false;
       if(levelComplete()) nextLevel();
     }
 
@@ -1637,6 +1696,7 @@ var GamePlayScene = function(game, stage)
     load_btn.y = 40;
     load_btn.click = function(evt)
     {
+      if(levels[cur_level_i] && !levels[cur_level_i].load_enabled) return false;
       if(!dragging_obj)
       {
         load_next_template();
@@ -1736,6 +1796,7 @@ var GamePlayScene = function(game, stage)
     if(dragger.filter(add_object_btn))       clicked = true;
     if(dragger.filter(add_relationship_btn)) clicked = true;
     //if(dragger.filter(add_module_btn))       clicked = true;
+    clicker.filter(levels[cur_level_i]);
     if(!clicked)
     {
       for(var i = 0; i < modules.length; i++)
@@ -1905,9 +1966,12 @@ var GamePlayScene = function(game, stage)
     s_graph.draw();
     ctx.textAlign = "left";
     s_editor.draw();
-    ctx.fillStyle = "#000000";
-    ctx.fillText("Speed:",speed_slider.x,speed_slider.y-10);
-    speed_slider.draw(canv);
+    if(levels[cur_level_i].speed_enabled)
+    {
+      ctx.fillStyle = "#000000";
+      ctx.fillText("Speed:",speed_slider.x,speed_slider.y-10);
+      speed_slider.draw(canv);
+    }
   };
 
   self.cleanup = function()
