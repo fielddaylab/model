@@ -245,12 +245,16 @@ var GamePlayScene = function(game, stage)
     var targets = levels[cur_level_i].primary_module_target_vals[0];
     var minx = 80;
     var maxx = 280;
-    var y = 160;
+    var y = 100;
     ctx.strokeStyle = "#AAAAAA";
+    var advance_timer_t = (1-(advance_timer/advance_timer_max));
+    var growth_timer_p = t_i+advance_timer_t
+    var growth_timer_max = targets.length;
+    var growth_timer_t = growth_timer_p/growth_timer_max;
     for(var i = 0; i < targets.length; i++)
-      draw_tree(lerp(minx,maxx,i/(targets.length-1)),y,i,0,targets);
+      draw_tree(lerp(minx,maxx,i/targets.length)-(maxx-minx)*growth_timer_t,y,i,0,targets);
     ctx.strokeStyle = "#000000";
-    draw_tree(min(maxx+70,lerp(minx,maxx,(t_i+(1-(advance_timer/advance_timer_max)))/(targets.length-1))),y,t_i,1-(advance_timer/advance_timer_max),modules[0].plot);
+    draw_tree(minx,y,t_i,advance_timer_t,modules[0].plot);
   }
   l.draw_predismiss = function()
   {
@@ -296,12 +300,16 @@ var GamePlayScene = function(game, stage)
     var targets = levels[cur_level_i].primary_module_target_vals[0];
     var minx = 80;
     var maxx = 280;
-    var y = 160;
+    var y = 100;
     ctx.strokeStyle = "#AAAAAA";
+    var advance_timer_t = (1-(advance_timer/advance_timer_max));
+    var growth_timer_p = t_i+advance_timer_t
+    var growth_timer_max = targets.length;
+    var growth_timer_t = growth_timer_p/growth_timer_max;
     for(var i = 0; i < targets.length; i++)
-      draw_tree(lerp(minx,maxx,i/(targets.length-1)),y,i,0,targets);
+      draw_tree(lerp(minx,maxx,i/targets.length)-(maxx-minx)*growth_timer_t,y,i,0,targets);
     ctx.strokeStyle = "#000000";
-    draw_tree(min(maxx+70,lerp(minx,maxx,(t_i+(1-(advance_timer/advance_timer_max)))/(targets.length-1))),y,t_i,1-(advance_timer/advance_timer_max),modules[0].plot);
+    draw_tree(minx,y,t_i,advance_timer_t,modules[0].plot);
   }
   l.draw_predismiss = function()
   {
@@ -1351,12 +1359,27 @@ var GamePlayScene = function(game, stage)
         {
           t_t = 1-(advance_timer/advance_timer_max);
           if(t_t < 0.5)
-            txt = fdisp(self.input_dongle.attachment.v,2);
+          {
+            if(self.input_dongle.attachment.v > 0 && self.output_dongle.attachment && self.output_dongle.attachment.pool)
+              txt = "+"+fdisp(self.input_dongle.attachment.v,2);
+            else
+              txt = fdisp(self.input_dongle.attachment.v,2);
+          }
           else
-            txt = fdisp(self.input_dongle.attachment.v*self.v,2);
+          {
+            if(self.input_dongle.attachment.v*self.v > 0 && self.output_dongle.attachment && self.output_dongle.attachment.pool)
+              txt = "+"+fdisp(self.input_dongle.attachment.v*self.v,2);
+            else
+              txt = fdisp(self.input_dongle.attachment.v*self.v,2);
+          }
         }
         else
-          txt = fdisp(self.v,2);
+        {
+          if(self.v > 0 && self.output_dongle.attachment && self.output_dongle.attachment.pool)
+            txt = "+"+fdisp(self.v,2);
+          else
+            txt = fdisp(self.v,2);
+        }
 
         ctx.textAlign = "center";
         if(txt < 0)
@@ -1671,7 +1694,7 @@ var GamePlayScene = function(game, stage)
     next_level_btn = new btn();
     next_level_btn.w = 60;
     next_level_btn.h = 20;
-    next_level_btn.x = 210;
+    next_level_btn.x = 430;
     next_level_btn.y = 80;
     next_level_btn.click = function(evt)
     {
@@ -1923,7 +1946,7 @@ var GamePlayScene = function(game, stage)
     }
 
     var targets = levels[cur_level_i].primary_module_target_vals;
-    var targets_x = 80;
+    var targets_x = 300;
     var targets_y = 10;
     var xpad = 40;
     var ypad = 14;
