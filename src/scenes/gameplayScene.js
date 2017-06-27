@@ -212,7 +212,7 @@ var GamePlayScene = function(game, stage)
   var l;
 
   l = new level();
-  l.primary_module_template = "{\"modules\":[{\"title\":\"Tree Height (M)\",\"type\":1,\"v\":1,\"min\":0,\"max\":40,\"pool\":1,\"graph\":1,\"wx\":-0.05312499999999998,\"wy\":-0.19062500000000004,\"ww\":0.15625,\"wh\":0.15625,\"input\":-1,\"adder\":-1},{\"title\":\"Growth Rate (M/T)\",\"type\":2,\"v\":1,\"min\":0,\"max\":10,\"pool\":1,\"graph\":0,\"wx\":0.49687499999999996,\"wy\":-0.19374999999999987,\"ww\":0.15625,\"wh\":0.15625,\"input\":-1,\"adder\":0}]}";
+  l.primary_module_template = "{\"modules\":[{\"title\":\"Tree Height (M)\",\"type\":1,\"v\":1,\"min\":0,\"max\":40,\"pool\":1,\"graph\":1,\"wx\":0.2,\"wy\":-0.08,\"ww\":0.15625,\"wh\":0.15625,\"input\":-1,\"adder\":-1},{\"title\":\"Growth Rate (M/T)\",\"type\":2,\"v\":1,\"min\":0,\"max\":10,\"pool\":1,\"graph\":0,\"wx\":-0.2,\"wy\":-0.08,\"ww\":0.15625,\"wh\":0.15625,\"input\":-1,\"adder\":0}]}";
   l.primary_module_target_vals.push([1,3,5,7,9]);
   l.add_object_enabled = false;
   l.add_relationship_enabled = false;
@@ -254,6 +254,10 @@ var GamePlayScene = function(game, stage)
     ctx.font = "20px Arial";
     ctx.fillText("Click Play",50,260);
     ctx.font = "12px Arial";
+  }
+  l.click = function(evt)
+  {
+    if(doEvtWithinBB(evt, s_graph.pause_btn)) levels[cur_level_i].dismissed = true;
   }
   levels.push(l);
 
