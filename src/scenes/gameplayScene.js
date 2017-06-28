@@ -244,8 +244,7 @@ var GamePlayScene = function(game, stage)
     modules[1].lock_max = true;
     modules[1].lock_pool = true;
 
-    selected_module = modules[0];
-    s_editor.calc_sub_values();
+    selected_module = undefined;//modules[0];
   }
   l.draw = function()
   {
@@ -327,8 +326,7 @@ var GamePlayScene = function(game, stage)
     modules[1].lock_max = true;
     modules[1].lock_pool = true;
 
-    selected_module = modules[0];
-    s_editor.calc_sub_values();
+    selected_module = undefined;//modules[0];
   }
   l.draw = function()
   {
@@ -363,11 +361,25 @@ var GamePlayScene = function(game, stage)
     }
     draw_tree(minx,y,t_i,advance_timer_t,modules[0].plot);
 
-    if(!levels[cur_level_i].dismissed)
+    var targets = levels[cur_level_i].primary_module_target_vals;
+    if(modules[0].plot[0] != targets[0][0])
+    {
+      ctx.textAlign = "left";
+      ctx.font = "20px Arial";
+      ctx.fillStyle = black;
+      ctx.fillText("This doesn't conform",450,40);
+      ctx.fillText("to our data...",450,60);
+      ctx.textAlign = "center";
+      ctx.fillText("Select the Tree Height module",340,150);
+      ctx.fillText("And set its starting value",340,170);
+      ctx.font = "12px Arial";
+    }
+    if(levelComplete() && t_i >= 4)
     {
       ctx.font = "20px Arial";
       ctx.fillStyle = black;
-      ctx.fillText("Click Module",modules[1].x+modules[1].w/2,modules[1].y+modules[1].h+20);
+      ctx.fillText("Simulation Complete!",380,140);
+      ctx.fillText("Click Next Level",380,160);
       ctx.font = "12px Arial";
     }
   }
@@ -402,8 +414,7 @@ var GamePlayScene = function(game, stage)
     modules[1].lock_max = true;
     modules[1].lock_pool = true;
 
-    selected_module = modules[0];
-    s_editor.calc_sub_values();
+    selected_module = undefined;//modules[0];
   }
   l.draw = function()
   {
@@ -438,11 +449,25 @@ var GamePlayScene = function(game, stage)
     }
     draw_tree(minx,y,t_i,advance_timer_t,modules[0].plot);
 
-    if(!levels[cur_level_i].dismissed)
+    var targets = levels[cur_level_i].primary_module_target_vals;
+    if(t_i > 0 && modules[0].plot[1] != targets[0][1])
+    {
+      ctx.textAlign = "left";
+      ctx.font = "20px Arial";
+      ctx.fillStyle = black;
+      ctx.fillText("This doesn't conform",450,40);
+      ctx.fillText("to our data...",450,60);
+      ctx.textAlign = "center";
+      ctx.fillText("Select the Growth Rate module",340,150);
+      ctx.fillText("And set its contribution",340,170);
+      ctx.font = "12px Arial";
+    }
+    if(levelComplete() && t_i >= 4)
     {
       ctx.font = "20px Arial";
       ctx.fillStyle = black;
-      ctx.fillText("Click Module",modules[1].x+modules[1].w/2,modules[1].y+modules[1].h+20);
+      ctx.fillText("Simulation Complete!",380,140);
+      ctx.fillText("Click Next Level",380,160);
       ctx.font = "12px Arial";
     }
   }
@@ -453,7 +478,7 @@ var GamePlayScene = function(game, stage)
   levels.push(l);
 
   l = new level();
-  l.primary_module_template = "{\"modules\":[{\"title\":\"Tree Height (M)\",\"type\":1,\"v\":1,\"min\":0,\"max\":10,\"pool\":1,\"graph\":1,\"wx\":0,\"wy\":0,\"ww\":0.15625,\"wh\":0.15625,\"input\":-1,\"adder\":-1}]}";
+  l.primary_module_template = "{\"modules\":[{\"title\":\"Tree Height (M)\",\"type\":1,\"v\":1,\"min\":0,\"max\":10,\"pool\":1,\"graph\":1,\"wx\":0.2,\"wy\":-0.08,\"ww\":0.15625,\"wh\":0.15625,\"input\":-1,\"adder\":-1}]}";
   l.primary_module_target_vals.push([1,2,3,4,5]);
   l.add_object_enabled = false;
   l.add_module_enabled = false;
@@ -470,8 +495,62 @@ var GamePlayScene = function(game, stage)
     modules[0].lock_pool = true;
     modules[0].lock_graph = true;
 
-    selected_module = modules[0];
-    s_editor.calc_sub_values();
+    selected_module = undefined;//modules[0];
+  }
+  l.draw = function()
+  {
+    var targets = levels[cur_level_i].primary_module_target_vals[0];
+    var minx = 80;
+    var maxx = 280;
+    var y = 100;
+    var x;
+    var advance_timer_t = (1-(advance_timer/advance_timer_max));
+    var growth_timer_p = t_i+advance_timer_t
+    var growth_timer_max = targets.length;
+    var growth_timer_t = growth_timer_p/growth_timer_max;
+    for(var i = 0; i < targets.length; i++)
+    {
+      x = lerp(minx,maxx,i/targets.length)-(maxx-minx)*growth_timer_t;
+      ctx.globalAlpha = 0.2;
+      draw_tree(x,y,i,0,targets);
+      ctx.globalAlpha = 1;
+      if(t_i >= i)
+      {
+        if(modules[0].plot[i] == targets[i])
+        {
+          ctx.fillStyle = green;
+          ctx.fillText("✔",x,y+20);
+        }
+        else
+        {
+          ctx.fillStyle = red;
+          ctx.fillText("✘",x,y+20);
+        }
+      }
+    }
+    draw_tree(minx,y,t_i,advance_timer_t,modules[0].plot);
+
+    var targets = levels[cur_level_i].primary_module_target_vals;
+    if(t_i > 0 && modules[0].plot[1] != targets[0][1])
+    {
+      ctx.textAlign = "left";
+      ctx.font = "20px Arial";
+      ctx.fillStyle = black;
+      ctx.fillText("This doesn't conform",450,40);
+      ctx.fillText("to our data...",450,60);
+      ctx.textAlign = "center";
+      ctx.fillText("Drag out an action module",340,150);
+      ctx.fillText("And set its output to Tree Height",340,170);
+      ctx.font = "12px Arial";
+    }
+    if(levelComplete() && t_i >= 4)
+    {
+      ctx.font = "20px Arial";
+      ctx.fillStyle = black;
+      ctx.fillText("Simulation Complete!",380,140);
+      ctx.fillText("Click Next Level",380,160);
+      ctx.font = "12px Arial";
+    }
   }
   levels.push(l);
 
@@ -837,7 +916,15 @@ var GamePlayScene = function(game, stage)
       if(selected_module)
       {
         if(!selected_module.primary)    { self.title_box.draw(canv); ctx.fillStyle = black; ctx.fillText("title", self.title_box.x + self.title_box.w + 10, self.title_box.y+20); }
-        if(!selected_module.lock_value) { self.v_box.draw(canv);     ctx.fillStyle = black; ctx.fillText("val",   self.v_box.x     + self.v_box.w     + 10, self.v_box.y    +20); }
+        if(!selected_module.lock_value)
+        {
+          self.v_box.draw(canv);
+          ctx.fillStyle = black;
+          if(selected_module.output_dongle.attachment)
+            ctx.fillText("contribution",   self.v_box.x     + self.v_box.w     + 10, self.v_box.y    +20);
+          if(selected_module.pool && !selected_module.output_dongle.attachment)
+            ctx.fillText("starting val",   self.v_box.x     + self.v_box.w     + 10, self.v_box.y    +20);
+        }
         if(!selected_module.cache_const)
         {
           if(!selected_module.lock_min) { self.min_box.draw(canv);   ctx.fillStyle = black; ctx.fillText("min",   self.min_box.x   + self.min_box.w   + 10, self.min_box.y+20); }
@@ -2102,8 +2189,8 @@ var GamePlayScene = function(game, stage)
       ctx.strokeRect(targets_x, window_y, xpad*2, 20-8);
       for(var j = 0; j < targets.length; j++)
       {
-        ctx.fillText("target",targets_x+xpad*(2*j)+xpad/2,targets_y+ypad);
-        ctx.fillText("value",targets_x+xpad*(2*j+1)+xpad/2,targets_y+ypad);
+        ctx.fillText("data",targets_x+xpad*(2*j)+xpad/2,targets_y+ypad);
+        ctx.fillText("sim",targets_x+xpad*(2*j+1)+xpad/2,targets_y+ypad);
       }
       for(var i = 0; i < targets[0].length; i++) //inverted loop
       {
