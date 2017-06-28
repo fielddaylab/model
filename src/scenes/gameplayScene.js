@@ -2,6 +2,12 @@ var GamePlayScene = function(game, stage)
 {
   var self = this;
 
+  var green = "#00AA00";
+  var red = "#AA0000";
+  var white = "#FFFFFF";
+  var black = "#000000";
+  var brown = "#755232";
+
   var canv = stage.drawCanv;
   var canvas = canv.canvas;
   var ctx = canv.context;
@@ -70,7 +76,7 @@ var GamePlayScene = function(game, stage)
   w = module_inner_s;
   h = module_inner_s;
   var inner_module_img = GenIcon(w,h)
-  inner_module_img.context.fillStyle = "#FFFFFF";
+  inner_module_img.context.fillStyle = white;
   inner_module_img.context.lineWidth = 1;
   inner_module_img.context.beginPath();
   inner_module_img.context.arc(w/2,h/2,(w-5)/2,0,2*Math.PI);
@@ -79,7 +85,7 @@ var GamePlayScene = function(game, stage)
   w = module_outline_s;
   h = module_outline_s;
   var selected_module_img = GenIcon(w,h)
-  selected_module_img.context.strokeStyle = "#000000";
+  selected_module_img.context.strokeStyle = black;
   selected_module_img.context.lineWidth = 1;
   selected_module_img.context.beginPath();
   selected_module_img.context.arc(w/2,h/2,(w-5)/2,0,2*Math.PI);
@@ -106,7 +112,7 @@ var GamePlayScene = function(game, stage)
   w = module_fill_s;
   h = module_fill_s;
   var module_pos_img = GenIcon(w,h)
-  module_pos_img.context.fillStyle = "#00FF00";
+  module_pos_img.context.fillStyle = green;
   module_pos_img.context.lineWidth = 1;
   module_pos_img.context.beginPath();
   module_pos_img.context.arc(w/2,h/2,(w-5)/2,0,2*Math.PI);
@@ -115,7 +121,7 @@ var GamePlayScene = function(game, stage)
   w = module_fill_s;
   h = module_fill_s;
   var module_neg_img = GenIcon(w,h)
-  module_neg_img.context.fillStyle = "#FF0000";
+  module_neg_img.context.fillStyle = red;
   module_neg_img.context.lineWidth = 1;
   module_neg_img.context.beginPath();
   module_neg_img.context.arc(w/2,h/2,(w-5)/2,0,2*Math.PI);
@@ -133,7 +139,7 @@ var GamePlayScene = function(game, stage)
   w = 40;
   h = 40;
   var glob_pos_img = GenIcon(w,h)
-  glob_pos_img.context.fillStyle = "#00FF00";
+  glob_pos_img.context.fillStyle = green;
   glob_pos_img.context.lineWidth = 1;
   glob_pos_img.context.beginPath();
   glob_pos_img.context.arc(w/2,h/2,(w-5)/2,0,2*Math.PI);
@@ -142,7 +148,7 @@ var GamePlayScene = function(game, stage)
   w = 40;
   h = 40;
   var glob_neg_img = GenIcon(w,h)
-  glob_neg_img.context.fillStyle = "#FF0000";
+  glob_neg_img.context.fillStyle = red;
   glob_neg_img.context.lineWidth = 1;
   glob_neg_img.context.beginPath();
   glob_neg_img.context.arc(w/2,h/2,(w-5)/2,0,2*Math.PI);
@@ -169,9 +175,10 @@ var GamePlayScene = function(game, stage)
     self.remove_enabled = true;
     self.save_enabled = false;
     self.load_enabled = false;
+    self.play_enabled = true;
     self.speed_enabled = true;
-    self.dismissed = false;
-    self.click = function(){ self.dismissed = true; };
+    self.dismissed = 0;
+    self.click = function(){ self.dismissed++; };
     self.gen_modules = function()
     {
       load_template(self.primary_module_template);
@@ -182,7 +189,6 @@ var GamePlayScene = function(game, stage)
       }
     }
     self.draw = function() {};
-    self.draw_predismiss = function() {};
   }
 
   var levelComplete = function()
@@ -219,6 +225,7 @@ var GamePlayScene = function(game, stage)
   l.add_relationship_enabled = false;
   l.add_module_enabled = false;
   l.remove_enabled = false;
+  l.play_enabled = false;
   l.speed_enabled = false;
   l.ready = function()
   {
@@ -246,25 +253,127 @@ var GamePlayScene = function(game, stage)
     var minx = 80;
     var maxx = 280;
     var y = 100;
-    ctx.strokeStyle = "#AAAAAA";
+    var x;
     var advance_timer_t = (1-(advance_timer/advance_timer_max));
     var growth_timer_p = t_i+advance_timer_t
     var growth_timer_max = targets.length;
     var growth_timer_t = growth_timer_p/growth_timer_max;
     for(var i = 0; i < targets.length; i++)
-      draw_tree(lerp(minx,maxx,i/targets.length)-(maxx-minx)*growth_timer_t,y,i,0,targets);
-    ctx.strokeStyle = "#000000";
+    {
+      x = lerp(minx,maxx,i/targets.length)-(maxx-minx)*growth_timer_t;
+      ctx.globalAlpha = 0.2;
+      draw_tree(x,y,i,0,targets);
+      ctx.globalAlpha = 1;
+      if(t_i >= i)
+      {
+        if(modules[0].plot[i] == targets[i])
+        {
+          ctx.fillStyle = green;
+          ctx.fillText("✔",x,y+20);
+        }
+        else
+        {
+          ctx.fillStyle = red;
+          ctx.fillText("✘",x,y+20);
+        }
+      }
+    }
     draw_tree(minx,y,t_i,advance_timer_t,modules[0].plot);
-  }
-  l.draw_predismiss = function()
-  {
-    ctx.font = "20px Arial";
-    ctx.fillText("Click Play",50,260);
-    ctx.font = "12px Arial";
+
+    if(advance_timer == advance_timer_max && t_i < 4)
+    {
+      ctx.font = "20px Arial";
+      ctx.fillStyle = black;
+      ctx.fillText("Click Advance",70,280);
+      ctx.font = "12px Arial";
+    }
+    if(t_i >= 4)
+    {
+      ctx.font = "20px Arial";
+      ctx.fillStyle = black;
+      ctx.fillText("Simulation Complete!",380,140);
+      ctx.fillText("Click Next Level",380,160);
+      ctx.font = "12px Arial";
+    }
   }
   l.click = function(evt)
   {
-    if(doEvtWithinBB(evt, s_graph.pause_btn)) levels[cur_level_i].dismissed = true;
+    if(doEvtWithinBB(evt, s_graph.advance_btn)) levels[cur_level_i].dismissed++;
+  }
+  levels.push(l);
+
+  l = new level();
+  l.primary_module_template = "{\"modules\":[{\"title\":\"Tree Height (M)\",\"type\":1,\"v\":1,\"min\":0,\"max\":40,\"pool\":1,\"graph\":1,\"wx\":0.2,\"wy\":-0.08,\"ww\":0.15625,\"wh\":0.15625,\"input\":-1,\"adder\":-1},{\"title\":\"Growth Rate (M/T)\",\"type\":2,\"v\":1,\"min\":0,\"max\":10,\"pool\":1,\"graph\":0,\"wx\":-0.2,\"wy\":-0.08,\"ww\":0.15625,\"wh\":0.15625,\"input\":-1,\"adder\":0}]}";
+  l.primary_module_target_vals.push([2,3,4,5,6]);
+  l.add_object_enabled = false;
+  l.add_relationship_enabled = false;
+  l.add_module_enabled = false;
+  l.remove_enabled = false;
+  l.play_enabled = false;
+  l.speed_enabled = false;
+  l.ready = function()
+  {
+    modules[0].lock_input = true;
+    modules[0].lock_output = true;
+    modules[0].lock_min = true;
+    modules[0].lock_max = true;
+    modules[0].lock_pool = true;
+    modules[0].lock_graph = true;
+
+    modules[1].lock_input = true;
+    modules[1].lock_output = true;
+    modules[1].lock_value = true;
+    modules[1].lock_min = true;
+    modules[1].lock_max = true;
+    modules[1].lock_pool = true;
+
+    selected_module = modules[0];
+    s_editor.calc_sub_values();
+  }
+  l.draw = function()
+  {
+    var targets = levels[cur_level_i].primary_module_target_vals[0];
+    var minx = 80;
+    var maxx = 280;
+    var y = 100;
+    var x;
+    var advance_timer_t = (1-(advance_timer/advance_timer_max));
+    var growth_timer_p = t_i+advance_timer_t
+    var growth_timer_max = targets.length;
+    var growth_timer_t = growth_timer_p/growth_timer_max;
+    for(var i = 0; i < targets.length; i++)
+    {
+      x = lerp(minx,maxx,i/targets.length)-(maxx-minx)*growth_timer_t;
+      ctx.globalAlpha = 0.2;
+      draw_tree(x,y,i,0,targets);
+      ctx.globalAlpha = 1;
+      if(t_i >= i)
+      {
+        if(modules[0].plot[i] == targets[i])
+        {
+          ctx.fillStyle = green;
+          ctx.fillText("✔",x,y+20);
+        }
+        else
+        {
+          ctx.fillStyle = red;
+          ctx.fillText("✘",x,y+20);
+        }
+      }
+    }
+    draw_tree(minx,y,t_i,advance_timer_t,modules[0].plot);
+
+    if(!levels[cur_level_i].dismissed)
+    {
+      ctx.font = "20px Arial";
+      ctx.fillStyle = black;
+      ctx.fillText("Click Module",modules[1].x+modules[1].w/2,modules[1].y+modules[1].h+20);
+      ctx.font = "12px Arial";
+    }
+  }
+  l.click = function(evt)
+  {
+    if(doEvtWithinBB(evt, modules[1])) levels[cur_level_i].dismissed++;
   }
   levels.push(l);
 
@@ -275,6 +384,7 @@ var GamePlayScene = function(game, stage)
   l.add_relationship_enabled = false;
   l.add_module_enabled = false;
   l.remove_enabled = false;
+  l.play_enabled = false;
   l.speed_enabled = false;
   l.ready = function()
   {
@@ -301,25 +411,44 @@ var GamePlayScene = function(game, stage)
     var minx = 80;
     var maxx = 280;
     var y = 100;
-    ctx.strokeStyle = "#AAAAAA";
+    var x;
     var advance_timer_t = (1-(advance_timer/advance_timer_max));
     var growth_timer_p = t_i+advance_timer_t
     var growth_timer_max = targets.length;
     var growth_timer_t = growth_timer_p/growth_timer_max;
     for(var i = 0; i < targets.length; i++)
-      draw_tree(lerp(minx,maxx,i/targets.length)-(maxx-minx)*growth_timer_t,y,i,0,targets);
-    ctx.strokeStyle = "#000000";
+    {
+      x = lerp(minx,maxx,i/targets.length)-(maxx-minx)*growth_timer_t;
+      ctx.globalAlpha = 0.2;
+      draw_tree(x,y,i,0,targets);
+      ctx.globalAlpha = 1;
+      if(t_i >= i)
+      {
+        if(modules[0].plot[i] == targets[i])
+        {
+          ctx.fillStyle = green;
+          ctx.fillText("✔",x,y+20);
+        }
+        else
+        {
+          ctx.fillStyle = red;
+          ctx.fillText("✘",x,y+20);
+        }
+      }
+    }
     draw_tree(minx,y,t_i,advance_timer_t,modules[0].plot);
-  }
-  l.draw_predismiss = function()
-  {
-    ctx.font = "20px Arial";
-    ctx.fillText("Click Module",modules[1].x+modules[1].w/2,modules[1].y+modules[1].h+20);
-    ctx.font = "12px Arial";
+
+    if(!levels[cur_level_i].dismissed)
+    {
+      ctx.font = "20px Arial";
+      ctx.fillStyle = black;
+      ctx.fillText("Click Module",modules[1].x+modules[1].w/2,modules[1].y+modules[1].h+20);
+      ctx.font = "12px Arial";
+    }
   }
   l.click = function(evt)
   {
-    if(doEvtWithinBB(evt, modules[1])) levels[cur_level_i].dismissed = true;
+    if(doEvtWithinBB(evt, modules[1])) levels[cur_level_i].dismissed++;
   }
   levels.push(l);
 
@@ -329,6 +458,7 @@ var GamePlayScene = function(game, stage)
   l.add_object_enabled = false;
   l.add_module_enabled = false;
   l.remove_enabled = false;
+  l.play_enabled = false;
   l.speed_enabled = false;
   l.ready = function()
   {
@@ -347,6 +477,7 @@ var GamePlayScene = function(game, stage)
 
   var draw_tree = function(x,y,tick,t,plot)
   {
+    ctx.strokeStyle = brown;
     ctx.lineWidth = 3;
     var ini_from_x = x;
     var ini_from_y = y;
@@ -396,6 +527,7 @@ var GamePlayScene = function(game, stage)
       ctx.lineTo(to_x,to_y);
     }
     ctx.stroke();
+    ctx.strokeStyle = black;
   }
 
   var graph = function()
@@ -415,6 +547,7 @@ var GamePlayScene = function(game, stage)
     self.pause_btn = new btn();
     self.pause_btn.click = function(evt)
     {
+      if(!levels[cur_level_i].play_enabled) return;
       if(!dragging_obj)
       {
         if(!full_pause && t_i >= t_max-1)
@@ -495,8 +628,8 @@ var GamePlayScene = function(game, stage)
       ctx.lineTo(x,self.graph_y+self.graph_h);
       ctx.stroke();
 
-      ctx.strokeStyle = "#000000";
-      ctx.fillStyle = "#000000";
+      ctx.strokeStyle = black;
+      ctx.fillStyle = black;
 
       x = self.graph_x+ (t_i/(t_max-1)) * self.graph_w;
       ctx.beginPath();
@@ -508,11 +641,12 @@ var GamePlayScene = function(game, stage)
       ctx.strokeRect(self.graph_x,self.graph_y,self.graph_w,self.graph_h);
 
       ctx.lineWidth = 1;
-      if(full_pause)
-      ctx.fillText("||",self.pause_btn.x+10,self.pause_btn.y+10);
-      else
-      ctx.fillText(">",self.pause_btn.x+10,self.pause_btn.y+10);
-      ctx.strokeRect(self.pause_btn.x,self.pause_btn.y,self.pause_btn.w,self.pause_btn.h);
+      if(levels[cur_level_i].play_enabled)
+      {
+        if(full_pause) ctx.fillText("||",self.pause_btn.x+10,self.pause_btn.y+10);
+        else           ctx.fillText(">",self.pause_btn.x+10,self.pause_btn.y+10);
+        ctx.strokeRect(self.pause_btn.x,self.pause_btn.y,self.pause_btn.w,self.pause_btn.h);
+      }
       if(full_pause)
       {
         ctx.fillText("->",self.advance_btn.x+10,self.advance_btn.y+10);
@@ -702,22 +836,22 @@ var GamePlayScene = function(game, stage)
 
       if(selected_module)
       {
-        if(!selected_module.primary)    { self.title_box.draw(canv); ctx.fillStyle = "#000000"; ctx.fillText("title", self.title_box.x + self.title_box.w + 10, self.title_box.y+20); }
-        if(!selected_module.lock_value) { self.v_box.draw(canv);     ctx.fillStyle = "#000000"; ctx.fillText("val",   self.v_box.x     + self.v_box.w     + 10, self.v_box.y    +20); }
+        if(!selected_module.primary)    { self.title_box.draw(canv); ctx.fillStyle = black; ctx.fillText("title", self.title_box.x + self.title_box.w + 10, self.title_box.y+20); }
+        if(!selected_module.lock_value) { self.v_box.draw(canv);     ctx.fillStyle = black; ctx.fillText("val",   self.v_box.x     + self.v_box.w     + 10, self.v_box.y    +20); }
         if(!selected_module.cache_const)
         {
-          if(!selected_module.lock_min) { self.min_box.draw(canv);   ctx.fillStyle = "#000000"; ctx.fillText("min",   self.min_box.x   + self.min_box.w   + 10, self.min_box.y+20); }
-          if(!selected_module.lock_max) { self.max_box.draw(canv);   ctx.fillStyle = "#000000"; ctx.fillText("max",   self.max_box.x   + self.max_box.w   + 10, self.max_box.y+20); }
+          if(!selected_module.lock_min) { self.min_box.draw(canv);   ctx.fillStyle = black; ctx.fillText("min",   self.min_box.x   + self.min_box.w   + 10, self.min_box.y+20); }
+          if(!selected_module.lock_max) { self.max_box.draw(canv);   ctx.fillStyle = black; ctx.fillText("max",   self.max_box.x   + self.max_box.w   + 10, self.max_box.y+20); }
         }
-        if(!selected_module.cache_const && !selected_module.lock_pool) { self.pool_box.draw(canv);  ctx.fillStyle = "#000000"; ctx.fillText("pool",  self.pool_box.x  + self.pool_box.w  + 10, self.pool_box.y+20); }
-        if(!selected_module.lock_graph)                                { self.graph_box.draw(canv); ctx.fillStyle = "#000000"; ctx.fillText("graph", self.graph_box.x + self.graph_box.w + 10, self.graph_box.y+20); }
+        if(!selected_module.cache_const && !selected_module.lock_pool) { self.pool_box.draw(canv);  ctx.fillStyle = black; ctx.fillText("pool",  self.pool_box.x  + self.pool_box.w  + 10, self.pool_box.y+20); }
+        if(!selected_module.lock_graph)                                { self.graph_box.draw(canv); ctx.fillStyle = black; ctx.fillText("graph", self.graph_box.x + self.graph_box.w + 10, self.graph_box.y+20); }
 
         if(selected_module.input_dongle.attachment && !selected_module.cache_const)
         {
           self.operator_box_mul.draw(canv);
-          self.operator_box_div.draw(canv); ctx.fillStyle = "#000000"; ctx.fillText("mul/div",  self.operator_box_div.x + self.operator_box_div.w + 10, self.operator_box_div.y+20);
+          self.operator_box_div.draw(canv); ctx.fillStyle = black; ctx.fillText("mul/div",  self.operator_box_div.x + self.operator_box_div.w + 10, self.operator_box_div.y+20);
           self.sign_box_pos.draw(canv);
-          self.sign_box_neg.draw(canv);     ctx.fillStyle = "#000000"; ctx.fillText("pos/nev",  self.sign_box_neg.x     + self.sign_box_neg.w     + 10, self.sign_box_neg.y+20);
+          self.sign_box_neg.draw(canv);     ctx.fillStyle = black; ctx.fillText("pos/nev",  self.sign_box_neg.x     + self.sign_box_neg.w     + 10, self.sign_box_neg.y+20);
         }
       }
     }
@@ -1068,7 +1202,7 @@ var GamePlayScene = function(game, stage)
     self.drawLines = function()
     {
       ctx.lineWidth = 2;
-      ctx.strokeStyle = "#000000"
+      ctx.strokeStyle = black
 
       //away from dongles
       //input_dongle_line
@@ -1384,17 +1518,17 @@ var GamePlayScene = function(game, stage)
         ctx.textAlign = "center";
         if(txt < 0)
         {
-          ctx.fillStyle = "#000000";
+          ctx.fillStyle = black;
           ctx.drawImage(glob_neg_img,x-s*ts/2,y-s*ts/2,s*ts,s*ts);
         }
         else if(txt > 0)
         {
-          ctx.fillStyle = "#000000";
+          ctx.fillStyle = black;
           ctx.drawImage(glob_pos_img,x-s*ts/2,y-s*ts/2,s*ts,s*ts);
         }
         else
         {
-          ctx.fillStyle = "#000000";
+          ctx.fillStyle = black;
           ctx.drawImage(glob_img,x-s*ts/2,y-s*ts/2,s*ts,s*ts);
         }
         ctx.fillText(txt,x,y+3);
@@ -1405,27 +1539,35 @@ var GamePlayScene = function(game, stage)
       var s = module_inner_s*self.val_s;
       ctx.drawImage(inner_module_img,self.x+self.w/2-s/2,self.y+self.h/2-s/2,s,s);
       var targets = levels[cur_level_i].primary_module_target_vals;
-      ctx.fillStyle = "#000000"
+      ctx.fillStyle = black
       ctx.fillText(self.title,self.x+self.w/2,self.y-10);
       if(self.primary && targets[self.primary_index])
       {
-        if(targets[self.primary_index][t_i] == self.v)
-          ctx.fillStyle = "#00FF00";
+        if(targets[self.primary_index].length <= t_i)
+          ctx.fillStyle = black;
+        else if(targets[self.primary_index][t_i] == self.v)
+          ctx.fillStyle = green;
         else
-          ctx.fillStyle = "#FF0000";
+          ctx.fillStyle = red;
       }
       ctx.fillText(fdisp(self.v,2),self.x+self.w/2,self.y+self.h/2+5);
 
       var t = 1-(advance_timer/advance_timer_max);
       if(self.cache_delta > 0)
       {
-        ctx.fillStyle = "rgba(0,255,0,"+(1-t)+")"
+        var olda = ctx.globalAlpha;
+        ctx.globalAlpha = (1-t);
+        ctx.fillStyle = green;
         ctx.fillText("+"+self.cache_delta,self.x+sin(t*5*pi),self.y-t*20);
+        ctx.globalAlpha = olda;
       }
       else if(self.cache_delta < 0)
       {
-        ctx.fillStyle = "rgba(255,0,0,"+(1-t)+")"
+        var olda = ctx.globalAlpha;
+        ctx.globalAlpha = (1-t);
+        ctx.fillStyle = red;
         ctx.fillText(self.cache_delta,self.x+sin(t*5*pi),self.y-t*20);
+        ctx.globalAlpha = olda;
       }
     }
 
@@ -1694,7 +1836,7 @@ var GamePlayScene = function(game, stage)
     next_level_btn = new btn();
     next_level_btn.w = 60;
     next_level_btn.h = 20;
-    next_level_btn.x = 430;
+    next_level_btn.x = 440;
     next_level_btn.y = 80;
     next_level_btn.click = function(evt)
     {
@@ -1872,8 +2014,8 @@ var GamePlayScene = function(game, stage)
     ctx.fillStyle = "#EEEEEE";
     ctx.fillRect(0,0,canv.width,canv.height);
 
-    ctx.fillStyle = "#000000";
-    ctx.strokeStyle = "#000000";
+    ctx.fillStyle = black;
+    ctx.strokeStyle = black;
     ctx.lineWidth = 1;
     ctx.textAlign = "left";
     if(!levels[cur_level_i] || levels[cur_level_i].add_object_enabled)
@@ -1899,7 +2041,7 @@ var GamePlayScene = function(game, stage)
     ctx.fillStyle = "#AAAAAA";
     if(!levelComplete())
       ctx.fillRect(next_level_btn.x,next_level_btn.y,next_level_btn.w,next_level_btn.h);
-    ctx.fillStyle = "#000000";
+    ctx.fillStyle = black;
     ctx.textAlign = "right";
     ctx.fillText("Next Level",next_level_btn.x+next_level_btn.w-2,next_level_btn.y+10);
     ctx.strokeRect(next_level_btn.x,next_level_btn.y,next_level_btn.w,next_level_btn.h);
@@ -1946,7 +2088,7 @@ var GamePlayScene = function(game, stage)
     }
 
     var targets = levels[cur_level_i].primary_module_target_vals;
-    var targets_x = 300;
+    var targets_x = 350;
     var targets_y = 10;
     var xpad = 40;
     var ypad = 14;
@@ -1954,36 +2096,42 @@ var GamePlayScene = function(game, stage)
     {
       ctx.lineWidth = 1;
       ctx.textAlign = "center";
-      ctx.fillStyle = "#000000";
-      ctx.strokeRect(targets_x, targets_y, xpad*5, ypad*(targets[0].length+2));
-      ctx.fillText("time",targets_x+xpad/2,targets_y+ypad);
+      ctx.fillStyle = black;
+      ctx.strokeRect(targets_x, targets_y, xpad*2, ypad*(targets[0].length+2));
       var window_y = min(targets_y+ypad*((t_i+(1-(advance_timer/advance_timer_max)))+1)+4,targets_y+ypad*(targets[0].length+2)-12);
-      ctx.strokeRect(targets_x, window_y, xpad*5, 20-8);
+      ctx.strokeRect(targets_x, window_y, xpad*2, 20-8);
       for(var j = 0; j < targets.length; j++)
       {
-        ctx.fillText("target",targets_x+xpad*(1+2*j)+xpad/2,targets_y+ypad);
-        ctx.fillText("value",targets_x+xpad*(1+2*j+1)+xpad/2,targets_y+ypad);
+        ctx.fillText("target",targets_x+xpad*(2*j)+xpad/2,targets_y+ypad);
+        ctx.fillText("value",targets_x+xpad*(2*j+1)+xpad/2,targets_y+ypad);
       }
       for(var i = 0; i < targets[0].length; i++) //inverted loop
       {
-        ctx.fillStyle = "#000000";
-        ctx.fillText(i+":",targets_x+xpad/2,targets_y+ypad*(i+2)); //time
+        ctx.fillStyle = black;
         for(var j = 0; j < targets.length; j++)
         {
-          ctx.fillStyle = "#000000";
-          ctx.fillText(targets[j][i],targets_x+xpad*(1+2*j)+xpad/2,targets_y+ypad*(i+2)); //target
+          ctx.fillStyle = black;
+          ctx.fillText(targets[j][i],targets_x+xpad*(2*j)+xpad/2,targets_y+ypad*(i+2)); //target
           if(t_i >= i)
           {
-            if(modules[j].plot[i] == targets[j][i]) ctx.fillStyle = "#00FF00";
-            else                                    ctx.fillStyle = "#FF0000";
-            ctx.fillText(modules[j].plot[i],targets_x+xpad*(1+2*j+1)+xpad/2,targets_y+ypad*(i+2)); //value
+            var x = targets_x+xpad*(2*j+1)+xpad/2;
+            var y = targets_y+ypad*(i+2);
+            if(modules[j].plot[i] == targets[j][i])
+            {
+              ctx.fillStyle = green;
+              ctx.fillText("✔",x+10,y);
+            }
+            else
+            {
+              ctx.fillStyle = red;
+              ctx.fillText("✘",x+10,y);
+            }
+            ctx.fillText(modules[j].plot[i],x,y); //value
           }
         }
       }
     }
     levels[cur_level_i].draw();
-    if(!levels[cur_level_i].dismissed)
-      levels[cur_level_i].draw_predismiss();
     ctx.lineWidth = 1;
 
     s_graph.draw();
@@ -1991,7 +2139,7 @@ var GamePlayScene = function(game, stage)
     s_editor.draw();
     if(levels[cur_level_i].speed_enabled)
     {
-      ctx.fillStyle = "#000000";
+      ctx.fillStyle = black;
       ctx.fillText("Speed:",speed_slider.x,speed_slider.y-10);
       speed_slider.draw(canv);
     }
