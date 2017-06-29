@@ -7,6 +7,7 @@ var GamePlayScene = function(game, stage)
   var white = "#FFFFFF";
   var black = "#000000";
   var brown = "#755232";
+  var n_ticks;
 
   var canv = stage.drawCanv;
   var canvas = canv.canvas;
@@ -216,7 +217,7 @@ var GamePlayScene = function(game, stage)
   }
 
   var levels = [];
-  var cur_level_i = -1; //call nextLevel once!
+  var cur_level_i = 4-1; //call nextLevel once!
   var l;
 
   l = new level();
@@ -249,36 +250,7 @@ var GamePlayScene = function(game, stage)
   }
   l.draw = function()
   {
-    var targets = levels[cur_level_i].primary_module_target_vals[0];
-    var minx = 80;
-    var maxx = 280;
-    var y = 100;
-    var x;
-    var advance_timer_t = (1-(advance_timer/advance_timer_max));
-    var growth_timer_p = t_i+advance_timer_t
-    var growth_timer_max = targets.length;
-    var growth_timer_t = growth_timer_p/growth_timer_max;
-    for(var i = 0; i < targets.length; i++)
-    {
-      x = lerp(minx,maxx,i/targets.length)-(maxx-minx)*growth_timer_t;
-      ctx.globalAlpha = 0.2;
-      draw_tree(x,y,i,0,targets);
-      ctx.globalAlpha = 1;
-      if(t_i >= i)
-      {
-        if(modules[0].plot[i] == targets[i])
-        {
-          ctx.fillStyle = green;
-          ctx.fillText("✔",x,y+20);
-        }
-        else
-        {
-          ctx.fillStyle = red;
-          ctx.fillText("✘",x,y+20);
-        }
-      }
-    }
-    draw_tree(minx,y,t_i,advance_timer_t,modules[0].plot);
+    draw_trees();
 
     if(advance_timer == advance_timer_max && t_i < 4)
     {
@@ -331,36 +303,7 @@ var GamePlayScene = function(game, stage)
   }
   l.draw = function()
   {
-    var targets = levels[cur_level_i].primary_module_target_vals[0];
-    var minx = 80;
-    var maxx = 280;
-    var y = 100;
-    var x;
-    var advance_timer_t = (1-(advance_timer/advance_timer_max));
-    var growth_timer_p = t_i+advance_timer_t
-    var growth_timer_max = targets.length;
-    var growth_timer_t = growth_timer_p/growth_timer_max;
-    for(var i = 0; i < targets.length; i++)
-    {
-      x = lerp(minx,maxx,i/targets.length)-(maxx-minx)*growth_timer_t;
-      ctx.globalAlpha = 0.2;
-      draw_tree(x,y,i,0,targets);
-      ctx.globalAlpha = 1;
-      if(t_i >= i)
-      {
-        if(modules[0].plot[i] == targets[i])
-        {
-          ctx.fillStyle = green;
-          ctx.fillText("✔",x,y+20);
-        }
-        else
-        {
-          ctx.fillStyle = red;
-          ctx.fillText("✘",x,y+20);
-        }
-      }
-    }
-    draw_tree(minx,y,t_i,advance_timer_t,modules[0].plot);
+    draw_trees();
 
     var targets = levels[cur_level_i].primary_module_target_vals;
     if(modules[0].plot[0] != targets[0][0])
@@ -419,36 +362,7 @@ var GamePlayScene = function(game, stage)
   }
   l.draw = function()
   {
-    var targets = levels[cur_level_i].primary_module_target_vals[0];
-    var minx = 80;
-    var maxx = 280;
-    var y = 100;
-    var x;
-    var advance_timer_t = (1-(advance_timer/advance_timer_max));
-    var growth_timer_p = t_i+advance_timer_t
-    var growth_timer_max = targets.length;
-    var growth_timer_t = growth_timer_p/growth_timer_max;
-    for(var i = 0; i < targets.length; i++)
-    {
-      x = lerp(minx,maxx,i/targets.length)-(maxx-minx)*growth_timer_t;
-      ctx.globalAlpha = 0.2;
-      draw_tree(x,y,i,0,targets);
-      ctx.globalAlpha = 1;
-      if(t_i >= i)
-      {
-        if(modules[0].plot[i] == targets[i])
-        {
-          ctx.fillStyle = green;
-          ctx.fillText("✔",x,y+20);
-        }
-        else
-        {
-          ctx.fillStyle = red;
-          ctx.fillText("✘",x,y+20);
-        }
-      }
-    }
-    draw_tree(minx,y,t_i,advance_timer_t,modules[0].plot);
+    draw_trees();
 
     var targets = levels[cur_level_i].primary_module_target_vals;
     if(t_i > 0 && modules[0].plot[1] != targets[0][1])
@@ -501,36 +415,7 @@ var GamePlayScene = function(game, stage)
   }
   l.draw = function()
   {
-    var targets = levels[cur_level_i].primary_module_target_vals[0];
-    var minx = 80;
-    var maxx = 280;
-    var y = 100;
-    var x;
-    var advance_timer_t = (1-(advance_timer/advance_timer_max));
-    var growth_timer_p = t_i+advance_timer_t
-    var growth_timer_max = targets.length;
-    var growth_timer_t = growth_timer_p/growth_timer_max;
-    for(var i = 0; i < targets.length; i++)
-    {
-      x = lerp(minx,maxx,i/targets.length)-(maxx-minx)*growth_timer_t;
-      ctx.globalAlpha = 0.2;
-      draw_tree(x,y,i,0,targets);
-      ctx.globalAlpha = 1;
-      if(t_i >= i)
-      {
-        if(modules[0].plot[i] == targets[i])
-        {
-          ctx.fillStyle = green;
-          ctx.fillText("✔",x,y+20);
-        }
-        else
-        {
-          ctx.fillStyle = red;
-          ctx.fillText("✘",x,y+20);
-        }
-      }
-    }
-    draw_tree(minx,y,t_i,advance_timer_t,modules[0].plot);
+    draw_trees();
 
     var targets = levels[cur_level_i].primary_module_target_vals;
     if(t_i > 0 && modules[0].plot[1] != targets[0][1])
@@ -563,6 +448,104 @@ var GamePlayScene = function(game, stage)
     }
   }
   levels.push(l);
+
+  l = new level();
+  l.primary_module_template = "{\"modules\":[{\"title\":\"Bugs\",\"type\":1,\"v\":1,\"min\":0,\"max\":40,\"pool\":1,\"graph\":1,\"wx\":0.2,\"wy\":-0.08,\"ww\":0.15625,\"wh\":0.15625,\"input\":-1,\"adder\":-1},{\"title\":\"Plants\",\"type\":2,\"v\":1,\"min\":0,\"max\":10,\"pool\":1,\"graph\":0,\"wx\":-0.2,\"wy\":-0.08,\"ww\":0.15625,\"wh\":0.15625,\"input\":-1,\"adder\":-1},{\"title\":\"Sun\",\"type\":2,\"v\":1,\"min\":0,\"max\":10,\"pool\":1,\"graph\":0,\"wx\":-0.6,\"wy\":-0.08,\"ww\":0.15625,\"wh\":0.15625,\"input\":-1,\"adder\":-1}]}";
+  l.primary_module_target_vals.push([1,2,4,7,11]);
+  l.primary_module_target_vals.push([1,2,3,4,5]);
+  l.add_object_enabled = false;
+  l.add_relationship_enabled = false;
+  l.add_module_enabled = false;
+  l.remove_enabled = false;
+  l.play_enabled = false;
+  l.speed_enabled = false;
+  l.ready = function()
+  {
+    modules[0].lock_input = true;
+    modules[0].lock_output = true;
+    modules[0].lock_value = true;
+    modules[0].lock_min = true;
+    modules[0].lock_max = true;
+    modules[0].lock_pool = true;
+    modules[0].lock_graph = true;
+
+    modules[1].lock_input = true;
+    modules[1].lock_output = false;
+    modules[1].lock_value = true;
+    modules[1].lock_min = true;
+    modules[1].lock_max = true;
+    modules[1].lock_pool = true;
+    modules[1].lock_graph = true;
+
+    modules[2].lock_input = true;
+    modules[2].lock_output = false;
+    modules[2].lock_value = true;
+    modules[2].lock_min = true;
+    modules[2].lock_max = true;
+    modules[2].lock_pool = true;
+    modules[2].lock_graph = true;
+
+    selected_module = undefined;//modules[0];
+  }
+  l.draw = function()
+  {
+    draw_bugs();
+
+    if(advance_timer == advance_timer_max && t_i < 4)
+    {
+      ctx.font = "20px Arial";
+      ctx.fillStyle = black;
+      ctx.fillText("Click Advance",70,280);
+      ctx.font = "12px Arial";
+    }
+    if(t_i >= 4)
+    {
+      ctx.font = "20px Arial";
+      ctx.fillStyle = black;
+      ctx.fillText("Simulation Complete!",380,140);
+      ctx.fillText("Click Next Level",380,160);
+      ctx.font = "12px Arial";
+    }
+  }
+  l.click = function(evt)
+  {
+    if(doEvtWithinBB(evt, s_graph.advance_btn)) levels[cur_level_i].dismissed++;
+  }
+  levels.push(l);
+
+  var draw_trees = function()
+  {
+    var targets = levels[cur_level_i].primary_module_target_vals[0];
+    var minx = 80;
+    var maxx = 280;
+    var y = 100;
+    var x;
+    var advance_timer_t = (1-(advance_timer/advance_timer_max));
+    var growth_timer_p = t_i+advance_timer_t
+    var growth_timer_max = targets.length;
+    var growth_timer_t = growth_timer_p/growth_timer_max;
+    for(var i = 0; i < targets.length; i++)
+    {
+      x = lerp(minx,maxx,i/targets.length)-(maxx-minx)*growth_timer_t;
+      ctx.globalAlpha = 0.2;
+      draw_tree(x,y,i,0,targets);
+      ctx.globalAlpha = 1;
+      if(t_i >= i)
+      {
+        if(modules[0].plot[i] == targets[i])
+        {
+          ctx.fillStyle = green;
+          ctx.fillText("✔",x,y+20);
+        }
+        else
+        {
+          ctx.fillStyle = red;
+          ctx.fillText("✘",x,y+20);
+        }
+      }
+    }
+    draw_tree(minx,y,t_i,advance_timer_t,modules[0].plot);
+  }
 
   var draw_tree = function(x,y,tick,t,plot)
   {
@@ -617,6 +600,28 @@ var GamePlayScene = function(game, stage)
     }
     ctx.stroke();
     ctx.strokeStyle = black;
+  }
+
+  var draw_bugs = function()
+  {
+    for(var i = 0; i < modules[0].v; i++)
+      draw_bug(i);
+  }
+
+  var draw_bug = function(i)
+  {
+    var bug_t = (n_ticks/100)%twelvepi;
+    var start_t      = (((i*123+10)*123.4567)%1)*twopi;
+    var start_x      = 50+(((i*123+10)*123.4567)%1)*100;
+    var start_y      = 50+(((i*899+10)*123.4567)%1)*100;
+    var width  = 20+(((i*123+10)*123.4567)%1)*20;
+    var height = 10+(((i*123+10)*456.7897)%1)*10;
+    var x = start_x+cos((bug_t+start_t)*4)*width;
+    var y = start_y+sin((bug_t+start_t)*8)*height;
+    ctx.fillStyle = black;
+    ctx.beginPath();
+    ctx.arc(x,y,3,0,twopi);
+    ctx.fill();
   }
 
   var graph = function()
@@ -1837,6 +1842,7 @@ var GamePlayScene = function(game, stage)
     advance_timer = advance_timer_max;
     t_i = 0;
     t_max = 50;
+    n_ticks = 0;
 
     load_template_i = 0;
     templates = [];
@@ -2104,6 +2110,7 @@ var GamePlayScene = function(game, stage)
 
     for(var i = 0; i < modules.length; i++)
       modules[i].tick();
+    n_ticks++;
   };
 
   self.draw = function()
@@ -2188,16 +2195,17 @@ var GamePlayScene = function(game, stage)
     var targets = levels[cur_level_i].primary_module_target_vals;
     var targets_x = 350;
     var targets_y = 10;
-    var xpad = 40;
+    var xpad = 35;
     var ypad = 14;
     if(targets && targets.length)
     {
       ctx.lineWidth = 1;
       ctx.textAlign = "center";
       ctx.fillStyle = black;
-      ctx.strokeRect(targets_x, targets_y, xpad*2, ypad*(targets[0].length+2));
+      ctx.strokeRect(targets_x, targets_y, xpad*(targets.length*2), ypad*(targets[0].length+2)+10);
       var window_y = min(targets_y+ypad*((t_i+(1-(advance_timer/advance_timer_max)))+1)+4,targets_y+ypad*(targets[0].length+2)-12);
-      ctx.strokeRect(targets_x, window_y, xpad*2, 20-8);
+      ctx.strokeRect(targets_x, window_y, xpad*(targets.length*2), 20-8);
+      next_level_btn.x = targets_x + xpad*(targets.length*2) + 10;
       for(var j = 0; j < targets.length; j++)
       {
         ctx.fillText("data",targets_x+xpad*(2*j)+xpad/2,targets_y+ypad);
@@ -2226,6 +2234,17 @@ var GamePlayScene = function(game, stage)
             }
             ctx.fillText(modules[j].plot[i],x,y); //value
           }
+        }
+      }
+      ctx.fillStyle = black;
+      for(var j = 0; j < targets.length; j++)
+      {
+        ctx.fillText("?",targets_x+xpad*(2*j)+xpad/2,targets_y+ypad*(i+2)); //target
+        if(t_i >= i)
+        {
+          var x = targets_x+xpad*(2*j+1)+xpad/2;
+          var y = targets_y+ypad*(i+2);
+          ctx.fillText(modules[j].plot[i],x,y); //value
         }
       }
     }
