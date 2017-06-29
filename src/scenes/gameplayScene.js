@@ -179,6 +179,7 @@ var GamePlayScene = function(game, stage)
     self.speed_enabled = true;
     self.dismissed = 0;
     self.click = function(){ self.dismissed++; };
+    self.should_allow_creation = function(){ return true; }
     self.gen_modules = function()
     {
       load_template(self.primary_module_template);
@@ -485,6 +486,7 @@ var GamePlayScene = function(game, stage)
   l.remove_enabled = false;
   l.play_enabled = false;
   l.speed_enabled = false;
+  l.should_allow_creation = function(){ return modules.length < 2; }
   l.ready = function()
   {
     modules[0].lock_input = true;
@@ -541,6 +543,14 @@ var GamePlayScene = function(game, stage)
       ctx.textAlign = "center";
       ctx.fillText("Drag out an action module",340,150);
       ctx.fillText("And set its output to Tree Height",340,170);
+      ctx.font = "12px Arial";
+    }
+    if(modules.length > 1 && !modules[1].output_dongle.attachment && !dragging_obj)
+    {
+      ctx.font = "20px Arial";
+      ctx.fillStyle = black;
+      ctx.fillText("Drag the output arrow",modules[1].x+modules[1].w/2,modules[1].y-50);
+      ctx.fillText("To the tree height module",modules[1].x+modules[1].w/2,modules[1].y-30);
       ctx.font = "12px Arial";
     }
     if(levelComplete() && t_i >= 4)
@@ -1865,6 +1875,7 @@ var GamePlayScene = function(game, stage)
     var dragOutModule = function(type,btn,evt)
     {
       if(dragging_obj) return false;
+      if(levels[cur_level_i] && levels[cur_level_i].should_allow_creation && !levels[cur_level_i].should_allow_creation()) return false;
       if(doEvtWithinBB(evt,btn))
       {
         var m = new module(worldSpaceX(work_cam,canv,evt.doX),worldSpaceY(work_cam,canv,evt.doY),worldSpaceW(work_cam,canv,module_s),worldSpaceH(work_cam,canv,module_s));
