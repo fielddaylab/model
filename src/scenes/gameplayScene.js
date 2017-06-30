@@ -217,7 +217,8 @@ var GamePlayScene = function(game, stage)
   }
 
   var levels = [];
-  var cur_level_i = 4-1; //call nextLevel once!
+  //var cur_level_i = -1; //call nextLevel once!
+  var cur_level_i = 4-1;
   var l;
 
   l = new level();
@@ -450,9 +451,9 @@ var GamePlayScene = function(game, stage)
   levels.push(l);
 
   l = new level();
-  l.primary_module_template = "{\"modules\":[{\"title\":\"Sunlight\",\"type\":1,\"v\":1,\"min\":0,\"max\":10,\"pool\":1,\"graph\":1,\"wx\":-0.5,\"wy\":-0.125,\"ww\":0.15625,\"wh\":0.15625,\"input\":-1,\"adder\":-1},{\"title\":\"Plants\",\"type\":1,\"v\":1,\"min\":0,\"max\":10,\"pool\":1,\"graph\":1,\"wx\":0,\"wy\":-0.125,\"ww\":0.15625,\"wh\":0.15625,\"input\":-1,\"adder\":-1},{\"title\":\"Bugs\",\"type\":1,\"v\":1,\"min\":0,\"max\":10,\"pool\":1,\"graph\":1,\"wx\":0.5,\"wy\":-0.125,\"ww\":0.15625,\"wh\":0.15625,\"input\":-1,\"adder\":-1},{\"title\":\"feed\",\"type\":2,\"v\":0.1,\"min\":0,\"max\":10,\"pool\":1,\"graph\":0,\"wx\":0.25,\"wy\":0,\"ww\":0.15625,\"wh\":0.15625,\"input\":1,\"adder\":2}]}";
-  l.primary_module_target_vals.push([1,2,4,7,11]);
+  l.primary_module_template = "{\"modules\":[{\"title\":\"Plants\",\"type\":1,\"v\":1,\"min\":0,\"max\":10,\"pool\":1,\"graph\":1,\"wx\":0,\"wy\":-0.125,\"ww\":0.15625,\"wh\":0.15625,\"input\":-1,\"adder\":-1},{\"title\":\"Bugs\",\"type\":1,\"v\":1,\"min\":0,\"max\":10,\"pool\":1,\"graph\":1,\"wx\":0.5,\"wy\":-0.125,\"ww\":0.15625,\"wh\":0.15625,\"input\":-1,\"adder\":-1},{\"title\":\"Sunlight\",\"type\":1,\"v\":10,\"min\":0,\"max\":10,\"pool\":1,\"graph\":1,\"wx\":-0.5,\"wy\":-0.125,\"ww\":0.15625,\"wh\":0.15625,\"input\":-1,\"adder\":-1},{\"title\":\"feed\",\"type\":2,\"v\":0.1,\"min\":0,\"max\":10,\"pool\":1,\"graph\":0,\"wx\":0.25,\"wy\":0,\"ww\":0.15625,\"wh\":0.15625,\"input\":0,\"adder\":1}]}";
   l.primary_module_target_vals.push([1,2,3,4,5]);
+  l.primary_module_target_vals.push([1,1.1,1.3,1.6,2]);
   l.add_object_enabled = false;
   l.add_relationship_enabled = true;
   l.add_module_enabled = false;
@@ -491,14 +492,44 @@ var GamePlayScene = function(game, stage)
   {
     draw_bugs();
 
-    if(advance_timer == advance_timer_max && t_i < 4)
+    var targets = levels[cur_level_i].primary_module_target_vals;
+    if(t_i > 0 && modules[0].plot[1] != targets[0][1])
+    {
+      ctx.textAlign = "left";
+      ctx.font = "20px Arial";
+      ctx.fillStyle = black;
+      ctx.fillText("This doesn't conform",450,40);
+      ctx.fillText("to our data...",450,60);
+      ctx.textAlign = "center";
+      ctx.fillText("Drag out an action module",340,150);
+      ctx.fillText("And set its output to Plants",340,170);
+      ctx.font = "12px Arial";
+    }
+    if(modules.length > 4 && !modules[4].output_dongle.attachment && !dragging_obj)
     {
       ctx.font = "20px Arial";
       ctx.fillStyle = black;
-      ctx.fillText("Click Advance",70,280);
+      ctx.fillText("Drag the output arrow",modules[1].x+modules[1].w/2,modules[1].y-50);
+      ctx.fillText("To the Plants module",modules[1].x+modules[1].w/2,modules[1].y-30);
       ctx.font = "12px Arial";
     }
-    if(t_i >= 4)
+    if(modules.length > 4 && modules[4].output_dongle.attachment && !modules[4].input_dongle.attachment && !dragging_obj)
+    {
+      ctx.font = "20px Arial";
+      ctx.fillStyle = black;
+      ctx.fillText("Drag the input arrow",modules[1].x+modules[1].w/2,modules[1].y-50);
+      ctx.fillText("To the Sunlight module",modules[1].x+modules[1].w/2,modules[1].y-30);
+      ctx.font = "12px Arial";
+    }
+    if(modules.length > 4 && modules[4].output_dongle.attachment && modules[4].input_dongle.attachment && !dragging_obj)
+    {
+      ctx.font = "20px Arial";
+      ctx.fillStyle = black;
+      ctx.fillText("Select your new action module",340,150);
+      ctx.fillText("And set its multiplier",340,170);
+      ctx.font = "12px Arial";
+    }
+    if(levelComplete() && t_i >= 4)
     {
       ctx.font = "20px Arial";
       ctx.fillStyle = black;
@@ -935,9 +966,11 @@ var GamePlayScene = function(game, stage)
         {
           self.v_box.draw(canv);
           ctx.fillStyle = black;
-          if(selected_module.output_dongle.attachment)
+          if(selected_module.output_dongle.attachment && selected_module.input_dongle.attachment)
+            ctx.fillText("multiplier",   self.v_box.x     + self.v_box.w     + 10, self.v_box.y    +20);
+          else if(selected_module.output_dongle.attachment)
             ctx.fillText("contribution",   self.v_box.x     + self.v_box.w     + 10, self.v_box.y    +20);
-          if(selected_module.pool && !selected_module.output_dongle.attachment)
+          else if(selected_module.pool && !selected_module.output_dongle.attachment)
             ctx.fillText("starting val",   self.v_box.x     + self.v_box.w     + 10, self.v_box.y    +20);
         }
         if(!selected_module.cache_const)
