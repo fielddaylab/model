@@ -450,11 +450,11 @@ var GamePlayScene = function(game, stage)
   levels.push(l);
 
   l = new level();
-  l.primary_module_template = "{\"modules\":[{\"title\":\"Bugs\",\"type\":1,\"v\":1,\"min\":0,\"max\":40,\"pool\":1,\"graph\":1,\"wx\":0.2,\"wy\":-0.08,\"ww\":0.15625,\"wh\":0.15625,\"input\":-1,\"adder\":-1},{\"title\":\"Plants\",\"type\":2,\"v\":1,\"min\":0,\"max\":10,\"pool\":1,\"graph\":0,\"wx\":-0.2,\"wy\":-0.08,\"ww\":0.15625,\"wh\":0.15625,\"input\":-1,\"adder\":-1},{\"title\":\"Sun\",\"type\":2,\"v\":1,\"min\":0,\"max\":10,\"pool\":1,\"graph\":0,\"wx\":-0.6,\"wy\":-0.08,\"ww\":0.15625,\"wh\":0.15625,\"input\":-1,\"adder\":-1}]}";
+  l.primary_module_template = "{\"modules\":[{\"title\":\"Sunlight\",\"type\":1,\"v\":1,\"min\":0,\"max\":10,\"pool\":1,\"graph\":1,\"wx\":-0.5,\"wy\":-0.125,\"ww\":0.15625,\"wh\":0.15625,\"input\":-1,\"adder\":-1},{\"title\":\"Plants\",\"type\":1,\"v\":1,\"min\":0,\"max\":10,\"pool\":1,\"graph\":1,\"wx\":0,\"wy\":-0.125,\"ww\":0.15625,\"wh\":0.15625,\"input\":-1,\"adder\":-1},{\"title\":\"Bugs\",\"type\":1,\"v\":1,\"min\":0,\"max\":10,\"pool\":1,\"graph\":1,\"wx\":0.5,\"wy\":-0.125,\"ww\":0.15625,\"wh\":0.15625,\"input\":-1,\"adder\":-1},{\"title\":\"feed\",\"type\":2,\"v\":0.1,\"min\":0,\"max\":10,\"pool\":1,\"graph\":0,\"wx\":0.25,\"wy\":0,\"ww\":0.15625,\"wh\":0.15625,\"input\":1,\"adder\":2}]}";
   l.primary_module_target_vals.push([1,2,4,7,11]);
   l.primary_module_target_vals.push([1,2,3,4,5]);
   l.add_object_enabled = false;
-  l.add_relationship_enabled = false;
+  l.add_relationship_enabled = true;
   l.add_module_enabled = false;
   l.remove_enabled = false;
   l.play_enabled = false;
@@ -2202,14 +2202,19 @@ var GamePlayScene = function(game, stage)
       ctx.lineWidth = 1;
       ctx.textAlign = "center";
       ctx.fillStyle = black;
-      ctx.strokeRect(targets_x, targets_y, xpad*(targets.length*2), ypad*(targets[0].length+2)+10);
-      var window_y = min(targets_y+ypad*((t_i+(1-(advance_timer/advance_timer_max)))+1)+4,targets_y+ypad*(targets[0].length+2)-12);
-      ctx.strokeRect(targets_x, window_y, xpad*(targets.length*2), 20-8);
+      var c_t_i = t_i+(1-(advance_timer/advance_timer_max));
+      var window_t_i = min(c_t_i, targets[0].length);
+      var window_y = targets_y+(window_t_i+2)*ypad+2;
+      var box_w = (targets.length*2)*xpad;
+      var box_h = (targets[0].length+3)*ypad+2;
+      ctx.strokeRect(targets_x, targets_y, box_w, box_h);
+      ctx.strokeRect(targets_x, window_y, box_w, ypad);
       next_level_btn.x = targets_x + xpad*(targets.length*2) + 10;
       for(var j = 0; j < targets.length; j++)
       {
-        ctx.fillText("data",targets_x+xpad*(2*j)+xpad/2,targets_y+ypad);
-        ctx.fillText("sim",targets_x+xpad*(2*j+1)+xpad/2,targets_y+ypad);
+        ctx.fillText(modules[j].title,targets_x+xpad*(2*j+0.5)+xpad/2,targets_y+ypad);
+        ctx.fillText("data",targets_x+xpad*(2*j)+xpad/2,targets_y+ypad*2);
+        ctx.fillText("sim",targets_x+xpad*(2*j+1)+xpad/2,targets_y+ypad*2);
       }
       for(var i = 0; i < targets[0].length; i++) //inverted loop
       {
@@ -2217,11 +2222,11 @@ var GamePlayScene = function(game, stage)
         for(var j = 0; j < targets.length; j++)
         {
           ctx.fillStyle = black;
-          ctx.fillText(targets[j][i],targets_x+xpad*(2*j)+xpad/2,targets_y+ypad*(i+2)); //target
+          var y = targets_y+ypad*(i+3);
+          ctx.fillText(targets[j][i],targets_x+xpad*(2*j)+xpad/2,y); //target
           if(t_i >= i)
           {
             var x = targets_x+xpad*(2*j+1)+xpad/2;
-            var y = targets_y+ypad*(i+2);
             if(modules[j].plot[i] == targets[j][i])
             {
               ctx.fillStyle = green;
@@ -2239,11 +2244,11 @@ var GamePlayScene = function(game, stage)
       ctx.fillStyle = black;
       for(var j = 0; j < targets.length; j++)
       {
-        ctx.fillText("?",targets_x+xpad*(2*j)+xpad/2,targets_y+ypad*(i+2)); //target
+        var y = targets_y+ypad*(i+3);
+        ctx.fillText("?",targets_x+xpad*(2*j)+xpad/2,y); //target
         if(t_i >= i)
         {
           var x = targets_x+xpad*(2*j+1)+xpad/2;
-          var y = targets_y+ypad*(i+2);
           ctx.fillText(modules[j].plot[i],x,y); //value
         }
       }
