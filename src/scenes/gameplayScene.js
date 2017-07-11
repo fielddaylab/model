@@ -33,7 +33,9 @@ var GamePlayScene = function(game, stage)
   var t_i;
 
   var add_object_btn;
-  var add_object_btn;
+  var add_relationship_btn;
+  var add_generator_btn;
+  var add_module_btn;
   var remove_module_btn;
   var next_level_btn;
   var print_btn;
@@ -171,6 +173,7 @@ var GamePlayScene = function(game, stage)
     self.tick = noop;
     self.draw = noop;
     self.add_object_enabled = true;
+    self.add_generator_enabled = true;
     self.add_relationship_enabled = true;
     self.add_module_enabled = true;
     self.remove_enabled = true;
@@ -195,6 +198,7 @@ var GamePlayScene = function(game, stage)
 
   var levelComplete = function()
   {
+    return true;
     var targets = levels[cur_level_i].primary_module_target_vals;
     if(targets && targets.length)
     {
@@ -217,14 +221,15 @@ var GamePlayScene = function(game, stage)
   }
 
   var levels = [];
-  //var cur_level_i = -1; //call nextLevel once!
-  var cur_level_i = 4-1;
+  var cur_level_i = -1; //call nextLevel once!
+  //var cur_level_i = 4-1;
   var l;
 
   l = new level();
-  l.primary_module_template = "{\"modules\":[{\"title\":\"Tree Height (M)\",\"type\":1,\"v\":1,\"min\":0,\"max\":40,\"pool\":1,\"graph\":1,\"wx\":0.2,\"wy\":-0.08,\"ww\":0.15625,\"wh\":0.15625,\"input\":-1,\"adder\":-1},{\"title\":\"Growth Rate (M/T)\",\"type\":2,\"v\":1,\"min\":0,\"max\":10,\"pool\":1,\"graph\":0,\"wx\":-0.2,\"wy\":-0.08,\"ww\":0.15625,\"wh\":0.15625,\"input\":-1,\"adder\":0}]}";
+  l.primary_module_template = "{\"modules\":[{\"title\":\"Tree Height (M)\",\"type\":0,\"v\":1,\"min\":0,\"max\":40,\"pool\":1,\"graph\":1,\"wx\":0.2,\"wy\":-0.08,\"ww\":0.15625,\"wh\":0.15625,\"input\":-1,\"adder\":-1},{\"title\":\"Growth Rate (M/T)\",\"type\":1,\"v\":1,\"min\":0,\"max\":10,\"pool\":1,\"graph\":0,\"wx\":-0.2,\"wy\":-0.08,\"ww\":0.15625,\"wh\":0.15625,\"input\":-1,\"adder\":0}]}";
   l.primary_module_target_vals.push([1,2,3,4,5]);
   l.add_object_enabled = false;
+  l.add_generator_enabled = false;
   l.add_relationship_enabled = false;
   l.add_module_enabled = false;
   l.remove_enabled = false;
@@ -276,9 +281,10 @@ var GamePlayScene = function(game, stage)
   levels.push(l);
 
   l = new level();
-  l.primary_module_template = "{\"modules\":[{\"title\":\"Tree Height (M)\",\"type\":1,\"v\":1,\"min\":0,\"max\":40,\"pool\":1,\"graph\":1,\"wx\":0.2,\"wy\":-0.08,\"ww\":0.15625,\"wh\":0.15625,\"input\":-1,\"adder\":-1},{\"title\":\"Growth Rate (M/T)\",\"type\":2,\"v\":1,\"min\":0,\"max\":10,\"pool\":1,\"graph\":0,\"wx\":-0.2,\"wy\":-0.08,\"ww\":0.15625,\"wh\":0.15625,\"input\":-1,\"adder\":0}]}";
+  l.primary_module_template = "{\"modules\":[{\"title\":\"Tree Height (M)\",\"type\":0,\"v\":1,\"min\":0,\"max\":40,\"pool\":1,\"graph\":1,\"wx\":0.2,\"wy\":-0.08,\"ww\":0.15625,\"wh\":0.15625,\"input\":-1,\"adder\":-1},{\"title\":\"Growth Rate (M/T)\",\"type\":1,\"v\":1,\"min\":0,\"max\":10,\"pool\":1,\"graph\":0,\"wx\":-0.2,\"wy\":-0.08,\"ww\":0.15625,\"wh\":0.15625,\"input\":-1,\"adder\":0}]}";
   l.primary_module_target_vals.push([2,3,4,5,6]);
   l.add_object_enabled = false;
+  l.add_generator_enabled = false;
   l.add_relationship_enabled = false;
   l.add_module_enabled = false;
   l.remove_enabled = false;
@@ -335,9 +341,10 @@ var GamePlayScene = function(game, stage)
   levels.push(l);
 
   l = new level();
-  l.primary_module_template = "{\"modules\":[{\"title\":\"Tree Height (M)\",\"type\":1,\"v\":1,\"min\":0,\"max\":40,\"pool\":1,\"graph\":1,\"wx\":0.2,\"wy\":-0.08,\"ww\":0.15625,\"wh\":0.15625,\"input\":-1,\"adder\":-1},{\"title\":\"Growth Rate (M/T)\",\"type\":2,\"v\":1,\"min\":0,\"max\":10,\"pool\":1,\"graph\":0,\"wx\":-0.2,\"wy\":-0.08,\"ww\":0.15625,\"wh\":0.15625,\"input\":-1,\"adder\":0}]}";
+  l.primary_module_template = "{\"modules\":[{\"title\":\"Tree Height (M)\",\"type\":0,\"v\":1,\"min\":0,\"max\":40,\"pool\":1,\"graph\":1,\"wx\":0.2,\"wy\":-0.08,\"ww\":0.15625,\"wh\":0.15625,\"input\":-1,\"adder\":-1},{\"title\":\"Growth Rate (M/T)\",\"type\":1,\"v\":1,\"min\":0,\"max\":10,\"pool\":1,\"graph\":0,\"wx\":-0.2,\"wy\":-0.08,\"ww\":0.15625,\"wh\":0.15625,\"input\":-1,\"adder\":0}]}";
   l.primary_module_target_vals.push([1,3,5,7,9]);
   l.add_object_enabled = false;
+  l.add_generator_enabled = false;
   l.add_relationship_enabled = false;
   l.add_module_enabled = false;
   l.remove_enabled = false;
@@ -394,9 +401,11 @@ var GamePlayScene = function(game, stage)
   levels.push(l);
 
   l = new level();
-  l.primary_module_template = "{\"modules\":[{\"title\":\"Tree Height (M)\",\"type\":1,\"v\":1,\"min\":0,\"max\":10,\"pool\":1,\"graph\":1,\"wx\":0.2,\"wy\":-0.08,\"ww\":0.15625,\"wh\":0.15625,\"input\":-1,\"adder\":-1}]}";
+  l.primary_module_template = "{\"modules\":[{\"title\":\"Tree Height (M)\",\"type\":0,\"v\":1,\"min\":0,\"max\":10,\"pool\":1,\"graph\":1,\"wx\":0.2,\"wy\":-0.08,\"ww\":0.15625,\"wh\":0.15625,\"input\":-1,\"adder\":-1}]}";
   l.primary_module_target_vals.push([1,2,3,4,5]);
   l.add_object_enabled = false;
+  //l.add_generator_enabled = false;
+  l.add_relationship_enabled = false;
   l.add_module_enabled = false;
   l.remove_enabled = false;
   l.play_enabled = false;
@@ -451,10 +460,11 @@ var GamePlayScene = function(game, stage)
   levels.push(l);
 
   l = new level();
-  l.primary_module_template = "{\"modules\":[{\"title\":\"Plants\",\"type\":1,\"v\":1,\"min\":0,\"max\":10,\"pool\":1,\"graph\":1,\"wx\":0,\"wy\":-0.125,\"ww\":0.15625,\"wh\":0.15625,\"input\":-1,\"adder\":-1},{\"title\":\"Bugs\",\"type\":1,\"v\":1,\"min\":0,\"max\":10,\"pool\":1,\"graph\":1,\"wx\":0.5,\"wy\":-0.125,\"ww\":0.15625,\"wh\":0.15625,\"input\":-1,\"adder\":-1},{\"title\":\"Sunlight\",\"type\":1,\"v\":10,\"min\":0,\"max\":10,\"pool\":1,\"graph\":1,\"wx\":-0.5,\"wy\":-0.125,\"ww\":0.15625,\"wh\":0.15625,\"input\":-1,\"adder\":-1},{\"title\":\"feed\",\"type\":2,\"v\":0.1,\"min\":0,\"max\":10,\"pool\":1,\"graph\":0,\"wx\":0.25,\"wy\":0,\"ww\":0.15625,\"wh\":0.15625,\"input\":0,\"adder\":1}]}";
+  l.primary_module_template = "{\"modules\":[{\"title\":\"Plants\",\"type\":0,\"v\":1,\"min\":0,\"max\":10,\"pool\":1,\"graph\":1,\"wx\":0,\"wy\":-0.125,\"ww\":0.15625,\"wh\":0.15625,\"input\":-1,\"adder\":-1},{\"title\":\"Bugs\",\"type\":0,\"v\":1,\"min\":0,\"max\":10,\"pool\":1,\"graph\":1,\"wx\":0.5,\"wy\":-0.125,\"ww\":0.15625,\"wh\":0.15625,\"input\":-1,\"adder\":-1},{\"title\":\"Sunlight\",\"type\":1,\"v\":10,\"min\":0,\"max\":10,\"pool\":1,\"graph\":1,\"wx\":-0.5,\"wy\":-0.125,\"ww\":0.15625,\"wh\":0.15625,\"input\":-1,\"adder\":-1},{\"title\":\"feed\",\"type\":2,\"v\":0.1,\"min\":0,\"max\":10,\"pool\":1,\"graph\":0,\"wx\":0.25,\"wy\":0,\"ww\":0.15625,\"wh\":0.15625,\"input\":0,\"adder\":1}]}";
   l.primary_module_target_vals.push([1,2,3,4,5]);
   l.primary_module_target_vals.push([1,1.1,1.3,1.6,2]);
   l.add_object_enabled = false;
+  l.add_generator_enabled = false;
   l.add_relationship_enabled = true;
   l.add_module_enabled = false;
   l.remove_enabled = false;
@@ -1215,9 +1225,10 @@ var GamePlayScene = function(game, stage)
   var OPERATOR_MUL = ENUM; ENUM++;
   var OPERATOR_DIV = ENUM; ENUM++;
   ENUM = 0;
-  var MODULE_TYPE_BOTH         = ENUM; ENUM++;
   var MODULE_TYPE_OBJECT       = ENUM; ENUM++;
+  var MODULE_TYPE_GENERATOR    = ENUM; ENUM++;
   var MODULE_TYPE_RELATIONSHIP = ENUM; ENUM++;
+  var MODULE_TYPE_MODULE       = ENUM; ENUM++;
   var module = function(wx,wy,ww,wh)
   {
     var self = this;
@@ -1245,7 +1256,7 @@ var GamePlayScene = function(game, stage)
     self.lock_pool = false;
     self.lock_graph = false;
 
-    self.type = MODULE_TYPE_BOTH;
+    self.type = MODULE_TYPE_MODULE;
     self.v_default = 1;
     self.v = 1;
     self.v_temp = 1;
@@ -1450,7 +1461,7 @@ var GamePlayScene = function(game, stage)
       var should =
       (
         (
-          self.type == MODULE_TYPE_BOTH &&
+          self.type == MODULE_TYPE_MODULE &&
           (
             self.input_dongle.attachment ||
             self.input_dongle.dragging ||
@@ -1474,7 +1485,7 @@ var GamePlayScene = function(game, stage)
       var should =
       (
         (
-          self.type == MODULE_TYPE_BOTH &&
+          self.type == MODULE_TYPE_MODULE &&
           (
             self.output_dongle.attachment ||
             self.output_dongle.dragging ||
@@ -1487,6 +1498,10 @@ var GamePlayScene = function(game, stage)
         ||
         (
           self.type == MODULE_TYPE_RELATIONSHIP
+        )
+        ||
+        (
+          self.type == MODULE_TYPE_GENERATOR
         )
       );
       return should;
@@ -1777,7 +1792,7 @@ var GamePlayScene = function(game, stage)
 
       if(
         (
-          self.type == MODULE_TYPE_BOTH &&
+          self.type == MODULE_TYPE_MODULE &&
           !self.output_dongle.attachment &&
           !self.output_dongle.dragging &&
           self.hovering &&
@@ -1805,7 +1820,7 @@ var GamePlayScene = function(game, stage)
 
       if(
         (
-          self.type == MODULE_TYPE_BOTH &&
+          self.type == MODULE_TYPE_MODULE &&
           !self.input_dongle.attachment &&
           !self.input_dongle.dragging &&
           self.hovering &&
@@ -1880,11 +1895,11 @@ var GamePlayScene = function(game, stage)
     load_template_i = 0;
     templates = [];
     /*empty*/            templates.push("{\"modules\":[]}");
-    /*feedback loop*/    templates.push("{\"modules\":[{\"title\":\"microphone\",\"type\":0,\"v\":0,\"min\":0,\"max\":100,\"pool\":0,\"graph\":true,\"wx\":-0.478125,\"wy\":0.16874999999999993,\"ww\":0.15625,\"wh\":0.15625,\"input\":-1,\"adder\":-1},{\"title\":\"amp\",\"type\":0,\"v\":0,\"min\":0,\"max\":100,\"pool\":0,\"graph\":true,\"wx\":0.27812499999999996,\"wy\":0.15937500000000004,\"ww\":0.15625,\"wh\":0.15625,\"input\":-1,\"adder\":-1},{\"title\":\"makes sound\",\"type\":0,\"v\":1.1,\"min\":0,\"max\":100,\"pool\":true,\"graph\":0,\"wx\":-0.08125000000000004,\"wy\":0.40312499999999996,\"ww\":0.15625,\"wh\":0.15625,\"input\":1,\"adder\":0},{\"title\":\"records sound\",\"type\":0,\"v\":1.1,\"min\":0,\"max\":100,\"pool\":true,\"graph\":0,\"wx\":-0.12187499999999996,\"wy\":-0.05312500000000002,\"ww\":0.15625,\"wh\":0.15625,\"input\":0,\"adder\":1}]}");
-    /*normalizing loop*/ templates.push("{\"modules\":[{\"title\":\"bowl\",\"type\":0,\"v\":50,\"min\":0,\"max\":100,\"pool\":true,\"graph\":true,\"wx\":-0.275,\"wy\":0.046875,\"ww\":0.15625,\"wh\":0.15625,\"input\":-1,\"adder\":-1},{\"title\":\"kids\",\"type\":0,\"v\":50,\"min\":0,\"max\":100,\"pool\":0,\"graph\":true,\"wx\":0.5125,\"wy\":0.09687499999999999,\"ww\":0.15625,\"wh\":0.15625,\"input\":-1,\"adder\":-1},{\"title\":\"teachers\",\"type\":0,\"v\":50,\"min\":0,\"max\":100,\"pool\":true,\"graph\":true,\"wx\":-0.7562500000000002,\"wy\":0.36875,\"ww\":0.15625,\"wh\":0.15625,\"input\":-1,\"adder\":-1},{\"title\":\"each take jellybeans\",\"type\":0,\"v\":-1,\"min\":-1,\"max\":1,\"pool\":true,\"graph\":0,\"wx\":0.034374999999999864,\"wy\":0.25625,\"ww\":0.15625,\"wh\":0.15625,\"input\":1,\"adder\":0},{\"title\":\"each put jellybeans into\",\"type\":0,\"v\":1,\"min\":0,\"max\":100,\"pool\":true,\"graph\":0,\"wx\":-0.74375,\"wy\":0.10625000000000007,\"ww\":0.15625,\"wh\":0.15625,\"input\":2,\"adder\":0},{\"title\":\"attracts kids\",\"type\":0,\"v\":0.9,\"min\":0,\"max\":100,\"pool\":true,\"graph\":0,\"wx\":0.09062499999999989,\"wy\":-0.12500000000000006,\"ww\":0.15625,\"wh\":0.15625,\"input\":0,\"adder\":1}]}");
-    /*cycle*/            templates.push("{\"modules\":[{\"title\":\"rabbits\",\"type\":0,\"v\":50,\"min\":0,\"max\":100,\"pool\":true,\"graph\":true,\"wx\":-0.31875,\"wy\":0.184375,\"ww\":0.15625,\"wh\":0.15625,\"input\":-1,\"adder\":-1},{\"title\":\"foxes\",\"type\":0,\"v\":100,\"min\":0,\"max\":100,\"pool\":true,\"graph\":true,\"wx\":0.21562499999999996,\"wy\":0.2,\"ww\":0.15625,\"wh\":0.15625,\"input\":-1,\"adder\":-1},{\"title\":\"eat\",\"type\":0,\"v\":-0.3,\"min\":-1,\"max\":1,\"pool\":true,\"graph\":0,\"wx\":-0.034375000000000044,\"wy\":0.4,\"ww\":0.15625,\"wh\":0.15625,\"input\":1,\"adder\":0},{\"title\":\"nourish\",\"type\":0,\"v\":0.3,\"min\":0,\"max\":100,\"pool\":true,\"graph\":0,\"wx\":-0.050000000000000044,\"wy\":0.003124999999999989,\"ww\":0.15625,\"wh\":0.15625,\"input\":0,\"adder\":1},{\"title\":\"breed\",\"type\":0,\"v\":10,\"min\":0,\"max\":100,\"pool\":true,\"graph\":0,\"wx\":-0.6625,\"wy\":0.21874999999999994,\"ww\":0.15625,\"wh\":0.15625,\"input\":-1,\"adder\":0},{\"title\":\"die\",\"type\":0,\"v\":-10,\"min\":-10,\"max\":10,\"pool\":true,\"graph\":0,\"wx\":0.48124999999999996,\"wy\":0.203125,\"ww\":0.15625,\"wh\":0.15625,\"input\":-1,\"adder\":1}]}");
-    /*proportion cycle*/ templates.push("{\"modules\":[{\"title\":\"rabits\",\"type\":0,\"v\":100,\"min\":0,\"max\":100,\"pool\":true,\"graph\":true,\"wx\":-0.31875,\"wy\":0.184375,\"ww\":0.15625,\"wh\":0.15625,\"input\":-1,\"adder\":-1},{\"title\":\"foxes\",\"type\":0,\"v\":50,\"min\":0,\"max\":100,\"pool\":true,\"graph\":true,\"wx\":0.2437499999999999,\"wy\":0.175,\"ww\":0.15625,\"wh\":0.15625,\"input\":-1,\"adder\":-1},{\"title\":\"eat\",\"type\":0,\"v\":-0.4,\"min\":-1,\"max\":1,\"pool\":true,\"graph\":0,\"wx\":-0.009375000000000022,\"wy\":0.384375,\"ww\":0.15625,\"wh\":0.15625,\"input\":1,\"adder\":0},{\"title\":\"nourish\",\"type\":0,\"v\":0.1,\"min\":0,\"max\":100,\"pool\":true,\"graph\":0,\"wx\":-0.050000000000000044,\"wy\":0.003124999999999989,\"ww\":0.15625,\"wh\":0.15625,\"input\":0,\"adder\":1},{\"title\":\"breed\",\"type\":0,\"v\":0.3,\"min\":0,\"max\":100,\"pool\":true,\"graph\":0,\"wx\":-0.665625,\"wy\":0.19999999999999996,\"ww\":0.15625,\"wh\":0.15625,\"input\":0,\"adder\":0},{\"title\":\"die\",\"type\":0,\"v\":-0.2,\"min\":-1,\"max\":1,\"pool\":true,\"graph\":0,\"wx\":0.5,\"wy\":0.15,\"ww\":0.15625,\"wh\":0.15625,\"input\":1,\"adder\":1}]}");
-    /*circle of life*/   templates.push("{\"modules\":[{\"title\":\"sun\",\"type\":0,\"v\":10,\"min\":0,\"max\":10,\"pool\":1,\"graph\":false,\"wx\":-1.4125,\"wy\":0.1062499999999999,\"ww\":0.15625,\"wh\":0.15625,\"input\":-1,\"adder\":-1},{\"title\":\"grass\",\"type\":0,\"v\":1,\"min\":0,\"max\":100,\"pool\":1,\"graph\":1,\"wx\":-0.81875,\"wy\":0.078125,\"ww\":0.15625,\"wh\":0.15625,\"input\":-1,\"adder\":-1},{\"title\":\"gives light\",\"type\":0,\"v\":1,\"min\":0,\"max\":10,\"pool\":1,\"graph\":false,\"wx\":-1.1204999999999998,\"wy\":0.09262500000000004,\"ww\":0.15625,\"wh\":0.15625,\"input\":0,\"adder\":1},{\"title\":\"herbivores\",\"type\":0,\"v\":1,\"min\":0,\"max\":100,\"pool\":1,\"graph\":1,\"wx\":-0.21425000000000005,\"wy\":0.08325000000000002,\"ww\":0.15625,\"wh\":0.15625,\"input\":-1,\"adder\":-1},{\"title\":\"nourishes\",\"type\":0,\"v\":1,\"min\":-1,\"max\":1,\"pool\":1,\"graph\":false,\"wx\":-0.492375,\"wy\":0.20825,\"ww\":0.15625,\"wh\":0.15625,\"input\":1,\"adder\":3},{\"title\":\"eats\",\"type\":0,\"v\":-0.5,\"min\":-1,\"max\":1,\"pool\":1,\"graph\":false,\"wx\":-0.49550000000000005,\"wy\":-0.03862499999999991,\"ww\":0.15625,\"wh\":0.15625,\"input\":3,\"adder\":1},{\"title\":\"carnivores\",\"type\":0,\"v\":1,\"min\":0,\"max\":100,\"pool\":1,\"graph\":1,\"wx\":0.3224999999999999,\"wy\":0.06737500000000013,\"ww\":0.15625,\"wh\":0.15625,\"input\":-1,\"adder\":-1},{\"title\":\"nourishes\",\"type\":0,\"v\":1,\"min\":-1,\"max\":1,\"pool\":1,\"graph\":false,\"wx\":0.044375000000000164,\"wy\":0.2017500000000001,\"ww\":0.15625,\"wh\":0.15625,\"input\":3,\"adder\":6},{\"title\":\"eats\",\"type\":0,\"v\":-0.5,\"min\":-1,\"max\":1,\"pool\":1,\"graph\":false,\"wx\":0.038125000000000075,\"wy\":-0.05762499999999995,\"ww\":0.15625,\"wh\":0.15625,\"input\":6,\"adder\":3},{\"title\":\"\",\"type\":0,\"v\":-0.5,\"min\":-1,\"max\":1,\"pool\":1,\"graph\":false,\"wx\":0.6540000000000006,\"wy\":0.07125000000000006,\"ww\":0.15625,\"wh\":0.15625,\"input\":6,\"adder\":6}]}");
+    /*feedback loop*/    templates.push("{\"modules\":[{\"title\":\"microphone\",\"type\":0,\"v\":0,\"min\":0,\"max\":100,\"pool\":0,\"graph\":true,\"wx\":-0.478125,\"wy\":0.16874999999999993,\"ww\":0.15625,\"wh\":0.15625,\"input\":-1,\"adder\":-1},{\"title\":\"amp\",\"type\":0,\"v\":0,\"min\":0,\"max\":100,\"pool\":0,\"graph\":true,\"wx\":0.27812499999999996,\"wy\":0.15937500000000004,\"ww\":0.15625,\"wh\":0.15625,\"input\":-1,\"adder\":-1},{\"title\":\"makes sound\",\"type\":2,\"v\":1.1,\"min\":0,\"max\":100,\"pool\":true,\"graph\":0,\"wx\":-0.08125000000000004,\"wy\":0.40312499999999996,\"ww\":0.15625,\"wh\":0.15625,\"input\":1,\"adder\":0},{\"title\":\"records sound\",\"type\":2,\"v\":1.1,\"min\":0,\"max\":100,\"pool\":true,\"graph\":0,\"wx\":-0.12187499999999996,\"wy\":-0.05312500000000002,\"ww\":0.15625,\"wh\":0.15625,\"input\":0,\"adder\":1}]}");
+    /*normalizing loop*/ templates.push("{\"modules\":[{\"title\":\"bowl\",\"type\":0,\"v\":50,\"min\":0,\"max\":100,\"pool\":true,\"graph\":true,\"wx\":-0.275,\"wy\":0.046875,\"ww\":0.15625,\"wh\":0.15625,\"input\":-1,\"adder\":-1},{\"title\":\"kids\",\"type\":0,\"v\":50,\"min\":0,\"max\":100,\"pool\":0,\"graph\":true,\"wx\":0.5125,\"wy\":0.09687499999999999,\"ww\":0.15625,\"wh\":0.15625,\"input\":-1,\"adder\":-1},{\"title\":\"teachers\",\"type\":0,\"v\":50,\"min\":0,\"max\":100,\"pool\":true,\"graph\":true,\"wx\":-0.7562500000000002,\"wy\":0.36875,\"ww\":0.15625,\"wh\":0.15625,\"input\":-1,\"adder\":-1},{\"title\":\"each take jellybeans\",\"type\":2,\"v\":-1,\"min\":-1,\"max\":1,\"pool\":true,\"graph\":0,\"wx\":0.034374999999999864,\"wy\":0.25625,\"ww\":0.15625,\"wh\":0.15625,\"input\":1,\"adder\":0},{\"title\":\"each put jellybeans into\",\"type\":2,\"v\":1,\"min\":0,\"max\":100,\"pool\":true,\"graph\":0,\"wx\":-0.74375,\"wy\":0.10625000000000007,\"ww\":0.15625,\"wh\":0.15625,\"input\":2,\"adder\":0},{\"title\":\"attracts kids\",\"type\":2,\"v\":0.9,\"min\":0,\"max\":100,\"pool\":true,\"graph\":0,\"wx\":0.09062499999999989,\"wy\":-0.12500000000000006,\"ww\":0.15625,\"wh\":0.15625,\"input\":0,\"adder\":1}]}");
+    /*cycle*/            templates.push("{\"modules\":[{\"title\":\"rabbits\",\"type\":0,\"v\":50,\"min\":0,\"max\":100,\"pool\":true,\"graph\":true,\"wx\":-0.31875,\"wy\":0.184375,\"ww\":0.15625,\"wh\":0.15625,\"input\":-1,\"adder\":-1},{\"title\":\"foxes\",\"type\":0,\"v\":100,\"min\":0,\"max\":100,\"pool\":true,\"graph\":true,\"wx\":0.21562499999999996,\"wy\":0.2,\"ww\":0.15625,\"wh\":0.15625,\"input\":-1,\"adder\":-1},{\"title\":\"eat\",\"type\":2,\"v\":-0.3,\"min\":-1,\"max\":1,\"pool\":true,\"graph\":0,\"wx\":-0.034375000000000044,\"wy\":0.4,\"ww\":0.15625,\"wh\":0.15625,\"input\":1,\"adder\":0},{\"title\":\"nourish\",\"type\":2,\"v\":0.3,\"min\":0,\"max\":100,\"pool\":true,\"graph\":0,\"wx\":-0.050000000000000044,\"wy\":0.003124999999999989,\"ww\":0.15625,\"wh\":0.15625,\"input\":0,\"adder\":1},{\"title\":\"breed\",\"type\":2,\"v\":10,\"min\":0,\"max\":100,\"pool\":true,\"graph\":0,\"wx\":-0.6625,\"wy\":0.21874999999999994,\"ww\":0.15625,\"wh\":0.15625,\"input\":-1,\"adder\":0},{\"title\":\"die\",\"type\":2,\"v\":-10,\"min\":-10,\"max\":10,\"pool\":true,\"graph\":0,\"wx\":0.48124999999999996,\"wy\":0.203125,\"ww\":0.15625,\"wh\":0.15625,\"input\":-1,\"adder\":1}]}");
+    /*proportion cycle*/ templates.push("{\"modules\":[{\"title\":\"rabits\",\"type\":0,\"v\":100,\"min\":0,\"max\":100,\"pool\":true,\"graph\":true,\"wx\":-0.31875,\"wy\":0.184375,\"ww\":0.15625,\"wh\":0.15625,\"input\":-1,\"adder\":-1},{\"title\":\"foxes\",\"type\":0,\"v\":50,\"min\":0,\"max\":100,\"pool\":true,\"graph\":true,\"wx\":0.2437499999999999,\"wy\":0.175,\"ww\":0.15625,\"wh\":0.15625,\"input\":-1,\"adder\":-1},{\"title\":\"eat\",\"type\":2,\"v\":-0.4,\"min\":-1,\"max\":1,\"pool\":true,\"graph\":0,\"wx\":-0.009375000000000022,\"wy\":0.384375,\"ww\":0.15625,\"wh\":0.15625,\"input\":1,\"adder\":0},{\"title\":\"nourish\",\"type\":2,\"v\":0.1,\"min\":0,\"max\":100,\"pool\":true,\"graph\":0,\"wx\":-0.050000000000000044,\"wy\":0.003124999999999989,\"ww\":0.15625,\"wh\":0.15625,\"input\":0,\"adder\":1},{\"title\":\"breed\",\"type\":2,\"v\":0.3,\"min\":0,\"max\":100,\"pool\":true,\"graph\":0,\"wx\":-0.665625,\"wy\":0.19999999999999996,\"ww\":0.15625,\"wh\":0.15625,\"input\":0,\"adder\":0},{\"title\":\"die\",\"type\":2,\"v\":-0.2,\"min\":-1,\"max\":1,\"pool\":true,\"graph\":0,\"wx\":0.5,\"wy\":0.15,\"ww\":0.15625,\"wh\":0.15625,\"input\":1,\"adder\":1}]}");
+    /*circle of life*/   templates.push("{\"modules\":[{\"title\":\"sun\",\"type\":1,\"v\":10,\"min\":0,\"max\":10,\"pool\":1,\"graph\":false,\"wx\":-1.4125,\"wy\":0.1062499999999999,\"ww\":0.15625,\"wh\":0.15625,\"input\":-1,\"adder\":-1},{\"title\":\"grass\",\"type\":0,\"v\":1,\"min\":0,\"max\":100,\"pool\":1,\"graph\":1,\"wx\":-0.81875,\"wy\":0.078125,\"ww\":0.15625,\"wh\":0.15625,\"input\":-1,\"adder\":-1},{\"title\":\"gives light\",\"type\":2,\"v\":1,\"min\":0,\"max\":10,\"pool\":1,\"graph\":false,\"wx\":-1.1204999999999998,\"wy\":0.09262500000000004,\"ww\":0.15625,\"wh\":0.15625,\"input\":0,\"adder\":1},{\"title\":\"herbivores\",\"type\":0,\"v\":1,\"min\":0,\"max\":100,\"pool\":1,\"graph\":1,\"wx\":-0.21425000000000005,\"wy\":0.08325000000000002,\"ww\":0.15625,\"wh\":0.15625,\"input\":-1,\"adder\":-1},{\"title\":\"nourishes\",\"type\":2,\"v\":1,\"min\":-1,\"max\":1,\"pool\":1,\"graph\":false,\"wx\":-0.492375,\"wy\":0.20825,\"ww\":0.15625,\"wh\":0.15625,\"input\":1,\"adder\":3},{\"title\":\"eats\",\"type\":2,\"v\":-0.5,\"min\":-1,\"max\":1,\"pool\":1,\"graph\":false,\"wx\":-0.49550000000000005,\"wy\":-0.03862499999999991,\"ww\":0.15625,\"wh\":0.15625,\"input\":3,\"adder\":1},{\"title\":\"carnivores\",\"type\":0,\"v\":1,\"min\":0,\"max\":100,\"pool\":1,\"graph\":1,\"wx\":0.3224999999999999,\"wy\":0.06737500000000013,\"ww\":0.15625,\"wh\":0.15625,\"input\":-1,\"adder\":-1},{\"title\":\"nourishes\",\"type\":2,\"v\":1,\"min\":-1,\"max\":1,\"pool\":1,\"graph\":false,\"wx\":0.044375000000000164,\"wy\":0.2017500000000001,\"ww\":0.15625,\"wh\":0.15625,\"input\":3,\"adder\":6},{\"title\":\"eats\",\"type\":2,\"v\":-0.5,\"min\":-1,\"max\":1,\"pool\":1,\"graph\":false,\"wx\":0.038125000000000075,\"wy\":-0.05762499999999995,\"ww\":0.15625,\"wh\":0.15625,\"input\":6,\"adder\":3},{\"title\":\"\",\"type\":2,\"v\":-0.5,\"min\":-1,\"max\":1,\"pool\":1,\"graph\":false,\"wx\":0.6540000000000006,\"wy\":0.07125000000000006,\"ww\":0.15625,\"wh\":0.15625,\"input\":6,\"adder\":6}]}");
 
     s_dragger = new screen_dragger();
     s_graph = new graph();
@@ -1919,7 +1934,7 @@ var GamePlayScene = function(game, stage)
       {
         var m = new module(worldSpaceX(work_cam,canv,evt.doX),worldSpaceY(work_cam,canv,evt.doY),worldSpaceW(work_cam,canv,module_s),worldSpaceH(work_cam,canv,module_s));
         m.type = type;
-        if(type == MODULE_TYPE_RELATIONSHIP)
+        if(type == MODULE_TYPE_RELATIONSHIP || type == MODULE_TYPE_GENERATOR)
         m.graph = 0;
         screenSpace(work_cam,canv,m);
 
@@ -1941,11 +1956,22 @@ var GamePlayScene = function(game, stage)
       return dragOutModule(MODULE_TYPE_OBJECT,add_object_btn,evt);
     }
 
+    add_generator_btn = new btn();
+    add_generator_btn.w = 50;
+    add_generator_btn.h = 20;
+    add_generator_btn.x = 10;
+    add_generator_btn.y = 40;
+    add_generator_btn.shouldDrag = function(evt)
+    {
+      if(levels[cur_level_i] && !levels[cur_level_i].add_generator_enabled) return false;
+      return dragOutModule(MODULE_TYPE_GENERATOR,add_generator_btn,evt);
+    }
+
     add_relationship_btn = new btn();
     add_relationship_btn.w = 50;
     add_relationship_btn.h = 20;
     add_relationship_btn.x = 10;
-    add_relationship_btn.y = add_object_btn.y+add_object_btn.h+10;
+    add_relationship_btn.y = 70;
     add_relationship_btn.shouldDrag = function(evt)
     {
       if(levels[cur_level_i] && !levels[cur_level_i].add_relationship_enabled) return false;
@@ -1956,11 +1982,11 @@ var GamePlayScene = function(game, stage)
     add_module_btn.w = 50;
     add_module_btn.h = 20;
     add_module_btn.x = 10;
-    add_module_btn.y = add_relationship_btn.y+add_relationship_btn.h+10;
+    add_module_btn.y = 100;
     add_module_btn.shouldDrag = function(evt)
     {
       if(levels[cur_level_i] && !levels[cur_level_i].add_module_enabled) return false;
-      return dragOutModule(MODULE_TYPE_BOTH,add_module_btn,evt);
+      return dragOutModule(MODULE_TYPE_MODULE,add_module_btn,evt);
     }
 
     //kind of a hack- just placeholder that gets checked by modules themselves
@@ -1968,7 +1994,7 @@ var GamePlayScene = function(game, stage)
     remove_module_btn.w = 50;
     remove_module_btn.h = 20;
     remove_module_btn.x = 10;
-    remove_module_btn.y = add_module_btn.y+add_module_btn.h+10;
+    remove_module_btn.y = 130;
 
     next_level_btn = new btn();
     next_level_btn.w = 60;
@@ -2096,8 +2122,9 @@ var GamePlayScene = function(game, stage)
     if(clicker.filter(print_btn))            clicked = true;
     if(clicker.filter(load_btn))             clicked = true;
     if(dragger.filter(add_object_btn))       clicked = true;
+    if(dragger.filter(add_generator_btn))    clicked = true;
     if(dragger.filter(add_relationship_btn)) clicked = true;
-    //if(dragger.filter(add_module_btn))       clicked = true;
+    if(dragger.filter(add_module_btn))       clicked = true;
     clicker.filter(levels[cur_level_i]);
     if(!clicked)
     {
@@ -2161,9 +2188,14 @@ var GamePlayScene = function(game, stage)
       ctx.fillText("+Object",add_object_btn.x+2,add_object_btn.y+10);
       ctx.strokeRect(add_object_btn.x,add_object_btn.y,add_object_btn.w,add_object_btn.h);
     }
+    if(!levels[cur_level_i] || levels[cur_level_i].add_generator_enabled)
+    {
+      ctx.fillText("+Generator",add_generator_btn.x+2,add_generator_btn.y+10);
+      ctx.strokeRect(add_generator_btn.x,add_generator_btn.y,add_generator_btn.w,add_generator_btn.h);
+    }
     if(!levels[cur_level_i] || levels[cur_level_i].add_relationship_enabled)
     {
-      ctx.fillText("+Action",add_relationship_btn.x+2,add_relationship_btn.y+10);
+      ctx.fillText("+Relationship",add_relationship_btn.x+2,add_relationship_btn.y+10);
       ctx.strokeRect(add_relationship_btn.x,add_relationship_btn.y,add_relationship_btn.w,add_relationship_btn.h);
     }
     if(!levels[cur_level_i] || levels[cur_level_i].add_module_enabled)
