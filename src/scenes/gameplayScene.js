@@ -2,6 +2,9 @@ var GamePlayScene = function(game, stage)
 {
   var self = this;
 
+  var ALLOW_NEXT = true;
+  var ALLOW_SAVE = true;
+
   var green = "#00AA00";
   var red = "#AA0000";
   var white = "#FFFFFF";
@@ -168,6 +171,7 @@ var GamePlayScene = function(game, stage)
     self.w = canv.width;
     self.h = canv.height;
     self.primary_module_template = "";
+    self.primary_module_target_titles = [];
     self.primary_module_target_vals = [];
     self.ready = noop;
     self.tick = noop;
@@ -183,7 +187,7 @@ var GamePlayScene = function(game, stage)
     self.speed_enabled = true;
     self.dismissed = 0;
     self.click = function(){ self.dismissed++; };
-    self.should_allow_creation = function(){ return true; }
+    self.should_allow_creation = function(type){ return true; }
     self.gen_modules = function()
     {
       load_template(self.primary_module_template);
@@ -198,7 +202,7 @@ var GamePlayScene = function(game, stage)
 
   var levelComplete = function()
   {
-    return true;
+    if(ALLOW_NEXT) return true;
     var targets = levels[cur_level_i].primary_module_target_vals;
     if(targets && targets.length)
     {
@@ -225,6 +229,7 @@ var GamePlayScene = function(game, stage)
   //var cur_level_i = 4-1;
   var l;
 
+  //free play
   l = new level();
   l.primary_module_template = "{\"modules\":[]}";
   l.add_object_enabled = true;
@@ -245,8 +250,10 @@ var GamePlayScene = function(game, stage)
   }
   levels.push(l);
 
+  //tree free
   l = new level();
   l.primary_module_template = "{\"modules\":[{\"title\":\"Tree Height (M)\",\"type\":0,\"v\":1,\"min\":0,\"max\":40,\"pool\":1,\"graph\":1,\"wx\":0.2,\"wy\":-0.08,\"ww\":0.15625,\"wh\":0.15625,\"input\":-1,\"output\":-1,\"lock_move\":false,\"lock_input\":true,\"lock_output\":true,\"lock_value\":true,\"lock_min\":true,\"lock_max\":true,\"lock_pool\":true,\"lock_graph\":true},{\"title\":\"Growth Rate (M/T)\",\"type\":1,\"v\":1,\"min\":0,\"max\":10,\"pool\":1,\"graph\":0,\"wx\":-0.2,\"wy\":-0.08,\"ww\":0.15625,\"wh\":0.15625,\"input\":-1,\"output\":0,\"lock_move\":false,\"lock_input\":true,\"lock_output\":true,\"lock_value\":true,\"lock_min\":true,\"lock_max\":true,\"lock_pool\":true,\"lock_graph\":false}]}";
+  l.primary_module_target_titles.push("Height(M)");
   l.primary_module_target_vals.push([1,2,3,4,5]);
   l.add_object_enabled = false;
   l.add_generator_enabled = false;
@@ -300,8 +307,10 @@ var GamePlayScene = function(game, stage)
   }
   levels.push(l);
 
+  //tree edit delta
   l = new level();
   l.primary_module_template = "{\"modules\":[{\"title\":\"Tree Height (M)\",\"type\":0,\"v\":1,\"min\":0,\"max\":40,\"pool\":1,\"graph\":1,\"wx\":0.2,\"wy\":-0.08,\"ww\":0.15625,\"wh\":0.15625,\"input\":-1,\"output\":-1,\"lock_move\":false,\"lock_input\":true,\"lock_output\":true,\"lock_value\":true,\"lock_min\":true,\"lock_max\":true,\"lock_pool\":true,\"lock_graph\":true},{\"title\":\"Growth Rate (M/T)\",\"type\":1,\"v\":1,\"min\":0,\"max\":10,\"pool\":1,\"graph\":0,\"wx\":-0.2,\"wy\":-0.08,\"ww\":0.15625,\"wh\":0.15625,\"input\":-1,\"output\":0,\"lock_move\":false,\"lock_input\":true,\"lock_output\":true,\"lock_value\":false,\"lock_min\":true,\"lock_max\":true,\"lock_pool\":true,\"lock_graph\":false}]}";
+  l.primary_module_target_titles.push("Height(M)");
   l.primary_module_target_vals.push([1,3,5,7,9]);
   l.add_object_enabled = false;
   l.add_generator_enabled = false;
@@ -346,8 +355,10 @@ var GamePlayScene = function(game, stage)
   }
   levels.push(l);
 
+  //tree edit starting
   l = new level();
   l.primary_module_template = "{\"modules\":[{\"title\":\"Tree Height (M)\",\"type\":0,\"v\":1,\"min\":0,\"max\":40,\"pool\":1,\"graph\":1,\"wx\":0.2,\"wy\":-0.08,\"ww\":0.15625,\"wh\":0.15625,\"input\":-1,\"output\":-1,\"lock_move\":false,\"lock_input\":true,\"lock_output\":true,\"lock_value\":false,\"lock_min\":true,\"lock_max\":true,\"lock_pool\":true,\"lock_graph\":true},{\"title\":\"Growth Rate (M/T)\",\"type\":1,\"v\":2,\"min\":0,\"max\":10,\"pool\":1,\"graph\":0,\"wx\":-0.2,\"wy\":-0.08,\"ww\":0.15625,\"wh\":0.15625,\"input\":-1,\"output\":0,\"lock_move\":false,\"lock_input\":true,\"lock_output\":true,\"lock_value\":true,\"lock_min\":true,\"lock_max\":true,\"lock_pool\":true,\"lock_graph\":false}]}";
+  l.primary_module_target_titles.push("Height(M)");
   l.primary_module_target_vals.push([2,4,6,8,10]);
   l.add_object_enabled = false;
   l.add_generator_enabled = false;
@@ -392,8 +403,10 @@ var GamePlayScene = function(game, stage)
   }
   levels.push(l);
 
+  //tree create generator
   l = new level();
   l.primary_module_template = "{\"modules\":[{\"title\":\"Tree Height (M)\",\"type\":0,\"v\":1,\"min\":0,\"max\":10,\"pool\":1,\"graph\":1,\"wx\":0.2,\"wy\":-0.08,\"ww\":0.15625,\"wh\":0.15625,\"input\":-1,\"output\":-1,\"lock_move\":false,\"lock_input\":true,\"lock_output\":true,\"lock_value\":true,\"lock_min\":true,\"lock_max\":true,\"lock_pool\":true,\"lock_graph\":true}]}";
+  l.primary_module_target_titles.push("Height(M)");
   l.primary_module_target_vals.push([1,2,3,4,5]);
   l.add_object_enabled = false;
   //l.add_generator_enabled = false;
@@ -402,7 +415,7 @@ var GamePlayScene = function(game, stage)
   l.remove_enabled = false;
   l.play_enabled = false;
   l.speed_enabled = false;
-  l.should_allow_creation = function(){ return modules.length < 2; }
+  l.should_allow_creation = function(type){ return modules.length < 2; }
   l.ready = function()
   {
     selected_module = undefined;//modules[0];
@@ -443,9 +456,189 @@ var GamePlayScene = function(game, stage)
   }
   levels.push(l);
 
+  //tree empty
+  l = new level();
+  l.primary_module_template = "{\"modules\":[]}";
+  l.primary_module_target_titles.push("Height(M)");
+  l.primary_module_target_vals.push([0.5,1,1.5,2,2.5]);
+  l.add_object_enabled = true;
+  l.add_generator_enabled = true;
+  l.add_relationship_enabled = false;
+  l.add_module_enabled = false;
+  l.remove_enabled = false;
+  l.play_enabled = false;
+  l.speed_enabled = false;
+  l.should_allow_creation = function(type)
+  {
+    var n = 0;
+    if(type == MODULE_TYPE_OBJECT)
+    {
+      for(var i = 0; i < modules.length; i++)
+      {
+        if(modules.type == type) n++;
+      }
+      if(n > 0) return false;
+    }
+    if(type == MODULE_TYPE_GENERATOR)
+    {
+      for(var i = 0; i < modules.length; i++)
+      {
+        if(modules.type == type) n++;
+      }
+      if(n > 0) return false;
+    }
+    return true
+  }
+  l.ready = function()
+  {
+  }
+  l.draw = function()
+  {
+    draw_trees();
+  }
+  l.click = function(evt)
+  {
+  }
+  levels.push(l);
+
+  //first relationship
+  l = new level();
+  l.primary_module_template = "{\"modules\":[]}";
+  //5 "{\"modules\":[{\"title\":\"src_obj\",\"type\":0,\"v\":1,\"min\":0,\"max\":10,\"pool\":1,\"graph\":1,\"wx\":-0.359375,\"wy\":0.07812500000000003,\"ww\":0.15625,\"wh\":0.15625,\"input\":-1,\"output\":-1,\"lock_move\":false,\"lock_input\":false,\"lock_output\":false,\"lock_value\":false,\"lock_min\":false,\"lock_max\":false,\"lock_pool\":false,\"lock_graph\":false},{\"title\":\"dst_obj\",\"type\":0,\"v\":1,\"min\":0,\"max\":10,\"pool\":1,\"graph\":1,\"wx\":0.2593749999999999,\"wy\":0.06562499999999999,\"ww\":0.15625,\"wh\":0.15625,\"input\":-1,\"output\":-1,\"lock_move\":false,\"lock_input\":false,\"lock_output\":false,\"lock_value\":false,\"lock_min\":false,\"lock_max\":false,\"lock_pool\":false,\"lock_graph\":false},{\"title\":\"rel\",\"type\":2,\"v\":1,\"min\":0,\"max\":10,\"pool\":1,\"graph\":0,\"wx\":-0.06562500000000004,\"wy\":0.07812500000000003,\"ww\":0.15625,\"wh\":0.15625,\"input\":0,\"output\":1,\"lock_move\":false,\"lock_input\":false,\"lock_output\":false,\"lock_value\":false,\"lock_min\":false,\"lock_max\":false,\"lock_pool\":false,\"lock_graph\":false}]}"
+  //6 "{\"modules\":[{\"title\":\"src_obj\",\"type\":0,\"v\":1,\"min\":0,\"max\":10,\"pool\":1,\"graph\":1,\"wx\":-0.359375,\"wy\":0.07812500000000003,\"ww\":0.15625,\"wh\":0.15625,\"input\":-1,\"output\":-1,\"lock_move\":false,\"lock_input\":false,\"lock_output\":false,\"lock_value\":false,\"lock_min\":false,\"lock_max\":false,\"lock_pool\":false,\"lock_graph\":false},{\"title\":\"dst_obj\",\"type\":0,\"v\":1,\"min\":0,\"max\":10,\"pool\":1,\"graph\":1,\"wx\":0.2593749999999999,\"wy\":0.06562499999999999,\"ww\":0.15625,\"wh\":0.15625,\"input\":-1,\"output\":-1,\"lock_move\":false,\"lock_input\":false,\"lock_output\":false,\"lock_value\":false,\"lock_min\":false,\"lock_max\":false,\"lock_pool\":false,\"lock_graph\":false},{\"title\":\"rel\",\"type\":2,\"v\":1,\"min\":0,\"max\":10,\"pool\":1,\"graph\":0,\"wx\":-0.06562500000000004,\"wy\":0.07812500000000003,\"ww\":0.15625,\"wh\":0.15625,\"input\":0,\"output\":1,\"lock_move\":false,\"lock_input\":false,\"lock_output\":false,\"lock_value\":false,\"lock_min\":false,\"lock_max\":false,\"lock_pool\":false,\"lock_graph\":false}]}"
+  //6.1 "{\"modules\":[{\"title\":\"src_obj\",\"type\":0,\"v\":1,\"min\":0,\"max\":10,\"pool\":1,\"graph\":1,\"wx\":-0.359375,\"wy\":0.07812500000000003,\"ww\":0.15625,\"wh\":0.15625,\"input\":-1,\"output\":-1,\"lock_move\":false,\"lock_input\":false,\"lock_output\":false,\"lock_value\":false,\"lock_min\":false,\"lock_max\":false,\"lock_pool\":false,\"lock_graph\":false},{\"title\":\"dst_obj\",\"type\":0,\"v\":1,\"min\":0,\"max\":10,\"pool\":1,\"graph\":1,\"wx\":0.2593749999999999,\"wy\":0.06562499999999999,\"ww\":0.15625,\"wh\":0.15625,\"input\":-1,\"output\":-1,\"lock_move\":false,\"lock_input\":false,\"lock_output\":false,\"lock_value\":false,\"lock_min\":false,\"lock_max\":false,\"lock_pool\":false,\"lock_graph\":false},{\"title\":\"rel\",\"type\":2,\"v\":1,\"min\":0,\"max\":10,\"pool\":1,\"graph\":0,\"wx\":-0.06562500000000004,\"wy\":0.07812500000000003,\"ww\":0.15625,\"wh\":0.15625,\"input\":0,\"output\":1,\"lock_move\":false,\"lock_input\":false,\"lock_output\":false,\"lock_value\":false,\"lock_min\":false,\"lock_max\":false,\"lock_pool\":false,\"lock_graph\":false}]}"
+  //6.2 "{\"modules\":[{\"title\":\"src_obj\",\"type\":0,\"v\":1,\"min\":0,\"max\":10,\"pool\":1,\"graph\":1,\"wx\":-0.459375,\"wy\":0.03437499999999996,\"ww\":0.15625,\"wh\":0.15625,\"input\":-1,\"output\":-1,\"lock_move\":false,\"lock_input\":false,\"lock_output\":false,\"lock_value\":false,\"lock_min\":false,\"lock_max\":false,\"lock_pool\":false,\"lock_graph\":false},{\"title\":\"dst_obj\",\"type\":0,\"v\":1,\"min\":0,\"max\":10,\"pool\":1,\"graph\":1,\"wx\":0.05625000000000002,\"wy\":0.04375000000000001,\"ww\":0.15625,\"wh\":0.15625,\"input\":-1,\"output\":-1,\"lock_move\":false,\"lock_input\":false,\"lock_output\":false,\"lock_value\":false,\"lock_min\":false,\"lock_max\":false,\"lock_pool\":false,\"lock_graph\":false}]}"
+  //7 "{\"modules\":[{\"title\":\"dst_obj\",\"type\":0,\"v\":1,\"min\":0,\"max\":10,\"pool\":1,\"graph\":1,\"wx\":0.1968749999999999,\"wy\":0.04062500000000002,\"ww\":0.15625,\"wh\":0.15625,\"input\":-1,\"output\":-1,\"lock_move\":false,\"lock_input\":false,\"lock_output\":false,\"lock_value\":false,\"lock_min\":false,\"lock_max\":false,\"lock_pool\":false,\"lock_graph\":false},{\"title\":\"src_obj\",\"type\":0,\"v\":1,\"min\":0,\"max\":10,\"pool\":1,\"graph\":1,\"wx\":-0.328125,\"wy\":0.07499999999999996,\"ww\":0.15625,\"wh\":0.15625,\"input\":-1,\"output\":-1,\"lock_move\":false,\"lock_input\":false,\"lock_output\":false,\"lock_value\":false,\"lock_min\":false,\"lock_max\":false,\"lock_pool\":false,\"lock_graph\":false},{\"title\":\"src_delta\",\"type\":1,\"v\":1,\"min\":0,\"max\":10,\"pool\":1,\"graph\":0,\"wx\":-0.5875,\"wy\":0.07187499999999997,\"ww\":0.15625,\"wh\":0.15625,\"input\":-1,\"output\":1,\"lock_move\":false,\"lock_input\":false,\"lock_output\":false,\"lock_value\":false,\"lock_min\":false,\"lock_max\":false,\"lock_pool\":false,\"lock_graph\":false}]}"
+  //8 "{\"modules\":[{\"title\":\"dst_obj\",\"type\":0,\"v\":1,\"min\":0,\"max\":10,\"pool\":1,\"graph\":1,\"wx\":0.1968749999999999,\"wy\":0.04062500000000002,\"ww\":0.15625,\"wh\":0.15625,\"input\":-1,\"output\":-1,\"lock_move\":false,\"lock_input\":false,\"lock_output\":false,\"lock_value\":false,\"lock_min\":false,\"lock_max\":false,\"lock_pool\":false,\"lock_graph\":false},{\"title\":\"src_obj\",\"type\":0,\"v\":1,\"min\":0,\"max\":10,\"pool\":1,\"graph\":1,\"wx\":-0.328125,\"wy\":0.07499999999999996,\"ww\":0.15625,\"wh\":0.15625,\"input\":-1,\"output\":-1,\"lock_move\":false,\"lock_input\":false,\"lock_output\":false,\"lock_value\":false,\"lock_min\":false,\"lock_max\":false,\"lock_pool\":false,\"lock_graph\":false},{\"title\":\"src_delta\",\"type\":1,\"v\":1,\"min\":0,\"max\":10,\"pool\":1,\"graph\":0,\"wx\":-0.5875,\"wy\":0.07187499999999997,\"ww\":0.15625,\"wh\":0.15625,\"input\":-1,\"output\":1,\"lock_move\":false,\"lock_input\":false,\"lock_output\":false,\"lock_value\":false,\"lock_min\":false,\"lock_max\":false,\"lock_pool\":false,\"lock_graph\":false}]}"
+  l.add_object_enabled = true;
+  l.add_generator_enabled = true;
+  l.add_relationship_enabled = true;
+  l.add_module_enabled = true;
+  l.remove_enabled = true;
+  l.play_enabled = true;
+  l.speed_enabled = true;
+  l.ready = function()
+  {
+  }
+  l.draw = function()
+  {
+  }
+  l.click = function(evt)
+  {
+  }
+  levels.push(l);
+
+  //first relationship
+  l = new level();
+  l.primary_module_template = "{\"modules\":[]}";
+  l.add_object_enabled = true;
+  l.add_generator_enabled = true;
+  l.add_relationship_enabled = true;
+  l.add_module_enabled = true;
+  l.remove_enabled = true;
+  l.play_enabled = true;
+  l.speed_enabled = true;
+  l.ready = function()
+  {
+  }
+  l.draw = function()
+  {
+  }
+  l.click = function(evt)
+  {
+  }
+  levels.push(l);
+
+  //first relationship
+  l = new level();
+  l.primary_module_template = "{\"modules\":[]}";
+  l.add_object_enabled = true;
+  l.add_generator_enabled = true;
+  l.add_relationship_enabled = true;
+  l.add_module_enabled = true;
+  l.remove_enabled = true;
+  l.play_enabled = true;
+  l.speed_enabled = true;
+  l.ready = function()
+  {
+  }
+  l.draw = function()
+  {
+  }
+  l.click = function(evt)
+  {
+  }
+  levels.push(l);
+
+  //first relationship
+  l = new level();
+  l.primary_module_template = "{\"modules\":[]}";
+  l.add_object_enabled = true;
+  l.add_generator_enabled = true;
+  l.add_relationship_enabled = true;
+  l.add_module_enabled = true;
+  l.remove_enabled = true;
+  l.play_enabled = true;
+  l.speed_enabled = true;
+  l.ready = function()
+  {
+  }
+  l.draw = function()
+  {
+  }
+  l.click = function(evt)
+  {
+  }
+  levels.push(l);
+
+  //first relationship
+  l = new level();
+  l.primary_module_template = "{\"modules\":[]}";
+  l.add_object_enabled = true;
+  l.add_generator_enabled = true;
+  l.add_relationship_enabled = true;
+  l.add_module_enabled = true;
+  l.remove_enabled = true;
+  l.play_enabled = true;
+  l.speed_enabled = true;
+  l.ready = function()
+  {
+  }
+  l.draw = function()
+  {
+  }
+  l.click = function(evt)
+  {
+  }
+  levels.push(l);
+
+  //first relationship
+  l = new level();
+  l.primary_module_template = "{\"modules\":[]}";
+  l.add_object_enabled = true;
+  l.add_generator_enabled = true;
+  l.add_relationship_enabled = true;
+  l.add_module_enabled = true;
+  l.remove_enabled = true;
+  l.play_enabled = true;
+  l.speed_enabled = true;
+  l.ready = function()
+  {
+  }
+  l.draw = function()
+  {
+  }
+  l.click = function(evt)
+  {
+  }
+  levels.push(l);
+
+
   l = new level();
   l.primary_module_template = "{\"modules\":[{\"title\":\"Plants\",\"type\":0,\"v\":1,\"min\":0,\"max\":10,\"pool\":1,\"graph\":1,\"wx\":0,\"wy\":-0.125,\"ww\":0.15625,\"wh\":0.15625,\"input\":-1,\"output\":-1,\"lock_move\":false,\"lock_input\":true,\"lock_output\":true,\"lock_value\":true,\"lock_min\":true,\"lock_max\":true,\"lock_pool\":true,\"lock_graph\":true},{\"title\":\"Bugs\",\"type\":0,\"v\":1,\"min\":0,\"max\":10,\"pool\":1,\"graph\":1,\"wx\":0.5,\"wy\":-0.125,\"ww\":0.15625,\"wh\":0.15625,\"input\":-1,\"output\":-1,\"lock_move\":false,\"lock_input\":true,\"lock_output\":false,\"lock_value\":true,\"lock_min\":true,\"lock_max\":true,\"lock_pool\":true,\"lock_graph\":true},{\"title\":\"Sunlight\",\"type\":1,\"v\":10,\"min\":0,\"max\":10,\"pool\":1,\"graph\":1,\"wx\":-0.5,\"wy\":-0.125,\"ww\":0.15625,\"wh\":0.15625,\"input\":-1,\"output\":-1,\"lock_move\":false,\"lock_input\":true,\"lock_output\":false,\"lock_value\":true,\"lock_min\":true,\"lock_max\":true,\"lock_pool\":true,\"lock_graph\":true},{\"title\":\"feed\",\"type\":2,\"v\":0.1,\"min\":0,\"max\":10,\"pool\":1,\"graph\":0,\"wx\":0.25,\"wy\":0,\"ww\":0.15625,\"wh\":0.15625,\"input\":0,\"output\":1,\"lock_move\":false,\"lock_input\":false,\"lock_output\":false,\"lock_value\":false,\"lock_min\":false,\"lock_max\":false,\"lock_pool\":false,\"lock_graph\":false}]}";
+  l.primary_module_target_titles.push("Plants");
   l.primary_module_target_vals.push([1,2,3,4,5]);
+  l.primary_module_target_titles.push("Bugs");
   l.primary_module_target_vals.push([1,1.1,1.3,1.6,2]);
   l.add_object_enabled = false;
   l.add_generator_enabled = false;
@@ -533,7 +726,7 @@ var GamePlayScene = function(game, stage)
       ctx.globalAlpha = 1;
       if(t_i >= i)
       {
-        if(modules[0].plot[i] == targets[i])
+        if(modules[0] && modules[0].plot[i] == targets[i])
         {
           ctx.fillStyle = green;
           ctx.fillText("✔",x,y+20);
@@ -545,7 +738,7 @@ var GamePlayScene = function(game, stage)
         }
       }
     }
-    draw_tree(minx,y,t_i,advance_timer_t,modules[0].plot);
+    if(modules[0]) draw_tree(minx,y,t_i,advance_timer_t,modules[0].plot);
   }
 
   var draw_tree = function(x,y,tick,t,plot)
@@ -1905,7 +2098,7 @@ var GamePlayScene = function(game, stage)
     var dragOutModule = function(type,btn,evt)
     {
       if(dragging_obj) return false;
-      if(levels[cur_level_i] && levels[cur_level_i].should_allow_creation && !levels[cur_level_i].should_allow_creation()) return false;
+      if(levels[cur_level_i] && levels[cur_level_i].should_allow_creation && !levels[cur_level_i].should_allow_creation(type)) return false;
       if(doEvtWithinBB(evt,btn))
       {
         var m = new module(worldSpaceX(work_cam,canv,evt.doX),worldSpaceY(work_cam,canv,evt.doY),worldSpaceW(work_cam,canv,module_s),worldSpaceH(work_cam,canv,module_s));
@@ -1989,7 +2182,7 @@ var GamePlayScene = function(game, stage)
     print_btn.y = 10;
     print_btn.click = function(evt)
     {
-      if(levels[cur_level_i] && !levels[cur_level_i].save_enabled) return false;
+      if(!ALLOW_SAVE && levels[cur_level_i] && !levels[cur_level_i].save_enabled) return false;
       if(!dragging_obj) print_template();
     }
 
@@ -2191,7 +2384,7 @@ var GamePlayScene = function(game, stage)
     ctx.textAlign = "right";
     ctx.fillText("Next Level",next_level_btn.x+next_level_btn.w-2,next_level_btn.y+10);
     ctx.strokeRect(next_level_btn.x,next_level_btn.y,next_level_btn.w,next_level_btn.h);
-    if(!levels[cur_level_i] || levels[cur_level_i].save_enabled)
+    if(ALLOW_SAVE || !levels[cur_level_i] || levels[cur_level_i].save_enabled)
     {
       ctx.fillText("Save",print_btn.x+print_btn.w-2,print_btn.y+10);
       ctx.strokeRect(print_btn.x,print_btn.y,print_btn.w,print_btn.h);
@@ -2234,6 +2427,7 @@ var GamePlayScene = function(game, stage)
     }
 
     var targets = levels[cur_level_i].primary_module_target_vals;
+    var titles = levels[cur_level_i].primary_module_target_titles;
     var targets_x = 350;
     var targets_y = 10;
     var xpad = 35;
@@ -2253,7 +2447,7 @@ var GamePlayScene = function(game, stage)
       next_level_btn.x = targets_x + xpad*(targets.length*2) + 10;
       for(var j = 0; j < targets.length; j++)
       {
-        ctx.fillText(modules[j].title,targets_x+xpad*(2*j+0.5)+xpad/2,targets_y+ypad);
+        ctx.fillText(titles[j],targets_x+xpad*(2*j+0.5)+xpad/2,targets_y+ypad);
         ctx.fillText("data",targets_x+xpad*(2*j)+xpad/2,targets_y+ypad*2);
         ctx.fillText("sim",targets_x+xpad*(2*j+1)+xpad/2,targets_y+ypad*2);
       }
@@ -2268,7 +2462,7 @@ var GamePlayScene = function(game, stage)
           if(t_i >= i)
           {
             var x = targets_x+xpad*(2*j+1)+xpad/2;
-            if(modules[j].plot[i] == targets[j][i])
+            if(modules[j] && modules[j].plot[i] == targets[j][i])
             {
               ctx.fillStyle = green;
               ctx.fillText("✔",x+10,y);
@@ -2278,6 +2472,7 @@ var GamePlayScene = function(game, stage)
               ctx.fillStyle = red;
               ctx.fillText("✘",x+10,y);
             }
+            if(modules[j])
             ctx.fillText(modules[j].plot[i],x,y); //value
           }
         }
