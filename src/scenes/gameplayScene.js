@@ -226,6 +226,26 @@ var GamePlayScene = function(game, stage)
   var l;
 
   l = new level();
+  l.primary_module_template = "{\"modules\":[]}";
+  l.add_object_enabled = true;
+  l.add_generator_enabled = true;
+  l.add_relationship_enabled = true;
+  l.add_module_enabled = true;
+  l.remove_enabled = true;
+  l.play_enabled = true;
+  l.speed_enabled = true;
+  l.ready = function()
+  {
+  }
+  l.draw = function()
+  {
+  }
+  l.click = function(evt)
+  {
+  }
+  levels.push(l);
+
+  l = new level();
   l.primary_module_template = "{\"modules\":[{\"title\":\"Tree Height (M)\",\"type\":0,\"v\":1,\"min\":0,\"max\":40,\"pool\":1,\"graph\":1,\"wx\":0.2,\"wy\":-0.08,\"ww\":0.15625,\"wh\":0.15625,\"input\":-1,\"adder\":-1},{\"title\":\"Growth Rate (M/T)\",\"type\":1,\"v\":1,\"min\":0,\"max\":10,\"pool\":1,\"graph\":0,\"wx\":-0.2,\"wy\":-0.08,\"ww\":0.15625,\"wh\":0.15625,\"input\":-1,\"adder\":0}]}";
   l.primary_module_target_vals.push([1,2,3,4,5]);
   l.add_object_enabled = false;
@@ -1172,10 +1192,11 @@ var GamePlayScene = function(game, stage)
       self.dragging = false;
     }
   }
-  var whippet_dongle = function(offx,offy,r,src)
+  var whippet_dongle = function(offx,offy,r,src,srcShouldDrag)
   {
     var self = this;
     self.src = src;
+    self.srcShouldDrag = srcShouldDrag;
     self.off = {x:offx,y:offy};
     self.drag_start_x = 0;
     self.drag_start_y = 0;
@@ -1184,7 +1205,7 @@ var GamePlayScene = function(game, stage)
 
     self.shouldDrag = function(evt)
     {
-      if(dragging_obj && dragging_obj != self) return false;
+      if((dragging_obj && dragging_obj != self) || !self.srcShouldDrag()) return false;
       return distsqr(self.src.x+self.src.w/2+self.off.x,self.src.y+self.src.h/2+self.off.y,evt.doX,evt.doY) < self.r*self.r;
     }
     self.dragStart = function(evt)
@@ -1287,8 +1308,58 @@ var GamePlayScene = function(game, stage)
     self.input_dongle_vel = {x:0,y:0};
     self.output_dongle_vel = {x:0,y:0};
 
-    self.input_dongle = new whippet_dongle( self.w,0,dongle_img.width/2,self);
-    self.output_dongle = new whippet_dongle(-self.w,0,dongle_img.width/2,self);
+    self.shouldShowInputDongle = function()
+    {
+      var should =
+      (
+        (
+          self.type == MODULE_TYPE_MODULE &&
+          (
+            self.input_dongle.attachment ||
+            self.input_dongle.dragging ||
+            (
+              self.output_dongle.attachment &&
+              self.hovering &&
+              !dragging_obj
+            )
+          )
+        )
+        ||
+        (
+          self.type == MODULE_TYPE_RELATIONSHIP
+        )
+      );
+      return should;
+    }
+    self.shouldShowOutputDongle = function()
+    {
+      var should =
+      (
+        (
+          self.type == MODULE_TYPE_MODULE &&
+          (
+            self.output_dongle.attachment ||
+            self.output_dongle.dragging ||
+            (
+              self.hovering &&
+              !dragging_obj
+            )
+          )
+        )
+        ||
+        (
+          self.type == MODULE_TYPE_RELATIONSHIP
+        )
+        ||
+        (
+          self.type == MODULE_TYPE_GENERATOR
+        )
+      );
+      return should;
+    }
+
+    self.input_dongle = new whippet_dongle( self.w,0,dongle_img.width/2,self,self.shouldShowInputDongle);
+    self.output_dongle = new whippet_dongle(-self.w,0,dongle_img.width/2,self,self.shouldShowOutputDongle);
 
     //the module itself
     self.shouldDrag = function(evt)
@@ -1455,56 +1526,6 @@ var GamePlayScene = function(game, stage)
         ctx.drawImage(img,self.x+self.w/2-s/2,self.y+self.h/2-s/2,s,s);
         ctx.restore();
       }
-    }
-    self.shouldShowInputDongle = function()
-    {
-      var should =
-      (
-        (
-          self.type == MODULE_TYPE_MODULE &&
-          (
-            self.input_dongle.attachment ||
-            self.input_dongle.dragging ||
-            (
-              self.output_dongle.attachment &&
-              self.hovering &&
-              !dragging_obj
-            )
-          )
-        )
-        ||
-        (
-          self.type == MODULE_TYPE_RELATIONSHIP &&
-          (self.input_dongle.attachment || self.input_dongle.dragging || self.output_dongle.attachment)
-        )
-      );
-      return should;
-    }
-    self.shouldShowOutputDongle = function()
-    {
-      var should =
-      (
-        (
-          self.type == MODULE_TYPE_MODULE &&
-          (
-            self.output_dongle.attachment ||
-            self.output_dongle.dragging ||
-            (
-              self.hovering &&
-              !dragging_obj
-            )
-          )
-        )
-        ||
-        (
-          self.type == MODULE_TYPE_RELATIONSHIP
-        )
-        ||
-        (
-          self.type == MODULE_TYPE_GENERATOR
-        )
-      );
-      return should;
     }
     self.drawDongles = function()
     {
@@ -1801,6 +1822,12 @@ var GamePlayScene = function(game, stage)
         ||
         (
           self.type == MODULE_TYPE_RELATIONSHIP &&
+          !self.output_dongle.attachment &&
+          !self.output_dongle.dragging
+        )
+        ||
+        (
+          self.type == MODULE_TYPE_GENERATOR &&
           !self.output_dongle.attachment &&
           !self.output_dongle.dragging
         )
