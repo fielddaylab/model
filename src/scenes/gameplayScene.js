@@ -589,7 +589,7 @@ var GamePlayScene = function(game, stage)
 
   //first complex relationship (source fed)- create relationship
   l = new level();
-  l.primary_module_template = "{\"modules\":[{\"title\":\"Walleye Population\",\"type\":0,\"v\":1,\"min\":0,\"max\":20,\"pool\":1,\"graph\":1,\"wx\":0.2,\"wy\":-0.08,\"ww\":0.15625,\"wh\":0.15625,\"input\":-1,\"output\":-1,\"lock_move\":false,\"lock_input\":true,\"lock_output\":true,\"lock_value\":true,\"lock_min\":true,\"lock_max\":true,\"lock_pool\":true,\"lock_graph\":false},{\"title\":\"Minnow Population\",\"type\":0,\"v\":1,\"min\":0,\"max\":20,\"pool\":1,\"graph\":1,\"wx\":-0.2,\"wy\":-0.08,\"ww\":0.15625,\"wh\":0.15625,\"input\":-1,\"output\":-1,\"lock_move\":false,\"lock_input\":true,\"lock_output\":true,\"lock_value\":true,\"lock_min\":true,\"lock_max\":true,\"lock_pool\":true,\"lock_graph\":false},{\"title\":\"DNR Minnow Dump\",\"type\":1,\"v\":1,\"min\":0,\"max\":20,\"pool\":1,\"graph\":0,\"wx\":-0.5,\"wy\":-0.08,\"ww\":0.15625,\"wh\":0.15625,\"input\":-1,\"output\":1,\"lock_move\":false,\"lock_input\":true,\"lock_output\":true,\"lock_value\":true,\"lock_min\":true,\"lock_max\":true,\"lock_pool\":true,\"lock_graph\":false}]}";
+  l.primary_module_template = "{\"modules\":[{\"title\":\"Walleye Population\",\"type\":0,\"v\":1,\"min\":0,\"max\":20,\"pool\":1,\"graph\":1,\"wx\":0.2,\"wy\":-0.08,\"ww\":0.15625,\"wh\":0.15625,\"input\":-1,\"output\":-1,\"lock_move\":false,\"lock_input\":true,\"lock_output\":true,\"lock_value\":true,\"lock_min\":true,\"lock_max\":true,\"lock_pool\":true,\"lock_graph\":false},{\"title\":\"Minnow Population\",\"type\":0,\"v\":1,\"min\":0,\"max\":20,\"pool\":1,\"graph\":1,\"wx\":-0.3,\"wy\":-0.08,\"ww\":0.15625,\"wh\":0.15625,\"input\":-1,\"output\":-1,\"lock_move\":false,\"lock_input\":true,\"lock_output\":true,\"lock_value\":true,\"lock_min\":true,\"lock_max\":true,\"lock_pool\":true,\"lock_graph\":false},{\"title\":\"DNR Minnow Dump\",\"type\":1,\"v\":1,\"min\":0,\"max\":20,\"pool\":1,\"graph\":0,\"wx\":-0.7,\"wy\":-0.08,\"ww\":0.15625,\"wh\":0.15625,\"input\":-1,\"output\":1,\"lock_move\":false,\"lock_input\":true,\"lock_output\":true,\"lock_value\":true,\"lock_min\":true,\"lock_max\":true,\"lock_pool\":true,\"lock_graph\":false}]}";
   l.primary_module_target_titles.push("Walleye");
   l.primary_module_target_vals.push([1,2,4,7,11]);
   l.add_object_enabled = false;
@@ -614,7 +614,7 @@ var GamePlayScene = function(game, stage)
 
   //create/set complex relationship
   l = new level();
-  l.primary_module_template = "{\"modules\":[{\"title\":\"Walleye Population\",\"type\":0,\"v\":1,\"min\":0,\"max\":20,\"pool\":1,\"graph\":1,\"wx\":0.2,\"wy\":-0.08,\"ww\":0.15625,\"wh\":0.15625,\"input\":-1,\"output\":-1,\"lock_move\":false,\"lock_input\":true,\"lock_output\":true,\"lock_value\":false,\"lock_min\":true,\"lock_max\":true,\"lock_pool\":true,\"lock_graph\":false},{\"title\":\"Minnow Population\",\"type\":0,\"v\":1,\"min\":0,\"max\":20,\"pool\":1,\"graph\":1,\"wx\":-0.2,\"wy\":-0.08,\"ww\":0.15625,\"wh\":0.15625,\"input\":-1,\"output\":-1,\"lock_move\":false,\"lock_input\":true,\"lock_output\":true,\"lock_value\":false,\"lock_min\":true,\"lock_max\":true,\"lock_pool\":false,\"lock_graph\":false},{\"title\":\"DNR Minnow Dump\",\"type\":1,\"v\":1,\"min\":0,\"max\":20,\"pool\":1,\"graph\":0,\"wx\":-0.5,\"wy\":-0.08,\"ww\":0.15625,\"wh\":0.15625,\"input\":-1,\"output\":1,\"lock_move\":false,\"lock_input\":true,\"lock_output\":true,\"lock_value\":false,\"lock_min\":true,\"lock_max\":true,\"lock_pool\":true,\"lock_graph\":false}]}";
+  l.primary_module_template = "{\"modules\":[{\"title\":\"Walleye Population\",\"type\":0,\"v\":1,\"min\":0,\"max\":20,\"pool\":1,\"graph\":1,\"wx\":0.2,\"wy\":-0.08,\"ww\":0.15625,\"wh\":0.15625,\"input\":-1,\"output\":-1,\"lock_move\":false,\"lock_input\":true,\"lock_output\":true,\"lock_value\":false,\"lock_min\":true,\"lock_max\":true,\"lock_pool\":true,\"lock_graph\":false},{\"title\":\"Minnow Population\",\"type\":0,\"v\":1,\"min\":0,\"max\":20,\"pool\":1,\"graph\":1,\"wx\":-0.3,\"wy\":-0.08,\"ww\":0.15625,\"wh\":0.15625,\"input\":-1,\"output\":-1,\"lock_move\":false,\"lock_input\":true,\"lock_output\":true,\"lock_value\":false,\"lock_min\":true,\"lock_max\":true,\"lock_pool\":false,\"lock_graph\":false},{\"title\":\"DNR Minnow Dump\",\"type\":1,\"v\":1,\"min\":0,\"max\":20,\"pool\":1,\"graph\":0,\"wx\":-0.7,\"wy\":-0.08,\"ww\":0.15625,\"wh\":0.15625,\"input\":-1,\"output\":1,\"lock_move\":false,\"lock_input\":true,\"lock_output\":true,\"lock_value\":false,\"lock_min\":true,\"lock_max\":true,\"lock_pool\":true,\"lock_graph\":false}]}";
   l.primary_module_target_titles.push("Walleye");
   l.primary_module_target_vals.push([1,3,7,13,20]);
   l.add_object_enabled = false;
@@ -892,9 +892,28 @@ var GamePlayScene = function(game, stage)
       for(var i = 0; i < modules.length; i++)
       {
         if(!modules[i].graph) continue;
+
+        if(levels[cur_level_i] && levels[cur_level_i].primary_module_target_vals[i])
+        {
+          var targets = levels[cur_level_i].primary_module_target_vals[i];
+          for(var j = 0; j < targets.length; j++)
+          {
+            x = self.graph_x + (j/(t_max-1)) * self.graph_w;
+            y = self.graph_y + self.graph_h - (clamp(0,1,mapVal(modules[i].min,modules[i].max,0,1,targets[j]))*self.graph_h);
+            if(j <= t_i && !isNaN(modules[i].plot[j]) && modules[i].plot[j] == targets[j])
+              ctx.strokeStyle = green;
+            else
+              ctx.strokeStyle = red;
+            ctx.beginPath();
+            ctx.arc(x,y,2,0,twopi);
+            ctx.stroke();
+          }
+        }
+
         ctx.strokeStyle = modules[i].color;
         x = self.graph_x;
         y = self.graph_y+self.graph_h;
+
         ctx.beginPath();
         if(!isNaN(modules[i].plot[0])) y = self.graph_y+self.graph_h - clamp(0,1,mapVal(modules[i].min,modules[i].max,0,1,modules[i].plot[0]))*self.graph_h;
         ctx.moveTo(x,y);
