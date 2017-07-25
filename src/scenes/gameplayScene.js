@@ -1649,6 +1649,8 @@ var GamePlayScene = function(game, stage)
 
       //body
       var s = module_s;
+      if((self.input_dongle.attachment && self.output_dongle.attachment) || self.type == MODULE_TYPE_RELATIONSHIP)
+        s /= 2;
       ctx.drawImage(module_img(self.color),self.x+self.w/2-s/2,self.y+self.h/2-s/2,s,s);
       var p  = 1;
       var zp = 0;
@@ -1687,6 +1689,8 @@ var GamePlayScene = function(game, stage)
         ctx.closePath();
         ctx.clip();
         var s = module_fill_s;
+        if((self.input_dongle.attachment && self.output_dongle.attachment) || self.type == MODULE_TYPE_RELATIONSHIP)
+          s /= 2;
         ctx.drawImage(img,self.x+self.w/2-s/2,self.y+self.h/2-s/2,s,s);
         ctx.restore();
       }
@@ -1872,6 +1876,8 @@ var GamePlayScene = function(game, stage)
     self.drawValue = function()
     {
       var s = module_inner_s*self.val_s;
+      if((self.input_dongle.attachment && self.output_dongle.attachment) || self.type == MODULE_TYPE_RELATIONSHIP)
+        s /= 2;
       ctx.drawImage(inner_module_img,self.x+self.w/2-s/2,self.y+self.h/2-s/2,s,s);
       var targets = levels[cur_level_i].primary_module_target_vals;
       ctx.fillStyle = black
