@@ -2,8 +2,13 @@ var GamePlayScene = function(game, stage)
 {
   var self = this;
 
-  var ALLOW_NEXT = true;
-  var ALLOW_SAVE = true;
+  var ALLOW_NEXT = false;
+  var ALLOW_SAVE = false;
+
+  ENUM = 0;
+  var GAME_STATE_MENU = ENUM; ENUM++;
+  var GAME_STATE_PLAY = ENUM; ENUM++;
+  var game_state;
 
   var green = "#00AA00";
   var red = "#AA0000";
@@ -41,6 +46,7 @@ var GamePlayScene = function(game, stage)
   var add_module_btn;
   var remove_module_btn;
   var next_level_btn;
+  var menu_btn
   var print_btn;
   var load_btn;
   var load_template_i;
@@ -225,6 +231,7 @@ var GamePlayScene = function(game, stage)
   }
 
   var levels = [];
+  var level_btns = [];
   var cur_level_i = -1; //call nextLevel once!
   //var cur_level_i = 4-1;
   var l;
@@ -709,6 +716,34 @@ var GamePlayScene = function(game, stage)
     if(doEvtWithinBB(evt, s_graph.advance_btn)) levels[cur_level_i].dismissed++;
   }
   levels.push(l);
+
+  var x = 0;
+  var y = 0;
+  var w = 100;
+  var h = 100;
+  for(var i = 0; i < levels.length; i++)
+  {
+
+    var btn =
+    {
+      x:x,
+      y:y,
+      w:w,
+      h:h,
+      i:i,
+      level:levels[i],
+      click:function(evt)
+      {
+        game_state = GAME_STATE_PLAY;
+        cur_level_i = evt.clickable.i-1;
+        nextLevel();
+      }
+    };
+    level_btns.push(btn);
+
+    x += w*1.1;
+    if(x+w > canv.width) { x = 0; y += h*1.1; }
+  }
 
   var draw_trees = function()
   {
@@ -2203,6 +2238,16 @@ var GamePlayScene = function(game, stage)
       if(levelComplete()) nextLevel();
     }
 
+    menu_btn = new btn();
+    menu_btn.w = 60;
+    menu_btn.h = 20;
+    menu_btn.x = canv.width-menu_btn.w-10;
+    menu_btn.y = 0;
+    menu_btn.click = function(evt)
+    {
+      game_state = GAME_STATE_MENU;
+    }
+
     print_btn = new btn();
     print_btn.w = 60;
     print_btn.h = 20;
@@ -2232,6 +2277,7 @@ var GamePlayScene = function(game, stage)
       }
     }
 
+    game_state = GAME_STATE_MENU;
     nextLevel();
   };
 
@@ -2309,33 +2355,67 @@ var GamePlayScene = function(game, stage)
 
   self.tick = function()
   {
-    var clicked = false;
-    if(s_editor.filter())                    clicked = true;
-    if(dragger.filter(speed_slider))         clicked = true;
-    if(clicker.filter(s_graph.pause_btn))    clicked = true;
-    if(clicker.filter(s_graph.advance_btn))  clicked = true;
-    if(clicker.filter(s_graph.reset_btn))    clicked = true;
-    if(clicker.filter(next_level_btn))       clicked = true;
-    if(clicker.filter(print_btn))            clicked = true;
-    if(clicker.filter(load_btn))             clicked = true;
-    if(dragger.filter(add_object_btn))       clicked = true;
-    if(dragger.filter(add_generator_btn))    clicked = true;
-    if(dragger.filter(add_relationship_btn)) clicked = true;
-    if(dragger.filter(add_module_btn))       clicked = true;
-    clicker.filter(levels[cur_level_i]);
-    if(!clicked)
+    if(game_state == GAME_STATE_PLAY)
     {
-      for(var i = 0; i < modules.length; i++)
-        if(!modules[i].lock_input) dragger.filter(modules[i].input_dongle);
-      for(var i = 0; i < modules.length; i++)
-        if(!modules[i].lock_output) dragger.filter(modules[i].output_dongle);
-      for(var i = 0; i < modules.length; i++)
+      var clicked = false;
+      if(s_editor.filter())                    clicked = true;
+      if(dragger.filter(speed_slider))         clicked = true;
+      if(clicker.filter(s_graph.pause_btn))    clicked = true;
+      if(clicker.filter(s_graph.advance_btn))  clicked = true;
+      if(clicker.filter(s_graph.reset_btn))    clicked = true;
+      if(clicker.filter(next_level_btn))       clicked = true;
+      if(clicker.filter(menu_btn))             clicked = true;
+      if(clicker.filter(print_btn))            clicked = true;
+      if(clicker.filter(load_btn))             clicked = true;
+      if(dragger.filter(add_object_btn))       clicked = true;
+      if(dragger.filter(add_generator_btn))    clicked = true;
+      if(dragger.filter(add_relationship_btn)) clicked = true;
+      if(dragger.filter(add_module_btn))       clicked = true;
+      clicker.filter(levels[cur_level_i]);
+      if(!clicked)
       {
-        hoverer.filter(modules[i]);
-        if(!modules[i].lock_move) dragger.filter(modules[i]);
+        for(var i = 0; i < modules.length; i++)
+          if(!modules[i].lock_input) dragger.filter(modules[i].input_dongle);
+        for(var i = 0; i < modules.length; i++)
+          if(!modules[i].lock_output) dragger.filter(modules[i].output_dongle);
+        for(var i = 0; i < modules.length; i++)
+        {
+          hoverer.filter(modules[i]);
+          if(!modules[i].lock_move) dragger.filter(modules[i]);
+        }
       }
+      if(!clicked) dragger.filter(s_dragger);
+
+      for(var i = 0; i < modules.length; i++)
+        modules[i].cache_const = 1;
+      for(var i = 0; i < modules.length; i++)
+        if(modules[i].output_dongle.attachment) modules[i].output_dongle.attachment.cache_const = 0;
+
+      var should_pause = false;
+      if(
+        s_editor.v_box.focused ||
+        s_editor.min_box.focused ||
+        s_editor.max_box.focused
+      )
+        should_pause = true;
+      if(t_i >= t_max-1) should_pause = true;
+      if(drag_pause) should_pause = true;
+      if(full_pause && advance_timer == advance_timer_max) should_pause = true;
+      if(!should_pause)
+      {
+        advance_timer--;
+        if(advance_timer <= 0)
+          flow();
+      }
+
+      for(var i = 0; i < modules.length; i++)
+        modules[i].tick();
     }
-    if(!clicked) dragger.filter(s_dragger);
+    else if(game_state == GAME_STATE_MENU)
+    {
+      for(var i = 0; i < level_btns.length; i++)
+        clicker.filter(level_btns[i]);
+    }
 
     clicker.flush();
     dragger.flush();
@@ -2343,191 +2423,179 @@ var GamePlayScene = function(game, stage)
     keyer.flush();
     blurer.flush();
 
-    for(var i = 0; i < modules.length; i++)
-      modules[i].cache_const = 1;
-    for(var i = 0; i < modules.length; i++)
-      if(modules[i].output_dongle.attachment) modules[i].output_dongle.attachment.cache_const = 0;
-
-    var should_pause = false;
-    if(
-      s_editor.v_box.focused ||
-      s_editor.min_box.focused ||
-      s_editor.max_box.focused
-    )
-      should_pause = true;
-    if(t_i >= t_max-1) should_pause = true;
-    if(drag_pause) should_pause = true;
-    if(full_pause && advance_timer == advance_timer_max) should_pause = true;
-    if(!should_pause)
-    {
-      advance_timer--;
-      if(advance_timer <= 0)
-        flow();
-    }
-
-    for(var i = 0; i < modules.length; i++)
-      modules[i].tick();
     n_ticks++;
   };
 
   self.draw = function()
   {
-    calc_caches();
-    ctx.fillStyle = "#EEEEEE";
-    ctx.fillRect(0,0,canv.width,canv.height);
-
-    ctx.fillStyle = black;
-    ctx.strokeStyle = black;
-    ctx.lineWidth = 1;
-    ctx.textAlign = "left";
-    if(!levels[cur_level_i] || levels[cur_level_i].add_object_enabled)
+    if(game_state == GAME_STATE_PLAY)
     {
-      ctx.fillText("+Object",add_object_btn.x+2,add_object_btn.y+10);
-      ctx.strokeRect(add_object_btn.x,add_object_btn.y,add_object_btn.w,add_object_btn.h);
-    }
-    if(!levels[cur_level_i] || levels[cur_level_i].add_generator_enabled)
-    {
-      ctx.fillText("+Generator",add_generator_btn.x+2,add_generator_btn.y+10);
-      ctx.strokeRect(add_generator_btn.x,add_generator_btn.y,add_generator_btn.w,add_generator_btn.h);
-    }
-    if(!levels[cur_level_i] || levels[cur_level_i].add_relationship_enabled)
-    {
-      ctx.fillText("+Relationship",add_relationship_btn.x+2,add_relationship_btn.y+10);
-      ctx.strokeRect(add_relationship_btn.x,add_relationship_btn.y,add_relationship_btn.w,add_relationship_btn.h);
-    }
-    if(!levels[cur_level_i] || levels[cur_level_i].add_module_enabled)
-    {
-      ctx.fillText("+Module",add_module_btn.x+2,add_module_btn.y+10);
-      ctx.strokeRect(add_module_btn.x,add_module_btn.y,add_module_btn.w,add_module_btn.h);
-    }
-    if(!levels[cur_level_i] || levels[cur_level_i].remove_enabled)
-    {
-      ctx.fillText("Remove",remove_module_btn.x+2,remove_module_btn.y+10);
-      ctx.strokeRect(remove_module_btn.x,remove_module_btn.y,remove_module_btn.w,remove_module_btn.h);
-    }
-    ctx.fillStyle = "#AAAAAA";
-    if(!levelComplete())
-      ctx.fillRect(next_level_btn.x,next_level_btn.y,next_level_btn.w,next_level_btn.h);
-    ctx.fillStyle = black;
-    ctx.textAlign = "right";
-    ctx.fillText("Next Level",next_level_btn.x+next_level_btn.w-2,next_level_btn.y+10);
-    ctx.strokeRect(next_level_btn.x,next_level_btn.y,next_level_btn.w,next_level_btn.h);
-    if(ALLOW_SAVE || !levels[cur_level_i] || levels[cur_level_i].save_enabled)
-    {
-      ctx.fillText("Save",print_btn.x+print_btn.w-2,print_btn.y+10);
-      ctx.strokeRect(print_btn.x,print_btn.y,print_btn.w,print_btn.h);
-    }
-    if(!levels[cur_level_i] || levels[cur_level_i].load_enabled)
-    {
-      ctx.fillText("Load Next",load_btn.x+load_btn.w-2,load_btn.y+10);
-      ctx.fillText("("+load_template_i+"/"+(templates.length-1)+")",load_btn.x+load_btn.w-2,load_btn.y+30);
-      ctx.strokeRect(load_btn.x,load_btn.y,load_btn.w,load_btn.h);
-    }
-
-    ctx.textAlign = "center";
-
-    for(var i = 0; i < modules.length; i++)
-      screenSpace(work_cam,canv,modules[i]);
-
-    for(var i = 0; i < modules.length; i++)
-      modules[i].drawLines();
-    for(var i = 0; i < modules.length; i++)
-      modules[i].drawBody();
-    for(var i = 0; i < modules.length; i++)
-      modules[i].drawDongles();
-    for(var i = 0; i < modules.length; i++)
-      modules[i].drawBlob();
-    for(var i = 0; i < modules.length; i++)
-      modules[i].drawValue();
-
-    var tmp_pause = false;
-    if(
-      s_editor.v_box.focused ||
-      s_editor.min_box.focused ||
-      s_editor.max_box.focused
-    )
-      tmp_pause = true;
-    if(t_i >= t_max-1) tmp_pause = true;
-    if(drag_pause || full_pause || tmp_pause)
-    {
-      ctx.fillStyle = "rgba(0,0,0,0.05)";
+      calc_caches();
+      ctx.fillStyle = "#EEEEEE";
       ctx.fillRect(0,0,canv.width,canv.height);
-    }
 
-    var targets = levels[cur_level_i].primary_module_target_vals;
-    var titles = levels[cur_level_i].primary_module_target_titles;
-    var targets_x = 350;
-    var targets_y = 10;
-    var xpad = 35;
-    var ypad = 14;
-    if(targets && targets.length)
-    {
-      ctx.lineWidth = 1;
-      ctx.textAlign = "center";
       ctx.fillStyle = black;
-      var c_t_i = t_i+(1-(advance_timer/advance_timer_max));
-      var window_t_i = min(c_t_i, targets[0].length);
-      var window_y = targets_y+(window_t_i+2)*ypad+2;
-      var box_w = (targets.length*2)*xpad;
-      var box_h = (targets[0].length+3)*ypad+2;
-      ctx.strokeRect(targets_x, targets_y, box_w, box_h);
-      ctx.strokeRect(targets_x, window_y, box_w, ypad);
-      next_level_btn.x = targets_x + xpad*(targets.length*2) + 10;
-      for(var j = 0; j < targets.length; j++)
+      ctx.strokeStyle = black;
+      ctx.lineWidth = 1;
+      ctx.textAlign = "left";
+      if(!levels[cur_level_i] || levels[cur_level_i].add_object_enabled)
       {
-        ctx.fillText(titles[j],targets_x+xpad*(2*j+0.5)+xpad/2,targets_y+ypad);
-        ctx.fillText("data",targets_x+xpad*(2*j)+xpad/2,targets_y+ypad*2);
-        ctx.fillText("sim",targets_x+xpad*(2*j+1)+xpad/2,targets_y+ypad*2);
+        ctx.fillText("+Object",add_object_btn.x+2,add_object_btn.y+10);
+        ctx.strokeRect(add_object_btn.x,add_object_btn.y,add_object_btn.w,add_object_btn.h);
       }
-      for(var i = 0; i < targets[0].length; i++) //inverted loop
+      if(!levels[cur_level_i] || levels[cur_level_i].add_generator_enabled)
       {
+        ctx.fillText("+Generator",add_generator_btn.x+2,add_generator_btn.y+10);
+        ctx.strokeRect(add_generator_btn.x,add_generator_btn.y,add_generator_btn.w,add_generator_btn.h);
+      }
+      if(!levels[cur_level_i] || levels[cur_level_i].add_relationship_enabled)
+      {
+        ctx.fillText("+Relationship",add_relationship_btn.x+2,add_relationship_btn.y+10);
+        ctx.strokeRect(add_relationship_btn.x,add_relationship_btn.y,add_relationship_btn.w,add_relationship_btn.h);
+      }
+      if(!levels[cur_level_i] || levels[cur_level_i].add_module_enabled)
+      {
+        ctx.fillText("+Module",add_module_btn.x+2,add_module_btn.y+10);
+        ctx.strokeRect(add_module_btn.x,add_module_btn.y,add_module_btn.w,add_module_btn.h);
+      }
+      if(!levels[cur_level_i] || levels[cur_level_i].remove_enabled)
+      {
+        ctx.fillText("Remove",remove_module_btn.x+2,remove_module_btn.y+10);
+        ctx.strokeRect(remove_module_btn.x,remove_module_btn.y,remove_module_btn.w,remove_module_btn.h);
+      }
+      ctx.fillStyle = "#AAAAAA";
+      if(!levelComplete())
+        ctx.fillRect(next_level_btn.x,next_level_btn.y,next_level_btn.w,next_level_btn.h);
+      ctx.fillStyle = black;
+      ctx.textAlign = "right";
+      ctx.fillText("Next Level",next_level_btn.x+next_level_btn.w-2,next_level_btn.y+10);
+      ctx.strokeRect(next_level_btn.x,next_level_btn.y,next_level_btn.w,next_level_btn.h);
+      ctx.fillText("Menu",menu_btn.x+menu_btn.w-2,menu_btn.y+10);
+      ctx.strokeRect(menu_btn.x,menu_btn.y,menu_btn.w,menu_btn.h);
+      if(ALLOW_SAVE || !levels[cur_level_i] || levels[cur_level_i].save_enabled)
+      {
+        ctx.fillText("Save",print_btn.x+print_btn.w-2,print_btn.y+10);
+        ctx.strokeRect(print_btn.x,print_btn.y,print_btn.w,print_btn.h);
+      }
+      if(!levels[cur_level_i] || levels[cur_level_i].load_enabled)
+      {
+        ctx.fillText("Load Next",load_btn.x+load_btn.w-2,load_btn.y+10);
+        ctx.fillText("("+load_template_i+"/"+(templates.length-1)+")",load_btn.x+load_btn.w-2,load_btn.y+30);
+        ctx.strokeRect(load_btn.x,load_btn.y,load_btn.w,load_btn.h);
+      }
+
+      ctx.textAlign = "center";
+
+      for(var i = 0; i < modules.length; i++)
+        screenSpace(work_cam,canv,modules[i]);
+
+      for(var i = 0; i < modules.length; i++)
+        modules[i].drawLines();
+      for(var i = 0; i < modules.length; i++)
+        modules[i].drawBody();
+      for(var i = 0; i < modules.length; i++)
+        modules[i].drawDongles();
+      for(var i = 0; i < modules.length; i++)
+        modules[i].drawBlob();
+      for(var i = 0; i < modules.length; i++)
+        modules[i].drawValue();
+
+      var tmp_pause = false;
+      if(
+        s_editor.v_box.focused ||
+        s_editor.min_box.focused ||
+        s_editor.max_box.focused
+      )
+        tmp_pause = true;
+      if(t_i >= t_max-1) tmp_pause = true;
+      if(drag_pause || full_pause || tmp_pause)
+      {
+        ctx.fillStyle = "rgba(0,0,0,0.05)";
+        ctx.fillRect(0,0,canv.width,canv.height);
+      }
+
+      var targets = levels[cur_level_i].primary_module_target_vals;
+      var titles = levels[cur_level_i].primary_module_target_titles;
+      var targets_x = 350;
+      var targets_y = 10;
+      var xpad = 35;
+      var ypad = 14;
+      if(targets && targets.length)
+      {
+        ctx.lineWidth = 1;
+        ctx.textAlign = "center";
+        ctx.fillStyle = black;
+        var c_t_i = t_i+(1-(advance_timer/advance_timer_max));
+        var window_t_i = min(c_t_i, targets[0].length);
+        var window_y = targets_y+(window_t_i+2)*ypad+2;
+        var box_w = (targets.length*2)*xpad;
+        var box_h = (targets[0].length+3)*ypad+2;
+        ctx.strokeRect(targets_x, targets_y, box_w, box_h);
+        ctx.strokeRect(targets_x, window_y, box_w, ypad);
+        next_level_btn.x = targets_x + xpad*(targets.length*2) + 10;
+        for(var j = 0; j < targets.length; j++)
+        {
+          ctx.fillText(titles[j],targets_x+xpad*(2*j+0.5)+xpad/2,targets_y+ypad);
+          ctx.fillText("data",targets_x+xpad*(2*j)+xpad/2,targets_y+ypad*2);
+          ctx.fillText("sim",targets_x+xpad*(2*j+1)+xpad/2,targets_y+ypad*2);
+        }
+        for(var i = 0; i < targets[0].length; i++) //inverted loop
+        {
+          ctx.fillStyle = black;
+          for(var j = 0; j < targets.length; j++)
+          {
+            ctx.fillStyle = black;
+            var y = targets_y+ypad*(i+3);
+            ctx.fillText(targets[j][i],targets_x+xpad*(2*j)+xpad/2,y); //target
+            if(t_i >= i)
+            {
+              var x = targets_x+xpad*(2*j+1)+xpad/2;
+              if(modules[j] && modules[j].plot[i] == targets[j][i])
+              {
+                ctx.fillStyle = green;
+                ctx.fillText("✔",x+10,y);
+              }
+              else
+              {
+                ctx.fillStyle = red;
+                ctx.fillText("✘",x+10,y);
+              }
+              if(modules[j])
+              ctx.fillText(modules[j].plot[i],x,y); //value
+            }
+          }
+        }
         ctx.fillStyle = black;
         for(var j = 0; j < targets.length; j++)
         {
-          ctx.fillStyle = black;
           var y = targets_y+ypad*(i+3);
-          ctx.fillText(targets[j][i],targets_x+xpad*(2*j)+xpad/2,y); //target
+          ctx.fillText("?",targets_x+xpad*(2*j)+xpad/2,y); //target
           if(t_i >= i)
           {
             var x = targets_x+xpad*(2*j+1)+xpad/2;
-            if(modules[j] && modules[j].plot[i] == targets[j][i])
-            {
-              ctx.fillStyle = green;
-              ctx.fillText("✔",x+10,y);
-            }
-            else
-            {
-              ctx.fillStyle = red;
-              ctx.fillText("✘",x+10,y);
-            }
-            if(modules[j])
             ctx.fillText(modules[j].plot[i],x,y); //value
           }
         }
       }
-      ctx.fillStyle = black;
-      for(var j = 0; j < targets.length; j++)
+      levels[cur_level_i].draw();
+      ctx.lineWidth = 1;
+
+      s_graph.draw();
+      ctx.textAlign = "left";
+      s_editor.draw();
+      if(levels[cur_level_i].speed_enabled)
       {
-        var y = targets_y+ypad*(i+3);
-        ctx.fillText("?",targets_x+xpad*(2*j)+xpad/2,y); //target
-        if(t_i >= i)
-        {
-          var x = targets_x+xpad*(2*j+1)+xpad/2;
-          ctx.fillText(modules[j].plot[i],x,y); //value
-        }
+        ctx.fillStyle = black;
+        ctx.fillText("Speed:",speed_slider.x,speed_slider.y-10);
+        speed_slider.draw(canv);
       }
     }
-    levels[cur_level_i].draw();
-    ctx.lineWidth = 1;
-
-    s_graph.draw();
-    ctx.textAlign = "left";
-    s_editor.draw();
-    if(levels[cur_level_i].speed_enabled)
+    else if(game_state == GAME_STATE_MENU)
     {
-      ctx.fillStyle = black;
-      ctx.fillText("Speed:",speed_slider.x,speed_slider.y-10);
-      speed_slider.draw(canv);
+      for(var i = 0; i < level_btns.length; i++)
+      {
+        ctx.strokeRect(level_btns[i].x,level_btns[i].y,level_btns[i].w,level_btns[i].h);
+      }
     }
   };
 

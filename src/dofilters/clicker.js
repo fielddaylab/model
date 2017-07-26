@@ -34,6 +34,7 @@ var Clicker = function(init)
       evt = evts[i];
       if((clickable.shouldClick && clickable.shouldClick(evt)) || (!clickable.shouldClick && doEvtWithinBB(evt, clickable)))
       {
+        evt.clickable = clickable;
         clickable.click(evt);
         hit = true;
       }
