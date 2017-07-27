@@ -172,6 +172,7 @@ var GamePlayScene = function(game, stage)
   var level = function()
   {
     var self = this;
+    self.title = "";
     self.x = 0;
     self.y = 0;
     self.w = canv.width;
@@ -192,6 +193,7 @@ var GamePlayScene = function(game, stage)
     self.play_enabled = true;
     self.speed_enabled = true;
     self.dismissed = 0;
+    self.complete = false;
     self.click = function(){ self.dismissed++; };
     self.should_allow_creation = function(type){ return true; }
     self.gen_modules = function()
@@ -214,30 +216,35 @@ var GamePlayScene = function(game, stage)
     {
       for(var i = 0; i < targets[0].length; i++) //inverted loop
         for(var j = 0; j < targets.length; j++)
-          if(t_i < i || modules[j].plot[i] != targets[j][i]) return false
+          if(t_i < i || !modules[j] || modules[j].plot[i] != targets[j][i]) return false
     }
-    else return false
     return true;
   }
 
-  var nextLevel = function()
+  var beginLevel = function()
   {
-    cur_level_i++;
-    if(cur_level_i >= levels.length) cur_level_i = 0;
     levels[cur_level_i].gen_modules();
     levels[cur_level_i].ready();
     resetGraph();
     full_pause = true;
   }
+  var nextLevel = function()
+  {
+    if(levels[cur_level_i]) levels[cur_level_i].complete = true;
+    cur_level_i++;
+    if(cur_level_i >= levels.length) cur_level_i = 0;
+    beginLevel();
+  }
 
   var levels = [];
   var level_btns = [];
-  var cur_level_i = -1; //call nextLevel once!
+  var cur_level_i = 0;
   //var cur_level_i = 4-1;
   var l;
 
   //free play
   l = new level();
+  l.title = "free play";
   l.primary_module_template = "{\"modules\":[]}";
   l.add_object_enabled = true;
   l.add_generator_enabled = true;
@@ -259,6 +266,7 @@ var GamePlayScene = function(game, stage)
 
   //tree free
   l = new level();
+  l.title = "tree free";
   l.primary_module_template = "{\"modules\":[{\"title\":\"Tree Height (M)\",\"type\":0,\"v\":1,\"min\":0,\"max\":40,\"pool\":1,\"graph\":1,\"wx\":0.2,\"wy\":-0.08,\"ww\":0.15625,\"wh\":0.15625,\"input\":-1,\"output\":-1,\"lock_move\":false,\"lock_input\":true,\"lock_output\":true,\"lock_value\":true,\"lock_min\":true,\"lock_max\":true,\"lock_pool\":true,\"lock_graph\":true},{\"title\":\"Growth Rate (M/T)\",\"type\":1,\"v\":1,\"min\":0,\"max\":10,\"pool\":1,\"graph\":0,\"wx\":-0.2,\"wy\":-0.08,\"ww\":0.15625,\"wh\":0.15625,\"input\":-1,\"output\":0,\"lock_move\":false,\"lock_input\":true,\"lock_output\":true,\"lock_value\":true,\"lock_min\":true,\"lock_max\":true,\"lock_pool\":true,\"lock_graph\":false}]}";
   l.primary_module_target_titles.push("Height(M)");
   l.primary_module_target_vals.push([1,2,3,4,5]);
@@ -275,8 +283,6 @@ var GamePlayScene = function(game, stage)
   }
   l.draw = function()
   {
-    draw_trees();
-
     if(advance_timer == advance_timer_max && t_i < 4)
     {
       ctx.font = "20px Arial";
@@ -301,6 +307,7 @@ var GamePlayScene = function(game, stage)
 
   //tree edit delta
   l = new level();
+  l.title = "tree edit delta";
   l.primary_module_template = "{\"modules\":[{\"title\":\"Tree Height (M)\",\"type\":0,\"v\":1,\"min\":0,\"max\":40,\"pool\":1,\"graph\":1,\"wx\":0.2,\"wy\":-0.08,\"ww\":0.15625,\"wh\":0.15625,\"input\":-1,\"output\":-1,\"lock_move\":false,\"lock_input\":true,\"lock_output\":true,\"lock_value\":true,\"lock_min\":true,\"lock_max\":true,\"lock_pool\":true,\"lock_graph\":true},{\"title\":\"Growth Rate (M/T)\",\"type\":1,\"v\":1,\"min\":0,\"max\":10,\"pool\":1,\"graph\":0,\"wx\":-0.2,\"wy\":-0.08,\"ww\":0.15625,\"wh\":0.15625,\"input\":-1,\"output\":0,\"lock_move\":false,\"lock_input\":true,\"lock_output\":true,\"lock_value\":false,\"lock_min\":true,\"lock_max\":true,\"lock_pool\":true,\"lock_graph\":false}]}";
   l.primary_module_target_titles.push("Height(M)");
   l.primary_module_target_vals.push([1,3,5,7,9]);
@@ -317,8 +324,6 @@ var GamePlayScene = function(game, stage)
   }
   l.draw = function()
   {
-    draw_trees();
-
     var targets = levels[cur_level_i].primary_module_target_vals;
     if(t_i > 0 && modules[0].plot[1] != targets[0][1])
     {
@@ -349,6 +354,7 @@ var GamePlayScene = function(game, stage)
 
   //tree edit starting
   l = new level();
+  l.title = "tree edit starting";
   l.primary_module_template = "{\"modules\":[{\"title\":\"Tree Height (M)\",\"type\":0,\"v\":1,\"min\":0,\"max\":40,\"pool\":1,\"graph\":1,\"wx\":0.2,\"wy\":-0.08,\"ww\":0.15625,\"wh\":0.15625,\"input\":-1,\"output\":-1,\"lock_move\":false,\"lock_input\":true,\"lock_output\":true,\"lock_value\":false,\"lock_min\":true,\"lock_max\":true,\"lock_pool\":true,\"lock_graph\":true},{\"title\":\"Growth Rate (M/T)\",\"type\":1,\"v\":2,\"min\":0,\"max\":10,\"pool\":1,\"graph\":0,\"wx\":-0.2,\"wy\":-0.08,\"ww\":0.15625,\"wh\":0.15625,\"input\":-1,\"output\":0,\"lock_move\":false,\"lock_input\":true,\"lock_output\":true,\"lock_value\":true,\"lock_min\":true,\"lock_max\":true,\"lock_pool\":true,\"lock_graph\":false}]}";
   l.primary_module_target_titles.push("Height(M)");
   l.primary_module_target_vals.push([2,4,6,8,10]);
@@ -365,8 +371,6 @@ var GamePlayScene = function(game, stage)
   }
   l.draw = function()
   {
-    draw_trees();
-
     var targets = levels[cur_level_i].primary_module_target_vals;
     if(modules[0].plot[0] != targets[0][0])
     {
@@ -397,6 +401,7 @@ var GamePlayScene = function(game, stage)
 
   //tree create generator
   l = new level();
+  l.title = "tree create generator";
   l.primary_module_template = "{\"modules\":[{\"title\":\"Tree Height (M)\",\"type\":0,\"v\":1,\"min\":0,\"max\":10,\"pool\":1,\"graph\":1,\"wx\":0.2,\"wy\":-0.08,\"ww\":0.15625,\"wh\":0.15625,\"input\":-1,\"output\":-1,\"lock_move\":false,\"lock_input\":true,\"lock_output\":true,\"lock_value\":true,\"lock_min\":true,\"lock_max\":true,\"lock_pool\":true,\"lock_graph\":true}]}";
   l.primary_module_target_titles.push("Height(M)");
   l.primary_module_target_vals.push([1,2,3,4,5]);
@@ -414,8 +419,6 @@ var GamePlayScene = function(game, stage)
   }
   l.draw = function()
   {
-    draw_trees();
-
     var targets = levels[cur_level_i].primary_module_target_vals;
     if(t_i > 0 && modules[0].plot[1] != targets[0][1])
     {
@@ -425,7 +428,7 @@ var GamePlayScene = function(game, stage)
       ctx.fillText("This doesn't conform",450,40);
       ctx.fillText("to our data...",450,60);
       ctx.textAlign = "center";
-      ctx.fillText("Drag out an action module",340,150);
+      ctx.fillText("Drag out a generator module",340,150);
       ctx.fillText("And set its output to Tree Height",340,170);
       ctx.font = "12px Arial";
     }
@@ -450,6 +453,7 @@ var GamePlayScene = function(game, stage)
 
   //tree empty
   l = new level();
+  l.title = "tree empty";
   l.primary_module_template = "{\"modules\":[]}";
   l.primary_module_target_titles.push("Height(M)");
   l.primary_module_target_vals.push([0.5,1,1.5,2,2.5]);
@@ -489,7 +493,6 @@ var GamePlayScene = function(game, stage)
       modules[0] = modules[1];
       modules[1] = m;
     }
-    draw_trees();
   }
   l.click = function(evt)
   {
@@ -498,6 +501,7 @@ var GamePlayScene = function(game, stage)
 
   //first relationship
   l = new level();
+  l.title = "first relationship";
   l.primary_module_template = "{\"modules\":[{\"title\":\"Plant Population\",\"type\":0,\"v\":1,\"min\":0,\"max\":50,\"pool\":1,\"graph\":1,\"wx\":0.3,\"wy\":-0.08,\"ww\":0.15625,\"wh\":0.15625,\"input\":-1,\"output\":-1,\"lock_move\":false,\"lock_input\":true,\"lock_output\":true,\"lock_value\":true,\"lock_min\":true,\"lock_max\":true,\"lock_pool\":true,\"lock_graph\":false},{\"title\":\"Sunlight\",\"type\":0,\"v\":10,\"min\":0,\"max\":50,\"pool\":1,\"graph\":0,\"wx\":-0.6,\"wy\":-0.08,\"ww\":0.15625,\"wh\":0.15625,\"input\":-1,\"output\":-1,\"lock_move\":false,\"lock_input\":true,\"lock_output\":true,\"lock_value\":true,\"lock_min\":true,\"lock_max\":true,\"lock_pool\":true,\"lock_graph\":false},{\"title\":\"Grows\",\"type\":2,\"v\":0.5,\"min\":0,\"max\":10,\"pool\":1,\"graph\":0,\"wx\":-0.2,\"wy\":0.1,\"ww\":0.15625,\"wh\":0.15625,\"input\":1,\"output\":0,\"lock_move\":false,\"lock_input\":true,\"lock_output\":true,\"lock_value\":false,\"lock_min\":true,\"lock_max\":true,\"lock_pool\":true,\"lock_graph\":false}]}";
   l.primary_module_target_titles.push("Plants");
   l.primary_module_target_vals.push([1,2,3,4,5]);
@@ -523,6 +527,7 @@ var GamePlayScene = function(game, stage)
 
   //edit relationship source
   l = new level();
+  l.title = "edit relationship source";
   l.primary_module_template = "{\"modules\":[{\"title\":\"Plant Population\",\"type\":0,\"v\":1,\"min\":0,\"max\":50,\"pool\":1,\"graph\":1,\"wx\":0.3,\"wy\":-0.08,\"ww\":0.15625,\"wh\":0.15625,\"input\":-1,\"output\":-1,\"lock_move\":false,\"lock_input\":true,\"lock_output\":true,\"lock_value\":true,\"lock_min\":true,\"lock_max\":true,\"lock_pool\":true,\"lock_graph\":false},{\"title\":\"Sunlight\",\"type\":0,\"v\":10,\"min\":0,\"max\":50,\"pool\":1,\"graph\":1,\"wx\":-0.6,\"wy\":-0.08,\"ww\":0.15625,\"wh\":0.15625,\"input\":-1,\"output\":-1,\"lock_move\":false,\"lock_input\":true,\"lock_output\":true,\"lock_value\":false,\"lock_min\":true,\"lock_max\":true,\"lock_pool\":true,\"lock_graph\":false},{\"title\":\"Grows\",\"type\":2,\"v\":0.1,\"min\":0,\"max\":10,\"pool\":1,\"graph\":0,\"wx\":-0.2,\"wy\":0.1,\"ww\":0.15625,\"wh\":0.15625,\"input\":1,\"output\":0,\"lock_move\":false,\"lock_input\":true,\"lock_output\":true,\"lock_value\":true,\"lock_min\":true,\"lock_max\":true,\"lock_pool\":true,\"lock_graph\":false}]}";
   l.primary_module_target_titles.push("Plants");
   l.primary_module_target_vals.push([1,3,5,7,9]);
@@ -547,6 +552,7 @@ var GamePlayScene = function(game, stage)
 
   //edit relationship source/multiplier
   l = new level();
+  l.title = "edit relationship source/multiplier";
   l.primary_module_template = "{\"modules\":[{\"title\":\"Plant Population\",\"type\":0,\"v\":1,\"min\":0,\"max\":50,\"pool\":1,\"graph\":1,\"wx\":0.3,\"wy\":-0.08,\"ww\":0.15625,\"wh\":0.15625,\"input\":-1,\"output\":-1,\"lock_move\":false,\"lock_input\":true,\"lock_output\":true,\"lock_value\":false,\"lock_min\":true,\"lock_max\":true,\"lock_pool\":true,\"lock_graph\":false},{\"title\":\"Sunlight\",\"type\":0,\"v\":10,\"min\":0,\"max\":50,\"pool\":1,\"graph\":1,\"wx\":-0.6,\"wy\":-0.08,\"ww\":0.15625,\"wh\":0.15625,\"input\":-1,\"output\":-1,\"lock_move\":false,\"lock_input\":true,\"lock_output\":true,\"lock_value\":false,\"lock_min\":true,\"lock_max\":true,\"lock_pool\":true,\"lock_graph\":false},{\"title\":\"Grows\",\"type\":2,\"v\":0.3,\"min\":0,\"max\":10,\"pool\":1,\"graph\":0,\"wx\":-0.2,\"wy\":0.1,\"ww\":0.15625,\"wh\":0.15625,\"input\":1,\"output\":0,\"lock_move\":false,\"lock_input\":true,\"lock_output\":true,\"lock_value\":false,\"lock_min\":true,\"lock_max\":true,\"lock_pool\":true,\"lock_graph\":false}]}";
   l.primary_module_target_titles.push("Plants");
   l.primary_module_target_vals.push([5,10,15,20,25]);
@@ -571,6 +577,7 @@ var GamePlayScene = function(game, stage)
 
   //create relationship
   l = new level();
+  l.title = "create relationship";
   l.primary_module_template = "{\"modules\":[{\"title\":\"Plant Population\",\"type\":0,\"v\":1,\"min\":0,\"max\":50,\"pool\":1,\"graph\":1,\"wx\":0.3,\"wy\":-0.08,\"ww\":0.15625,\"wh\":0.15625,\"input\":-1,\"output\":-1,\"lock_move\":false,\"lock_input\":true,\"lock_output\":true,\"lock_value\":false,\"lock_min\":true,\"lock_max\":true,\"lock_pool\":true,\"lock_graph\":false},{\"title\":\"Sunlight\",\"type\":0,\"v\":10,\"min\":0,\"max\":50,\"pool\":1,\"graph\":1,\"wx\":-0.6,\"wy\":-0.08,\"ww\":0.15625,\"wh\":0.15625,\"input\":-1,\"output\":-1,\"lock_move\":false,\"lock_input\":true,\"lock_output\":true,\"lock_value\":false,\"lock_min\":true,\"lock_max\":true,\"lock_pool\":true,\"lock_graph\":false}]}";
   l.primary_module_target_titles.push("Plants");
   l.primary_module_target_vals.push([1,2,3,4,5]);
@@ -596,6 +603,7 @@ var GamePlayScene = function(game, stage)
 
   //first complex relationship (source fed)- create relationship
   l = new level();
+  l.title = "first complex relationship (source fed)- create relationship";
   l.primary_module_template = "{\"modules\":[{\"title\":\"Walleye Population\",\"type\":0,\"v\":1,\"min\":0,\"max\":20,\"pool\":1,\"graph\":1,\"wx\":0.2,\"wy\":-0.08,\"ww\":0.15625,\"wh\":0.15625,\"input\":-1,\"output\":-1,\"lock_move\":false,\"lock_input\":true,\"lock_output\":true,\"lock_value\":true,\"lock_min\":true,\"lock_max\":true,\"lock_pool\":true,\"lock_graph\":false},{\"title\":\"Minnow Population\",\"type\":0,\"v\":1,\"min\":0,\"max\":20,\"pool\":1,\"graph\":1,\"wx\":-0.3,\"wy\":-0.08,\"ww\":0.15625,\"wh\":0.15625,\"input\":-1,\"output\":-1,\"lock_move\":false,\"lock_input\":true,\"lock_output\":true,\"lock_value\":true,\"lock_min\":true,\"lock_max\":true,\"lock_pool\":true,\"lock_graph\":false},{\"title\":\"DNR Minnow Dump\",\"type\":1,\"v\":1,\"min\":0,\"max\":20,\"pool\":1,\"graph\":0,\"wx\":-0.7,\"wy\":-0.08,\"ww\":0.15625,\"wh\":0.15625,\"input\":-1,\"output\":1,\"lock_move\":false,\"lock_input\":true,\"lock_output\":true,\"lock_value\":true,\"lock_min\":true,\"lock_max\":true,\"lock_pool\":true,\"lock_graph\":false}]}";
   l.primary_module_target_titles.push("Walleye");
   l.primary_module_target_vals.push([1,2,4,7,11]);
@@ -621,6 +629,7 @@ var GamePlayScene = function(game, stage)
 
   //create/set complex relationship
   l = new level();
+  l.title = "create/set complex relationship";
   l.primary_module_template = "{\"modules\":[{\"title\":\"Walleye Population\",\"type\":0,\"v\":1,\"min\":0,\"max\":20,\"pool\":1,\"graph\":1,\"wx\":0.2,\"wy\":-0.08,\"ww\":0.15625,\"wh\":0.15625,\"input\":-1,\"output\":-1,\"lock_move\":false,\"lock_input\":true,\"lock_output\":true,\"lock_value\":false,\"lock_min\":true,\"lock_max\":true,\"lock_pool\":true,\"lock_graph\":false},{\"title\":\"Minnow Population\",\"type\":0,\"v\":1,\"min\":0,\"max\":20,\"pool\":1,\"graph\":1,\"wx\":-0.3,\"wy\":-0.08,\"ww\":0.15625,\"wh\":0.15625,\"input\":-1,\"output\":-1,\"lock_move\":false,\"lock_input\":true,\"lock_output\":true,\"lock_value\":false,\"lock_min\":true,\"lock_max\":true,\"lock_pool\":false,\"lock_graph\":false},{\"title\":\"DNR Minnow Dump\",\"type\":1,\"v\":1,\"min\":0,\"max\":20,\"pool\":1,\"graph\":0,\"wx\":-0.7,\"wy\":-0.08,\"ww\":0.15625,\"wh\":0.15625,\"input\":-1,\"output\":1,\"lock_move\":false,\"lock_input\":true,\"lock_output\":true,\"lock_value\":false,\"lock_min\":true,\"lock_max\":true,\"lock_pool\":true,\"lock_graph\":false}]}";
   l.primary_module_target_titles.push("Walleye");
   l.primary_module_target_vals.push([1,3,7,13,20]);
@@ -645,6 +654,7 @@ var GamePlayScene = function(game, stage)
   levels.push(l);
 
   l = new level();
+  l.title = "plants n bugs n stuff";
   l.primary_module_template = "{\"modules\":[{\"title\":\"Plants\",\"type\":0,\"v\":1,\"min\":0,\"max\":10,\"pool\":1,\"graph\":1,\"wx\":0,\"wy\":-0.125,\"ww\":0.15625,\"wh\":0.15625,\"input\":-1,\"output\":-1,\"lock_move\":false,\"lock_input\":true,\"lock_output\":true,\"lock_value\":true,\"lock_min\":true,\"lock_max\":true,\"lock_pool\":true,\"lock_graph\":true},{\"title\":\"Bugs\",\"type\":0,\"v\":1,\"min\":0,\"max\":10,\"pool\":1,\"graph\":1,\"wx\":0.5,\"wy\":-0.125,\"ww\":0.15625,\"wh\":0.15625,\"input\":-1,\"output\":-1,\"lock_move\":false,\"lock_input\":true,\"lock_output\":false,\"lock_value\":true,\"lock_min\":true,\"lock_max\":true,\"lock_pool\":true,\"lock_graph\":true},{\"title\":\"Sunlight\",\"type\":1,\"v\":10,\"min\":0,\"max\":50,\"pool\":1,\"graph\":1,\"wx\":-0.5,\"wy\":-0.125,\"ww\":0.15625,\"wh\":0.15625,\"input\":-1,\"output\":-1,\"lock_move\":false,\"lock_input\":true,\"lock_output\":false,\"lock_value\":true,\"lock_min\":true,\"lock_max\":true,\"lock_pool\":true,\"lock_graph\":true},{\"title\":\"feed\",\"type\":2,\"v\":0.1,\"min\":0,\"max\":10,\"pool\":1,\"graph\":0,\"wx\":0.25,\"wy\":0,\"ww\":0.15625,\"wh\":0.15625,\"input\":0,\"output\":1,\"lock_move\":false,\"lock_input\":false,\"lock_output\":false,\"lock_value\":false,\"lock_min\":false,\"lock_max\":false,\"lock_pool\":false,\"lock_graph\":false}]}";
   l.primary_module_target_titles.push("Plants");
   l.primary_module_target_vals.push([1,2,3,4,5]);
@@ -663,8 +673,6 @@ var GamePlayScene = function(game, stage)
   }
   l.draw = function()
   {
-    draw_bugs();
-
     var targets = levels[cur_level_i].primary_module_target_vals;
     if(t_i > 0 && modules[0].plot[1] != targets[0][1])
     {
@@ -674,7 +682,7 @@ var GamePlayScene = function(game, stage)
       ctx.fillText("This doesn't conform",450,40);
       ctx.fillText("to our data...",450,60);
       ctx.textAlign = "center";
-      ctx.fillText("Drag out an action module",340,150);
+      ctx.fillText("Drag out an  generator module",340,150);
       ctx.fillText("And set its output to Plants",340,170);
       ctx.font = "12px Arial";
     }
@@ -717,8 +725,8 @@ var GamePlayScene = function(game, stage)
   }
   levels.push(l);
 
-  var x = 0;
-  var y = 0;
+  var x = 10;
+  var y = 10;
   var w = 100;
   var h = 100;
   for(var i = 0; i < levels.length; i++)
@@ -735,125 +743,14 @@ var GamePlayScene = function(game, stage)
       click:function(evt)
       {
         game_state = GAME_STATE_PLAY;
-        cur_level_i = evt.clickable.i-1;
-        nextLevel();
+        cur_level_i = evt.clickable.i;
+        beginLevel();
       }
     };
     level_btns.push(btn);
 
     x += w*1.1;
-    if(x+w > canv.width) { x = 0; y += h*1.1; }
-  }
-
-  var draw_trees = function()
-  {
-    var targets = levels[cur_level_i].primary_module_target_vals[0];
-    var minx = 80;
-    var maxx = 280;
-    var y = 100;
-    var x;
-    var advance_timer_t = (1-(advance_timer/advance_timer_max));
-    var growth_timer_p = t_i+advance_timer_t
-    var growth_timer_max = targets.length;
-    var growth_timer_t = growth_timer_p/growth_timer_max;
-    for(var i = 0; i < targets.length; i++)
-    {
-      x = lerp(minx,maxx,i/targets.length)-(maxx-minx)*growth_timer_t;
-      ctx.globalAlpha = 0.2;
-      draw_tree(x,y,i,0,targets);
-      ctx.globalAlpha = 1;
-      if(t_i >= i)
-      {
-        if(modules[0] && modules[0].plot[i] == targets[i])
-        {
-          ctx.fillStyle = green;
-          ctx.fillText("✔",x,y+20);
-        }
-        else
-        {
-          ctx.fillStyle = red;
-          ctx.fillText("✘",x,y+20);
-        }
-      }
-    }
-    if(modules[0]) draw_tree(minx,y,t_i,advance_timer_t,modules[0].plot);
-  }
-
-  var draw_tree = function(x,y,tick,t,plot)
-  {
-    ctx.strokeStyle = brown;
-    ctx.lineWidth = 3;
-    var ini_from_x = x;
-    var ini_from_y = y;
-    var len = function(i){return (plot[i]*5); };
-
-    var from_x = ini_from_x;
-    var from_y = ini_from_y;
-    var to_x = ini_from_x;
-    var to_y;
-    if(!isNaN(len(tick+1)))
-      to_y = ini_from_y-lerp(len(tick),len(tick+1),t);
-    else
-      to_y = ini_from_y-len(tick);
-
-    var next_from_x = from_x;
-    var next_from_y = from_y;
-    var next_to_x = to_x;
-    var next_to_y = to_y;
-
-    var frame_t;
-    ctx.beginPath();
-    ctx.moveTo(from_x,from_y);
-    ctx.lineTo(to_x,to_y);
-    for(var i = 1; i < plot.length; i++)
-    {
-      next_from_x = ini_from_x;
-      next_from_y = ini_from_y-lerp(len(i-1),len(i),0.5);
-      next_to_y =   next_from_y-10;
-      if(i%2) next_to_x = next_from_x+len(i)*pow(0.9,i*2)*2;
-      else    next_to_x = next_from_x-len(i)*pow(0.9,i*2)*2;
-
-      from_x = ini_from_x;
-      from_y = ini_from_y-len(tick-1);
-      to_x = ini_from_x;
-      to_y = ini_from_y-len(tick);
-
-      if(i < tick) frame_t = 1;
-      else if (i == tick) frame_t = t;
-      else frame_t = 0;
-
-      from_x = lerp(from_x, next_from_x, frame_t);
-      from_y = lerp(from_y, next_from_y, frame_t);
-      to_x = lerp(to_x, next_to_x, frame_t);
-      to_y = lerp(to_y, next_to_y, frame_t);
-
-      ctx.moveTo(from_x,from_y);
-      ctx.lineTo(to_x,to_y);
-    }
-    ctx.stroke();
-    ctx.strokeStyle = black;
-  }
-
-  var draw_bugs = function()
-  {
-    for(var i = 0; i < modules[0].v; i++)
-      draw_bug(i);
-  }
-
-  var draw_bug = function(i)
-  {
-    var bug_t = (n_ticks/100)%twelvepi;
-    var start_t      = (((i*123+10)*123.4567)%1)*twopi;
-    var start_x      = 50+(((i*123+10)*123.4567)%1)*100;
-    var start_y      = 50+(((i*899+10)*123.4567)%1)*100;
-    var width  = 20+(((i*123+10)*123.4567)%1)*20;
-    var height = 10+(((i*123+10)*456.7897)%1)*10;
-    var x = start_x+cos((bug_t+start_t)*4)*width;
-    var y = start_y+sin((bug_t+start_t)*8)*height;
-    ctx.fillStyle = black;
-    ctx.beginPath();
-    ctx.arc(x,y,3,0,twopi);
-    ctx.fill();
+    if(x+w > canv.width) { x = 10; y += h*1.1; }
   }
 
   var graph = function()
@@ -1685,7 +1582,7 @@ var GamePlayScene = function(game, stage)
       //body
       var s = module_s;
       if((self.input_dongle.attachment && self.output_dongle.attachment) || self.type == MODULE_TYPE_RELATIONSHIP)
-        s /= 2;
+        s *= 0.75;
       ctx.drawImage(module_img(self.color),self.x+self.w/2-s/2,self.y+self.h/2-s/2,s,s);
       var p  = 1;
       var zp = 0;
@@ -1725,7 +1622,7 @@ var GamePlayScene = function(game, stage)
         ctx.clip();
         var s = module_fill_s;
         if((self.input_dongle.attachment && self.output_dongle.attachment) || self.type == MODULE_TYPE_RELATIONSHIP)
-          s /= 2;
+          s *= 0.75;
         ctx.drawImage(img,self.x+self.w/2-s/2,self.y+self.h/2-s/2,s,s);
         ctx.restore();
       }
@@ -1912,7 +1809,7 @@ var GamePlayScene = function(game, stage)
     {
       var s = module_inner_s*self.val_s;
       if((self.input_dongle.attachment && self.output_dongle.attachment) || self.type == MODULE_TYPE_RELATIONSHIP)
-        s /= 2;
+        s *= 0.75;
       ctx.drawImage(inner_module_img,self.x+self.w/2-s/2,self.y+self.h/2-s/2,s,s);
       var targets = levels[cur_level_i].primary_module_target_vals;
       ctx.fillStyle = black
@@ -1926,7 +1823,10 @@ var GamePlayScene = function(game, stage)
         else
           ctx.fillStyle = red;
       }
-      ctx.fillText(fdisp(self.v,2),self.x+self.w/2,self.y+self.h/2+5);
+      if((self.input_dongle.attachment && self.output_dongle.attachment) || self.type == MODULE_TYPE_RELATIONSHIP)
+        ctx.fillText("x"+fdisp(self.v,2),self.x+self.w/2,self.y+self.h/2+5);
+      else
+        ctx.fillText(fdisp(self.v,2),self.x+self.w/2,self.y+self.h/2+5);
 
       var t = 1-(advance_timer/advance_timer_max);
       if(self.cache_delta > 0)
@@ -2278,7 +2178,7 @@ var GamePlayScene = function(game, stage)
     }
 
     game_state = GAME_STATE_MENU;
-    nextLevel();
+    beginLevel();
   };
 
   var resetGraph = function()
@@ -2570,7 +2470,7 @@ var GamePlayScene = function(game, stage)
         {
           var y = targets_y+ypad*(i+3);
           ctx.fillText("?",targets_x+xpad*(2*j)+xpad/2,y); //target
-          if(t_i >= i)
+          if(t_i >= i && modules[j])
           {
             var x = targets_x+xpad*(2*j+1)+xpad/2;
             ctx.fillText(modules[j].plot[i],x,y); //value
@@ -2594,7 +2494,10 @@ var GamePlayScene = function(game, stage)
     {
       for(var i = 0; i < level_btns.length; i++)
       {
+        ctx.fillText(levels[i].title.substr(0,18),level_btns[i].x+10,level_btns[i].y+25);
         ctx.strokeRect(level_btns[i].x,level_btns[i].y,level_btns[i].w,level_btns[i].h);
+        if(levels[i].complete)
+          ctx.strokeRect(level_btns[i].x+2,level_btns[i].y+2,level_btns[i].w-4,level_btns[i].h-4);
       }
     }
   };
