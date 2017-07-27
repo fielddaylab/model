@@ -5,6 +5,9 @@ var GamePlayScene = function(game, stage)
   var ALLOW_NEXT = false;
   var ALLOW_SAVE = true;
 
+  var precision = 2;
+  var predict = true;
+
   ENUM = 0;
   var GAME_STATE_MENU = ENUM; ENUM++;
   var GAME_STATE_PLAY = ENUM; ENUM++;
@@ -165,9 +168,6 @@ var GamePlayScene = function(game, stage)
   glob_neg_img.context.beginPath();
   glob_neg_img.context.arc(w/2,h/2,(w-5)/2,0,2*Math.PI);
   glob_neg_img.context.fill();
-
-  var precision = 2;
-  var predict = false;
 
   var level = function()
   {
@@ -760,8 +760,8 @@ var GamePlayScene = function(game, stage)
   l.add_relationship_enabled = true;
   l.add_module_enabled = false;
   l.remove_enabled = false;
-  l.play_enabled = false;
-  l.speed_enabled = false;
+  l.play_enabled = true;
+  l.speed_enabled = true;
   l.ready = function()
   {
     selected_module = undefined;
@@ -2242,7 +2242,7 @@ var GamePlayScene = function(game, stage)
 
   var resetGraph = function()
   {
-    for(var j = 0; j < 1 || j < 2 && (predict && j < t_max); j++)
+    for(var j = 0; j < 2 || (predict && j < t_max); j++)
     {
       t_i = 0;
       advance_timer = advance_timer_max;
