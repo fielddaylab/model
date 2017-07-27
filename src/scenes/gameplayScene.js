@@ -678,42 +678,6 @@ var GamePlayScene = function(game, stage)
   l.draw = function()
   {
     var targets = levels[cur_level_i].primary_module_target_vals;
-    if(t_i > 0 && modules[0].plot[1] != targets[0][1])
-    {
-      ctx.textAlign = "left";
-      ctx.font = "20px Arial";
-      ctx.fillStyle = black;
-      ctx.fillText("This doesn't conform",450,40);
-      ctx.fillText("to our data...",450,60);
-      ctx.textAlign = "center";
-      ctx.fillText("Drag out an  generator module",340,150);
-      ctx.fillText("And set its output to Plants",340,170);
-      ctx.font = "12px Arial";
-    }
-    if(modules.length > 4 && !modules[4].output_dongle.attachment && !dragging_obj)
-    {
-      ctx.font = "20px Arial";
-      ctx.fillStyle = black;
-      ctx.fillText("Drag the output arrow",modules[1].x+modules[1].w/2,modules[1].y-50);
-      ctx.fillText("To the Plants module",modules[1].x+modules[1].w/2,modules[1].y-30);
-      ctx.font = "12px Arial";
-    }
-    if(modules.length > 4 && modules[4].output_dongle.attachment && !modules[4].input_dongle.attachment && !dragging_obj)
-    {
-      ctx.font = "20px Arial";
-      ctx.fillStyle = black;
-      ctx.fillText("Drag the input arrow",modules[1].x+modules[1].w/2,modules[1].y-50);
-      ctx.fillText("To the Sunlight module",modules[1].x+modules[1].w/2,modules[1].y-30);
-      ctx.font = "12px Arial";
-    }
-    if(modules.length > 4 && modules[4].output_dongle.attachment && modules[4].input_dongle.attachment && !dragging_obj)
-    {
-      ctx.font = "20px Arial";
-      ctx.fillStyle = black;
-      ctx.fillText("Select your new action module",340,150);
-      ctx.fillText("And set its multiplier",340,170);
-      ctx.font = "12px Arial";
-    }
     if(levelComplete() && t_i >= 4)
     {
       ctx.font = "20px Arial";
