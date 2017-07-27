@@ -2,7 +2,7 @@ var GamePlayScene = function(game, stage)
 {
   var self = this;
 
-  var ALLOW_NEXT = true;
+  var ALLOW_NEXT = false;
   var ALLOW_SAVE = true;
 
   ENUM = 0;
@@ -716,6 +716,45 @@ var GamePlayScene = function(game, stage)
   l.primary_module_target_vals.push([1,2,3,4,5]);
   l.primary_module_target_titles.push("Bugs");
   l.primary_module_target_vals.push([1,1.1,1.3,1.6,2]);
+  l.add_object_enabled = false;
+  l.add_generator_enabled = false;
+  l.add_relationship_enabled = true;
+  l.add_module_enabled = false;
+  l.remove_enabled = false;
+  l.play_enabled = false;
+  l.speed_enabled = false;
+  l.ready = function()
+  {
+    selected_module = undefined;
+  }
+  l.draw = function()
+  {
+    var targets = levels[cur_level_i].primary_module_target_vals;
+    if(levelComplete() && t_i >= 4)
+    {
+      ctx.font = "20px Arial";
+      ctx.fillStyle = black;
+      ctx.fillText("Simulation Complete!",380,140);
+      ctx.fillText("Click Next Level",380,160);
+      ctx.font = "12px Arial";
+    }
+  }
+  l.click = function(evt)
+  {
+    if(doEvtWithinBB(evt, s_graph.advance_btn)) levels[cur_level_i].dismissed++;
+  }
+  levels.push(l);
+
+  //circle of life
+  l = new level();
+  l.title = "circle of life";
+  l.primary_module_template = "{\"modules\":[{\"title\":\"Grass\",\"type\":0,\"v\":1,\"min\":0,\"max\":100,\"pool\":1,\"graph\":1,\"wx\":-0.81875,\"wy\":0.078125,\"ww\":0.15625,\"wh\":0.15625,\"input\":-1,\"output\":-1,\"lock_move\":0,\"lock_input\":0,\"lock_output\":0,\"lock_value\":0,\"lock_min\":0,\"lock_max\":0,\"lock_pool\":0,\"lock_graph\":0},{\"title\":\"Herbivores\",\"type\":0,\"v\":1,\"min\":0,\"max\":100,\"pool\":1,\"graph\":1,\"wx\":-0.21425000000000005,\"wy\":0.08325000000000002,\"ww\":0.15625,\"wh\":0.15625,\"input\":-1,\"output\":-1,\"lock_move\":0,\"lock_input\":0,\"lock_output\":0,\"lock_value\":0,\"lock_min\":0,\"lock_max\":0,\"lock_pool\":0,\"lock_graph\":0},{\"title\":\"Carnivores\",\"type\":0,\"v\":1,\"min\":0,\"max\":100,\"pool\":1,\"graph\":1,\"wx\":0.3224999999999999,\"wy\":0.06737500000000013,\"ww\":0.15625,\"wh\":0.15625,\"input\":-1,\"output\":-1,\"lock_move\":0,\"lock_input\":0,\"lock_output\":0,\"lock_value\":0,\"lock_min\":0,\"lock_max\":0,\"lock_pool\":0,\"lock_graph\":0},{\"title\":\"Sun\",\"type\":1,\"v\":10,\"min\":0,\"max\":10,\"pool\":1,\"graph\":false,\"wx\":-1.4125,\"wy\":0.1062499999999999,\"ww\":0.15625,\"wh\":0.15625,\"input\":-1,\"output\":-1,\"lock_move\":0,\"lock_input\":0,\"lock_output\":0,\"lock_value\":0,\"lock_min\":0,\"lock_max\":0,\"lock_pool\":0,\"lock_graph\":0},{\"title\":\"gives light\",\"type\":2,\"v\":1,\"min\":0,\"max\":10,\"pool\":1,\"graph\":false,\"wx\":-1.1204999999999998,\"wy\":0.09262500000000004,\"ww\":0.15625,\"wh\":0.15625,\"input\":3,\"output\":0,\"lock_move\":0,\"lock_input\":0,\"lock_output\":0,\"lock_value\":0,\"lock_min\":0,\"lock_max\":0,\"lock_pool\":0,\"lock_graph\":0},{\"title\":\"nourishes\",\"type\":2,\"v\":1,\"min\":-1,\"max\":1,\"pool\":1,\"graph\":false,\"wx\":-0.492375,\"wy\":0.20825,\"ww\":0.15625,\"wh\":0.15625,\"input\":0,\"output\":1,\"lock_move\":0,\"lock_input\":0,\"lock_output\":0,\"lock_value\":0,\"lock_min\":0,\"lock_max\":0,\"lock_pool\":0,\"lock_graph\":0},{\"title\":\"eats\",\"type\":2,\"v\":-0.5,\"min\":-1,\"max\":1,\"pool\":1,\"graph\":false,\"wx\":-0.52675,\"wy\":-0.06674999999999986,\"ww\":0.15625,\"wh\":0.15625,\"input\":1,\"output\":0,\"lock_move\":0,\"lock_input\":0,\"lock_output\":0,\"lock_value\":0,\"lock_min\":0,\"lock_max\":0,\"lock_pool\":0,\"lock_graph\":0},{\"title\":\"dies\",\"type\":2,\"v\":-0.5,\"min\":-1,\"max\":1,\"pool\":1,\"graph\":false,\"wx\":0.6540000000000006,\"wy\":0.07125000000000006,\"ww\":0.15625,\"wh\":0.15625,\"input\":2,\"output\":2,\"lock_move\":0,\"lock_input\":0,\"lock_output\":0,\"lock_value\":0,\"lock_min\":0,\"lock_max\":0,\"lock_pool\":0,\"lock_graph\":0}]}";
+  l.primary_module_target_titles.push("Grass");
+  l.primary_module_target_vals.push([1,10.5,19.75,24.13,19.19]);
+  l.primary_module_target_titles.push("Herbivores");
+  l.primary_module_target_vals.push([1,1.5,11.25,29.88,47.82]);
+  l.primary_module_target_titles.push("Carnivores");
+  l.primary_module_target_vals.push([1,1.5,2.25,12.38,36.07]);
   l.add_object_enabled = false;
   l.add_generator_enabled = false;
   l.add_relationship_enabled = true;
