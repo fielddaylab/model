@@ -3,7 +3,7 @@ var GamePlayScene = function(game, stage)
   var self = this;
 
   var ALLOW_NEXT = false;
-  var ALLOW_SAVE = true;
+  var ALLOW_SAVE = false;
 
   var precision = 2;
   var predict = false;
@@ -242,9 +242,8 @@ var GamePlayScene = function(game, stage)
   //var cur_level_i = 4-1;
   var l;
 
-  //free play
   l = new level();
-  l.title = "free play";
+  l.title = "sandbox";
   l.primary_module_template = "{\"modules\":[]}";
   l.add_object_enabled = true;
   l.add_generator_enabled = true;
@@ -264,9 +263,8 @@ var GamePlayScene = function(game, stage)
   }
   levels.push(l);
 
-  //tree free
   l = new level();
-  l.title = "tree free";
+  l.title = "Watch";
   l.primary_module_template = "{\"modules\":[{\"title\":\"Tree Height (M)\",\"type\":0,\"v\":1,\"min\":0,\"max\":40,\"pool\":1,\"graph\":1,\"wx\":0.2,\"wy\":-0.08,\"ww\":0.15625,\"wh\":0.15625,\"input\":-1,\"output\":-1,\"lock_move\":false,\"lock_input\":true,\"lock_output\":true,\"lock_value\":true,\"lock_min\":true,\"lock_max\":true,\"lock_pool\":true,\"lock_graph\":true},{\"title\":\"Growth Rate (M/T)\",\"type\":1,\"v\":1,\"min\":0,\"max\":10,\"pool\":1,\"graph\":0,\"wx\":-0.2,\"wy\":-0.08,\"ww\":0.15625,\"wh\":0.15625,\"input\":-1,\"output\":0,\"lock_move\":false,\"lock_input\":true,\"lock_output\":true,\"lock_value\":true,\"lock_min\":true,\"lock_max\":true,\"lock_pool\":true,\"lock_graph\":false}]}";
   l.primary_module_target_titles.push("Height(M)");
   l.primary_module_target_vals.push([1,2,3,4,5]);
@@ -305,9 +303,8 @@ var GamePlayScene = function(game, stage)
   }
   levels.push(l);
 
-  //tree edit delta
   l = new level();
-  l.title = "tree edit delta";
+  l.title = "Source";
   l.primary_module_template = "{\"modules\":[{\"title\":\"Tree Height (M)\",\"type\":0,\"v\":1,\"min\":0,\"max\":40,\"pool\":1,\"graph\":1,\"wx\":0.2,\"wy\":-0.08,\"ww\":0.15625,\"wh\":0.15625,\"input\":-1,\"output\":-1,\"lock_move\":false,\"lock_input\":true,\"lock_output\":true,\"lock_value\":true,\"lock_min\":true,\"lock_max\":true,\"lock_pool\":true,\"lock_graph\":true},{\"title\":\"Growth Rate (M/T)\",\"type\":1,\"v\":1,\"min\":0,\"max\":10,\"pool\":1,\"graph\":0,\"wx\":-0.2,\"wy\":-0.08,\"ww\":0.15625,\"wh\":0.15625,\"input\":-1,\"output\":0,\"lock_move\":false,\"lock_input\":true,\"lock_output\":true,\"lock_value\":false,\"lock_min\":true,\"lock_max\":true,\"lock_pool\":true,\"lock_graph\":false}]}";
   l.primary_module_target_titles.push("Height(M)");
   l.primary_module_target_vals.push([1,3,5,7,9]);
@@ -352,9 +349,8 @@ var GamePlayScene = function(game, stage)
   }
   levels.push(l);
 
-  //tree edit starting
   l = new level();
-  l.title = "tree edit starting";
+  l.title = "Start";
   l.primary_module_template = "{\"modules\":[{\"title\":\"Tree Height (M)\",\"type\":0,\"v\":1,\"min\":0,\"max\":40,\"pool\":1,\"graph\":1,\"wx\":0.2,\"wy\":-0.08,\"ww\":0.15625,\"wh\":0.15625,\"input\":-1,\"output\":-1,\"lock_move\":false,\"lock_input\":true,\"lock_output\":true,\"lock_value\":false,\"lock_min\":true,\"lock_max\":true,\"lock_pool\":true,\"lock_graph\":true},{\"title\":\"Growth Rate (M/T)\",\"type\":1,\"v\":2,\"min\":0,\"max\":10,\"pool\":1,\"graph\":0,\"wx\":-0.2,\"wy\":-0.08,\"ww\":0.15625,\"wh\":0.15625,\"input\":-1,\"output\":0,\"lock_move\":false,\"lock_input\":true,\"lock_output\":true,\"lock_value\":true,\"lock_min\":true,\"lock_max\":true,\"lock_pool\":true,\"lock_graph\":false}]}";
   l.primary_module_target_titles.push("Height(M)");
   l.primary_module_target_vals.push([2,4,6,8,10]);
@@ -399,9 +395,8 @@ var GamePlayScene = function(game, stage)
   }
   levels.push(l);
 
-  //tree create generator
   l = new level();
-  l.title = "tree create generator";
+  l.title = "Give Life";
   l.primary_module_template = "{\"modules\":[{\"title\":\"Tree Height (M)\",\"type\":0,\"v\":1,\"min\":0,\"max\":10,\"pool\":1,\"graph\":1,\"wx\":0.2,\"wy\":-0.08,\"ww\":0.15625,\"wh\":0.15625,\"input\":-1,\"output\":-1,\"lock_move\":false,\"lock_input\":true,\"lock_output\":true,\"lock_value\":true,\"lock_min\":true,\"lock_max\":true,\"lock_pool\":true,\"lock_graph\":true}]}";
   l.primary_module_target_titles.push("Height(M)");
   l.primary_module_target_vals.push([1,2,3,4,5]);
@@ -451,9 +446,8 @@ var GamePlayScene = function(game, stage)
   }
   levels.push(l);
 
-  //tree empty
   l = new level();
-  l.title = "tree empty";
+  l.title = "Build-a-Tree";
   l.primary_module_template = "{\"modules\":[]}";
   l.primary_module_target_titles.push("Height(M)");
   l.primary_module_target_vals.push([0.5,1,1.5,2,2.5]);
@@ -499,9 +493,8 @@ var GamePlayScene = function(game, stage)
   }
   levels.push(l);
 
-  //e rel mul
   l = new level();
-  l.title = "e rel mul";
+  l.title = "Relationships";
   l.primary_module_template = "{\"modules\":[{\"title\":\"Plant Population\",\"type\":0,\"v\":1,\"min\":0,\"max\":50,\"pool\":1,\"graph\":1,\"wx\":0.3,\"wy\":-0.08,\"ww\":0.15625,\"wh\":0.15625,\"input\":-1,\"output\":-1,\"lock_move\":false,\"lock_input\":true,\"lock_output\":true,\"lock_value\":true,\"lock_min\":true,\"lock_max\":true,\"lock_pool\":true,\"lock_graph\":false},{\"title\":\"Sunlight\",\"type\":0,\"v\":10,\"min\":0,\"max\":50,\"pool\":1,\"graph\":0,\"wx\":-0.6,\"wy\":-0.08,\"ww\":0.15625,\"wh\":0.15625,\"input\":-1,\"output\":-1,\"lock_move\":false,\"lock_input\":true,\"lock_output\":true,\"lock_value\":true,\"lock_min\":true,\"lock_max\":true,\"lock_pool\":true,\"lock_graph\":false},{\"title\":\"Grows\",\"type\":2,\"v\":0.5,\"min\":0,\"max\":10,\"pool\":1,\"graph\":0,\"wx\":-0.2,\"wy\":0.1,\"ww\":0.15625,\"wh\":0.15625,\"input\":1,\"output\":0,\"lock_move\":false,\"lock_input\":true,\"lock_output\":true,\"lock_value\":false,\"lock_min\":true,\"lock_max\":true,\"lock_pool\":true,\"lock_graph\":false}]}";
   l.primary_module_target_titles.push("Plants");
   l.primary_module_target_vals.push([1,2,3,4,5]);
@@ -556,9 +549,8 @@ var GamePlayScene = function(game, stage)
   }
   levels.push(l);
 
-  //e rel source
   l = new level();
-  l.title = "e rel source";
+  l.title = "Source";
   l.primary_module_template = "{\"modules\":[{\"title\":\"Plant Population\",\"type\":0,\"v\":1,\"min\":0,\"max\":50,\"pool\":1,\"graph\":1,\"wx\":0.3,\"wy\":-0.08,\"ww\":0.15625,\"wh\":0.15625,\"input\":-1,\"output\":-1,\"lock_move\":false,\"lock_input\":true,\"lock_output\":true,\"lock_value\":true,\"lock_min\":true,\"lock_max\":true,\"lock_pool\":true,\"lock_graph\":false},{\"title\":\"Sunlight\",\"type\":0,\"v\":10,\"min\":0,\"max\":50,\"pool\":1,\"graph\":1,\"wx\":-0.6,\"wy\":-0.08,\"ww\":0.15625,\"wh\":0.15625,\"input\":-1,\"output\":-1,\"lock_move\":false,\"lock_input\":true,\"lock_output\":true,\"lock_value\":false,\"lock_min\":true,\"lock_max\":true,\"lock_pool\":true,\"lock_graph\":false},{\"title\":\"Grows\",\"type\":2,\"v\":0.5,\"min\":0,\"max\":10,\"pool\":1,\"graph\":0,\"wx\":-0.2,\"wy\":0.1,\"ww\":0.15625,\"wh\":0.15625,\"input\":1,\"output\":0,\"lock_move\":false,\"lock_input\":true,\"lock_output\":true,\"lock_value\":true,\"lock_min\":true,\"lock_max\":true,\"lock_pool\":true,\"lock_graph\":false}]}";
   l.primary_module_target_titles.push("Plants");
   l.primary_module_target_vals.push([1,2,3,4,5]);
@@ -611,9 +603,8 @@ var GamePlayScene = function(game, stage)
   }
   levels.push(l);
 
-  //e rel whole
   l = new level();
-  l.title = "e rel whole";
+  l.title = "Two ways";
   l.primary_module_template = "{\"modules\":[{\"title\":\"Plant Population\",\"type\":0,\"v\":1,\"min\":0,\"max\":80,\"pool\":1,\"graph\":1,\"wx\":0.3,\"wy\":-0.08,\"ww\":0.15625,\"wh\":0.15625,\"input\":-1,\"output\":-1,\"lock_move\":false,\"lock_input\":true,\"lock_output\":true,\"lock_value\":false,\"lock_min\":true,\"lock_max\":true,\"lock_pool\":true,\"lock_graph\":false},{\"title\":\"Sunlight\",\"type\":0,\"v\":10,\"min\":0,\"max\":50,\"pool\":1,\"graph\":1,\"wx\":-0.6,\"wy\":-0.08,\"ww\":0.15625,\"wh\":0.15625,\"input\":-1,\"output\":-1,\"lock_move\":false,\"lock_input\":true,\"lock_output\":true,\"lock_value\":false,\"lock_min\":true,\"lock_max\":true,\"lock_pool\":true,\"lock_graph\":false},{\"title\":\"Grows\",\"type\":2,\"v\":0.5,\"min\":0,\"max\":10,\"pool\":1,\"graph\":0,\"wx\":-0.2,\"wy\":0.1,\"ww\":0.15625,\"wh\":0.15625,\"input\":1,\"output\":0,\"lock_move\":false,\"lock_input\":true,\"lock_output\":true,\"lock_value\":false,\"lock_min\":true,\"lock_max\":true,\"lock_pool\":true,\"lock_graph\":false}]}";
   l.primary_module_target_titles.push("Plants");
   l.primary_module_target_vals.push([10,20,30,40,50]);
@@ -636,9 +627,8 @@ var GamePlayScene = function(game, stage)
   }
   levels.push(l);
 
-  //c rel
   l = new level();
-  l.title = "c rel";
+  l.title = "Connect the dots";
   l.primary_module_template = "{\"modules\":[{\"title\":\"Plant Population\",\"type\":0,\"v\":1,\"min\":0,\"max\":50,\"pool\":1,\"graph\":1,\"wx\":0.3,\"wy\":-0.08,\"ww\":0.15625,\"wh\":0.15625,\"input\":-1,\"output\":-1,\"lock_move\":false,\"lock_input\":true,\"lock_output\":true,\"lock_value\":false,\"lock_min\":true,\"lock_max\":true,\"lock_pool\":true,\"lock_graph\":false},{\"title\":\"Sunlight\",\"type\":0,\"v\":10,\"min\":0,\"max\":50,\"pool\":1,\"graph\":1,\"wx\":-0.6,\"wy\":-0.08,\"ww\":0.15625,\"wh\":0.15625,\"input\":-1,\"output\":-1,\"lock_move\":false,\"lock_input\":true,\"lock_output\":true,\"lock_value\":false,\"lock_min\":true,\"lock_max\":true,\"lock_pool\":true,\"lock_graph\":false}]}";
   l.primary_module_target_titles.push("Plants");
   l.primary_module_target_vals.push([1,2,3,4,5]);
@@ -662,9 +652,8 @@ var GamePlayScene = function(game, stage)
   }
   levels.push(l);
 
-  //e multiple rels
   l = new level();
-  l.title = "e multiple rels";
+  l.title = "Multiple Sources";
   l.primary_module_template = "{\"modules\":[{\"title\":\"Greenhouse Effect\",\"type\":0,\"v\":1,\"min\":0,\"max\":20,\"pool\":1,\"graph\":1,\"wx\":0.3,\"wy\":0,\"ww\":0.15625,\"wh\":0.15625,\"input\":-1,\"output\":-1,\"lock_move\":false,\"lock_input\":false,\"lock_output\":false,\"lock_value\":false,\"lock_min\":false,\"lock_max\":false,\"lock_pool\":false,\"lock_graph\":false},{\"title\":\"Cars\",\"type\":0,\"v\":1,\"min\":0,\"max\":10,\"pool\":1,\"graph\":1,\"wx\":-0.6,\"wy\":0.15,\"ww\":0.15625,\"wh\":0.15625,\"input\":-1,\"output\":-1,\"lock_move\":false,\"lock_input\":false,\"lock_output\":false,\"lock_value\":false,\"lock_min\":false,\"lock_max\":false,\"lock_pool\":false,\"lock_graph\":false},{\"title\":\"Cows\",\"type\":0,\"v\":1,\"min\":0,\"max\":10,\"pool\":1,\"graph\":1,\"wx\":-0.6,\"wy\":-0.15,\"ww\":0.15625,\"wh\":0.15625,\"input\":-1,\"output\":-1,\"lock_move\":false,\"lock_input\":false,\"lock_output\":false,\"lock_value\":false,\"lock_min\":false,\"lock_max\":false,\"lock_pool\":false,\"lock_graph\":false},{\"title\":\"CO2 Emissions\",\"type\":2,\"v\":1,\"min\":0,\"max\":10,\"pool\":1,\"graph\":0,\"wx\":-0.15,\"wy\":0.15,\"ww\":0.15625,\"wh\":0.15625,\"input\":1,\"output\":0,\"lock_move\":false,\"lock_input\":false,\"lock_output\":false,\"lock_value\":false,\"lock_min\":false,\"lock_max\":false,\"lock_pool\":false,\"lock_graph\":false},{\"title\":\"Methane Release\",\"type\":2,\"v\":1,\"min\":0,\"max\":10,\"pool\":1,\"graph\":0,\"wx\":-0.15,\"wy\":-0.15,\"ww\":0.15625,\"wh\":0.15625,\"input\":2,\"output\":0,\"lock_move\":false,\"lock_input\":false,\"lock_output\":false,\"lock_value\":false,\"lock_min\":false,\"lock_max\":false,\"lock_pool\":false,\"lock_graph\":false}]}";
   l.primary_module_target_titles.push("Plants");
   l.primary_module_target_vals.push([1,4,7,10,13]);
@@ -688,9 +677,8 @@ var GamePlayScene = function(game, stage)
   }
   levels.push(l);
 
-  //e neg multiple rels
   l = new level();
-  l.title = "e neg multiple rels";
+  l.title = "Counteracting Sources";
   l.primary_module_template = "{\"modules\":[{\"title\":\"Greenhouse Effect\",\"type\":0,\"v\":1,\"min\":0,\"max\":20,\"pool\":1,\"graph\":1,\"wx\":0.3,\"wy\":0,\"ww\":0.15625,\"wh\":0.15625,\"input\":-1,\"output\":-1,\"lock_move\":false,\"lock_input\":false,\"lock_output\":false,\"lock_value\":false,\"lock_min\":false,\"lock_max\":false,\"lock_pool\":false,\"lock_graph\":false},{\"title\":\"Cars\",\"type\":0,\"v\":1,\"min\":0,\"max\":10,\"pool\":1,\"graph\":1,\"wx\":-0.6,\"wy\":0.15,\"ww\":0.15625,\"wh\":0.15625,\"input\":-1,\"output\":-1,\"lock_move\":false,\"lock_input\":false,\"lock_output\":false,\"lock_value\":false,\"lock_min\":false,\"lock_max\":false,\"lock_pool\":false,\"lock_graph\":false},{\"title\":\"Cows\",\"type\":0,\"v\":1,\"min\":0,\"max\":10,\"pool\":1,\"graph\":1,\"wx\":-0.6,\"wy\":-0.15,\"ww\":0.15625,\"wh\":0.15625,\"input\":-1,\"output\":-1,\"lock_move\":false,\"lock_input\":false,\"lock_output\":false,\"lock_value\":false,\"lock_min\":false,\"lock_max\":false,\"lock_pool\":false,\"lock_graph\":false},{\"title\":\"Trees\",\"type\":0,\"v\":1,\"min\":0,\"max\":10,\"pool\":1,\"graph\":1,\"wx\":-0.8,\"wy\":0,\"ww\":0.15625,\"wh\":0.15625,\"input\":-1,\"output\":-1,\"lock_move\":false,\"lock_input\":false,\"lock_output\":false,\"lock_value\":false,\"lock_min\":false,\"lock_max\":false,\"lock_pool\":false,\"lock_graph\":false},{\"title\":\"CO2 Emissions\",\"type\":2,\"v\":1,\"min\":-1,\"max\":1,\"pool\":1,\"graph\":0,\"wx\":-0.15,\"wy\":0.15,\"ww\":0.15625,\"wh\":0.15625,\"input\":1,\"output\":0,\"lock_move\":false,\"lock_input\":false,\"lock_output\":false,\"lock_value\":false,\"lock_min\":false,\"lock_max\":false,\"lock_pool\":false,\"lock_graph\":false},{\"title\":\"Methane Release\",\"type\":2,\"v\":1,\"min\":0,\"max\":10,\"pool\":1,\"graph\":0,\"wx\":-0.15,\"wy\":-0.15,\"ww\":0.15625,\"wh\":0.15625,\"input\":2,\"output\":0,\"lock_move\":false,\"lock_input\":false,\"lock_output\":false,\"lock_value\":false,\"lock_min\":false,\"lock_max\":false,\"lock_pool\":false,\"lock_graph\":false},{\"title\":\"CO2 Scrubbing\",\"type\":2,\"v\":-1,\"min\":-1,\"max\":1,\"pool\":1,\"graph\":0,\"wx\":-0.35,\"wy\":0,\"ww\":0.15625,\"wh\":0.15625,\"input\":3,\"output\":0,\"lock_move\":false,\"lock_input\":false,\"lock_output\":false,\"lock_value\":true,\"lock_min\":false,\"lock_max\":false,\"lock_pool\":false,\"lock_graph\":false}]}";
   l.primary_module_target_titles.push("Plants");
   l.primary_module_target_vals.push([1,4,7,10,13]);
@@ -714,65 +702,9 @@ var GamePlayScene = function(game, stage)
   }
   levels.push(l);
 
-  //first complex relationship (source fed)- create relationship
   l = new level();
-  l.title = "first complex relationship (source fed)- create relationship";
-  l.primary_module_template = "{\"modules\":[{\"title\":\"Minnow Population\",\"type\":0,\"v\":1,\"min\":0,\"max\":20,\"pool\":1,\"graph\":1,\"wx\":-0.3,\"wy\":-0.08,\"ww\":0.15625,\"wh\":0.15625,\"input\":-1,\"output\":-1,\"lock_move\":false,\"lock_input\":true,\"lock_output\":true,\"lock_value\":true,\"lock_min\":true,\"lock_max\":true,\"lock_pool\":true,\"lock_graph\":false},{\"title\":\"Walleye Population\",\"type\":0,\"v\":1,\"min\":0,\"max\":20,\"pool\":1,\"graph\":1,\"wx\":0.2,\"wy\":-0.08,\"ww\":0.15625,\"wh\":0.15625,\"input\":-1,\"output\":-1,\"lock_move\":false,\"lock_input\":true,\"lock_output\":true,\"lock_value\":true,\"lock_min\":true,\"lock_max\":true,\"lock_pool\":true,\"lock_graph\":false},{\"title\":\"DNR Minnow Dump\",\"type\":1,\"v\":1,\"min\":0,\"max\":20,\"pool\":1,\"graph\":0,\"wx\":-0.7,\"wy\":-0.08,\"ww\":0.15625,\"wh\":0.15625,\"input\":-1,\"output\":0,\"lock_move\":false,\"lock_input\":true,\"lock_output\":true,\"lock_value\":true,\"lock_min\":true,\"lock_max\":true,\"lock_pool\":true,\"lock_graph\":false}]}";
-  l.primary_module_target_titles.push("Minnow");
-  l.primary_module_target_titles.push("Walleye");
-  l.primary_module_target_vals.push([1,2,3,4,5]);
-  l.primary_module_target_vals.push([1,2,4,7,11]);
-  l.add_object_enabled = false;
-  l.add_generator_enabled = false;
-  l.add_relationship_enabled = true;
-  l.add_module_enabled = false;
-  l.remove_enabled = false;
-  l.play_enabled = false;
-  l.speed_enabled = true;
-  l.should_allow_creation = function(type){ return modules.length < 4; }
-  l.ready = function()
-  {
-    selected_module = undefined;
-  }
-  l.draw = function()
-  {
-  }
-  l.click = function(evt)
-  {
-  }
-  levels.push(l);
-
-  //create/set complex relationship
-  l = new level();
-  l.title = "create/set complex relationship";
-  l.primary_module_template = "{\"modules\":[{\"title\":\"Minnow Population\",\"type\":0,\"v\":1,\"min\":0,\"max\":20,\"pool\":1,\"graph\":1,\"wx\":-0.3,\"wy\":-0.08,\"ww\":0.15625,\"wh\":0.15625,\"input\":-1,\"output\":-1,\"lock_move\":false,\"lock_input\":true,\"lock_output\":true,\"lock_value\":false,\"lock_min\":true,\"lock_max\":true,\"lock_pool\":false,\"lock_graph\":false},{\"title\":\"Walleye Population\",\"type\":0,\"v\":1,\"min\":0,\"max\":30,\"pool\":1,\"graph\":1,\"wx\":0.2,\"wy\":-0.08,\"ww\":0.15625,\"wh\":0.15625,\"input\":-1,\"output\":-1,\"lock_move\":false,\"lock_input\":true,\"lock_output\":true,\"lock_value\":false,\"lock_min\":true,\"lock_max\":true,\"lock_pool\":true,\"lock_graph\":false},{\"title\":\"DNR Minnow Dump\",\"type\":1,\"v\":1,\"min\":0,\"max\":20,\"pool\":1,\"graph\":0,\"wx\":-0.7,\"wy\":-0.08,\"ww\":0.15625,\"wh\":0.15625,\"input\":-1,\"output\":0,\"lock_move\":false,\"lock_input\":true,\"lock_output\":true,\"lock_value\":false,\"lock_min\":true,\"lock_max\":true,\"lock_pool\":true,\"lock_graph\":false}]}";
-  l.primary_module_target_titles.push("Minnow");
-  l.primary_module_target_titles.push("Walleye");
-  l.primary_module_target_vals.push([1,2,3,4,5]);
-  l.primary_module_target_vals.push([1,3,7,13,21]);
-  l.add_object_enabled = false;
-  l.add_generator_enabled = false;
-  l.add_relationship_enabled = true;
-  l.add_module_enabled = false;
-  l.remove_enabled = false;
-  l.play_enabled = false;
-  l.speed_enabled = true;
-  l.should_allow_creation = function(type){ return modules.length < 4; }
-  l.ready = function()
-  {
-    selected_module = undefined;
-  }
-  l.draw = function()
-  {
-  }
-  l.click = function(evt)
-  {
-  }
-  levels.push(l);
-
-  l = new level();
-  l.title = "plants n bugs n stuff";
-  l.primary_module_template = "{\"modules\":[{\"title\":\"Plants\",\"type\":0,\"v\":1,\"min\":0,\"max\":10,\"pool\":1,\"graph\":1,\"wx\":0,\"wy\":-0.125,\"ww\":0.15625,\"wh\":0.15625,\"input\":-1,\"output\":-1,\"lock_move\":false,\"lock_input\":true,\"lock_output\":true,\"lock_value\":true,\"lock_min\":true,\"lock_max\":true,\"lock_pool\":true,\"lock_graph\":true},{\"title\":\"Bugs\",\"type\":0,\"v\":1,\"min\":0,\"max\":10,\"pool\":1,\"graph\":1,\"wx\":0.5,\"wy\":-0.125,\"ww\":0.15625,\"wh\":0.15625,\"input\":-1,\"output\":-1,\"lock_move\":false,\"lock_input\":true,\"lock_output\":false,\"lock_value\":true,\"lock_min\":true,\"lock_max\":true,\"lock_pool\":true,\"lock_graph\":true},{\"title\":\"Sunlight\",\"type\":1,\"v\":10,\"min\":0,\"max\":50,\"pool\":1,\"graph\":1,\"wx\":-0.5,\"wy\":-0.125,\"ww\":0.15625,\"wh\":0.15625,\"input\":-1,\"output\":-1,\"lock_move\":false,\"lock_input\":true,\"lock_output\":false,\"lock_value\":true,\"lock_min\":true,\"lock_max\":true,\"lock_pool\":true,\"lock_graph\":true},{\"title\":\"feed\",\"type\":2,\"v\":0.1,\"min\":0,\"max\":10,\"pool\":1,\"graph\":0,\"wx\":0.25,\"wy\":0,\"ww\":0.15625,\"wh\":0.15625,\"input\":0,\"output\":1,\"lock_move\":false,\"lock_input\":false,\"lock_output\":false,\"lock_value\":false,\"lock_min\":false,\"lock_max\":false,\"lock_pool\":false,\"lock_graph\":false}]}";
+  l.title = "Chain Reaction";
+  l.primary_module_template = "{\"modules\":[{\"title\":\"Plants\",\"type\":0,\"v\":1,\"min\":0,\"max\":10,\"pool\":1,\"graph\":1,\"wx\":0,\"wy\":-0.125,\"ww\":0.15625,\"wh\":0.15625,\"input\":-1,\"output\":-1,\"lock_move\":false,\"lock_input\":true,\"lock_output\":true,\"lock_value\":true,\"lock_min\":true,\"lock_max\":true,\"lock_pool\":true,\"lock_graph\":true},{\"title\":\"Bugs\",\"type\":0,\"v\":1,\"min\":0,\"max\":10,\"pool\":1,\"graph\":1,\"wx\":0.5,\"wy\":-0.125,\"ww\":0.15625,\"wh\":0.15625,\"input\":-1,\"output\":-1,\"lock_move\":false,\"lock_input\":true,\"lock_output\":false,\"lock_value\":true,\"lock_min\":true,\"lock_max\":true,\"lock_pool\":true,\"lock_graph\":true},{\"title\":\"Sunlight\",\"type\":0,\"v\":10,\"min\":0,\"max\":50,\"pool\":1,\"graph\":1,\"wx\":-0.5,\"wy\":-0.125,\"ww\":0.15625,\"wh\":0.15625,\"input\":-1,\"output\":-1,\"lock_move\":false,\"lock_input\":true,\"lock_output\":false,\"lock_value\":true,\"lock_min\":true,\"lock_max\":true,\"lock_pool\":true,\"lock_graph\":true},{\"title\":\"feed\",\"type\":2,\"v\":0.1,\"min\":0,\"max\":10,\"pool\":1,\"graph\":0,\"wx\":0.25,\"wy\":0,\"ww\":0.15625,\"wh\":0.15625,\"input\":0,\"output\":1,\"lock_move\":false,\"lock_input\":false,\"lock_output\":false,\"lock_value\":false,\"lock_min\":false,\"lock_max\":false,\"lock_pool\":false,\"lock_graph\":false}]}";
   l.primary_module_target_titles.push("Plants");
   l.primary_module_target_vals.push([1,2,3,4,5]);
   l.primary_module_target_titles.push("Bugs");
@@ -806,10 +738,63 @@ var GamePlayScene = function(game, stage)
   }
   levels.push(l);
 
-  //circle of life
   l = new level();
-  l.title = "circle of life";
-  l.primary_module_template = "{\"modules\":[{\"title\":\"Grass\",\"type\":0,\"v\":1,\"min\":0,\"max\":100,\"pool\":1,\"graph\":1,\"wx\":-0.81875,\"wy\":0.078125,\"ww\":0.15625,\"wh\":0.15625,\"input\":-1,\"output\":-1,\"lock_move\":0,\"lock_input\":0,\"lock_output\":0,\"lock_value\":0,\"lock_min\":0,\"lock_max\":0,\"lock_pool\":0,\"lock_graph\":0},{\"title\":\"Herbivores\",\"type\":0,\"v\":1,\"min\":0,\"max\":100,\"pool\":1,\"graph\":1,\"wx\":-0.21425000000000005,\"wy\":0.08325000000000002,\"ww\":0.15625,\"wh\":0.15625,\"input\":-1,\"output\":-1,\"lock_move\":0,\"lock_input\":0,\"lock_output\":0,\"lock_value\":0,\"lock_min\":0,\"lock_max\":0,\"lock_pool\":0,\"lock_graph\":0},{\"title\":\"Carnivores\",\"type\":0,\"v\":1,\"min\":0,\"max\":100,\"pool\":1,\"graph\":1,\"wx\":0.3224999999999999,\"wy\":0.06737500000000013,\"ww\":0.15625,\"wh\":0.15625,\"input\":-1,\"output\":-1,\"lock_move\":0,\"lock_input\":0,\"lock_output\":0,\"lock_value\":0,\"lock_min\":0,\"lock_max\":0,\"lock_pool\":0,\"lock_graph\":0},{\"title\":\"Sun\",\"type\":1,\"v\":10,\"min\":0,\"max\":10,\"pool\":1,\"graph\":false,\"wx\":-1.4125,\"wy\":0.1062499999999999,\"ww\":0.15625,\"wh\":0.15625,\"input\":-1,\"output\":-1,\"lock_move\":0,\"lock_input\":0,\"lock_output\":0,\"lock_value\":0,\"lock_min\":0,\"lock_max\":0,\"lock_pool\":0,\"lock_graph\":0},{\"title\":\"gives light\",\"type\":2,\"v\":1,\"min\":0,\"max\":10,\"pool\":1,\"graph\":false,\"wx\":-1.1204999999999998,\"wy\":0.09262500000000004,\"ww\":0.15625,\"wh\":0.15625,\"input\":3,\"output\":0,\"lock_move\":0,\"lock_input\":0,\"lock_output\":0,\"lock_value\":0,\"lock_min\":0,\"lock_max\":0,\"lock_pool\":0,\"lock_graph\":0},{\"title\":\"nourishes\",\"type\":2,\"v\":1,\"min\":-1,\"max\":1,\"pool\":1,\"graph\":false,\"wx\":-0.492375,\"wy\":0.20825,\"ww\":0.15625,\"wh\":0.15625,\"input\":0,\"output\":1,\"lock_move\":0,\"lock_input\":0,\"lock_output\":0,\"lock_value\":0,\"lock_min\":0,\"lock_max\":0,\"lock_pool\":0,\"lock_graph\":0},{\"title\":\"eats\",\"type\":2,\"v\":-0.5,\"min\":-1,\"max\":1,\"pool\":1,\"graph\":false,\"wx\":-0.52675,\"wy\":-0.06674999999999986,\"ww\":0.15625,\"wh\":0.15625,\"input\":1,\"output\":0,\"lock_move\":0,\"lock_input\":0,\"lock_output\":0,\"lock_value\":0,\"lock_min\":0,\"lock_max\":0,\"lock_pool\":0,\"lock_graph\":0},{\"title\":\"dies\",\"type\":2,\"v\":-0.5,\"min\":-1,\"max\":1,\"pool\":1,\"graph\":false,\"wx\":0.6540000000000006,\"wy\":0.07125000000000006,\"ww\":0.15625,\"wh\":0.15625,\"input\":2,\"output\":2,\"lock_move\":0,\"lock_input\":0,\"lock_output\":0,\"lock_value\":0,\"lock_min\":0,\"lock_max\":0,\"lock_pool\":0,\"lock_graph\":0}]}";
+  l.title = "Polynomial Growth";
+  l.primary_module_template = "{\"modules\":[{\"title\":\"Minnow Population\",\"type\":0,\"v\":1,\"min\":0,\"max\":20,\"pool\":1,\"graph\":1,\"wx\":-0.3,\"wy\":-0.08,\"ww\":0.15625,\"wh\":0.15625,\"input\":-1,\"output\":-1,\"lock_move\":false,\"lock_input\":true,\"lock_output\":true,\"lock_value\":true,\"lock_min\":true,\"lock_max\":true,\"lock_pool\":true,\"lock_graph\":false},{\"title\":\"Walleye Population\",\"type\":0,\"v\":1,\"min\":0,\"max\":20,\"pool\":1,\"graph\":1,\"wx\":0.2,\"wy\":-0.08,\"ww\":0.15625,\"wh\":0.15625,\"input\":-1,\"output\":-1,\"lock_move\":false,\"lock_input\":true,\"lock_output\":true,\"lock_value\":true,\"lock_min\":true,\"lock_max\":true,\"lock_pool\":true,\"lock_graph\":false},{\"title\":\"DNR Minnow Dump\",\"type\":1,\"v\":1,\"min\":0,\"max\":20,\"pool\":1,\"graph\":0,\"wx\":-0.7,\"wy\":-0.08,\"ww\":0.15625,\"wh\":0.15625,\"input\":-1,\"output\":0,\"lock_move\":false,\"lock_input\":true,\"lock_output\":true,\"lock_value\":true,\"lock_min\":true,\"lock_max\":true,\"lock_pool\":true,\"lock_graph\":false}]}";
+  l.primary_module_target_titles.push("Minnow");
+  l.primary_module_target_titles.push("Walleye");
+  l.primary_module_target_vals.push([1,2,3,4,5]);
+  l.primary_module_target_vals.push([1,2,4,7,11]);
+  l.add_object_enabled = false;
+  l.add_generator_enabled = false;
+  l.add_relationship_enabled = true;
+  l.add_module_enabled = false;
+  l.remove_enabled = false;
+  l.play_enabled = false;
+  l.speed_enabled = true;
+  l.should_allow_creation = function(type){ return modules.length < 4; }
+  l.ready = function()
+  {
+    selected_module = undefined;
+  }
+  l.draw = function()
+  {
+  }
+  l.click = function(evt)
+  {
+  }
+  levels.push(l);
+
+  l = new level();
+  l.title = "Understanding Polynomial Growth";
+  l.primary_module_template = "{\"modules\":[{\"title\":\"Minnow Population\",\"type\":0,\"v\":1,\"min\":0,\"max\":20,\"pool\":1,\"graph\":1,\"wx\":-0.3,\"wy\":-0.08,\"ww\":0.15625,\"wh\":0.15625,\"input\":-1,\"output\":-1,\"lock_move\":false,\"lock_input\":true,\"lock_output\":true,\"lock_value\":false,\"lock_min\":true,\"lock_max\":true,\"lock_pool\":false,\"lock_graph\":false},{\"title\":\"Walleye Population\",\"type\":0,\"v\":1,\"min\":0,\"max\":30,\"pool\":1,\"graph\":1,\"wx\":0.2,\"wy\":-0.08,\"ww\":0.15625,\"wh\":0.15625,\"input\":-1,\"output\":-1,\"lock_move\":false,\"lock_input\":true,\"lock_output\":true,\"lock_value\":false,\"lock_min\":true,\"lock_max\":true,\"lock_pool\":true,\"lock_graph\":false},{\"title\":\"DNR Minnow Dump\",\"type\":1,\"v\":1,\"min\":0,\"max\":20,\"pool\":1,\"graph\":0,\"wx\":-0.7,\"wy\":-0.08,\"ww\":0.15625,\"wh\":0.15625,\"input\":-1,\"output\":0,\"lock_move\":false,\"lock_input\":true,\"lock_output\":true,\"lock_value\":false,\"lock_min\":true,\"lock_max\":true,\"lock_pool\":true,\"lock_graph\":false}]}";
+  l.primary_module_target_titles.push("Minnow");
+  l.primary_module_target_titles.push("Walleye");
+  l.primary_module_target_vals.push([1,2,3,4,5]);
+  l.primary_module_target_vals.push([1,3,7,13,21]);
+  l.add_object_enabled = false;
+  l.add_generator_enabled = false;
+  l.add_relationship_enabled = true;
+  l.add_module_enabled = false;
+  l.remove_enabled = false;
+  l.play_enabled = false;
+  l.speed_enabled = true;
+  l.should_allow_creation = function(type){ return modules.length < 4; }
+  l.ready = function()
+  {
+    selected_module = undefined;
+  }
+  l.draw = function()
+  {
+  }
+  l.click = function(evt)
+  {
+  }
+  levels.push(l);
+
+  l = new level();
+  l.title = "Big System";
+  l.primary_module_template = "{\"modules\":[{\"title\":\"Grass\",\"type\":0,\"v\":1,\"min\":0,\"max\":100,\"pool\":1,\"graph\":1,\"wx\":-0.81875,\"wy\":0.078125,\"ww\":0.15625,\"wh\":0.15625,\"input\":-1,\"output\":-1,\"lock_move\":0,\"lock_input\":0,\"lock_output\":0,\"lock_value\":0,\"lock_min\":0,\"lock_max\":0,\"lock_pool\":0,\"lock_graph\":0},{\"title\":\"Herbivores\",\"type\":0,\"v\":1,\"min\":0,\"max\":100,\"pool\":1,\"graph\":1,\"wx\":-0.21425000000000005,\"wy\":0.08325000000000002,\"ww\":0.15625,\"wh\":0.15625,\"input\":-1,\"output\":-1,\"lock_move\":0,\"lock_input\":0,\"lock_output\":0,\"lock_value\":0,\"lock_min\":0,\"lock_max\":0,\"lock_pool\":0,\"lock_graph\":0},{\"title\":\"Carnivores\",\"type\":0,\"v\":1,\"min\":0,\"max\":100,\"pool\":1,\"graph\":1,\"wx\":0.3224999999999999,\"wy\":0.06737500000000013,\"ww\":0.15625,\"wh\":0.15625,\"input\":-1,\"output\":-1,\"lock_move\":0,\"lock_input\":0,\"lock_output\":0,\"lock_value\":0,\"lock_min\":0,\"lock_max\":0,\"lock_pool\":0,\"lock_graph\":0},{\"title\":\"Sun\",\"type\":0,\"v\":10,\"min\":0,\"max\":10,\"pool\":1,\"graph\":false,\"wx\":-1.4125,\"wy\":0.1062499999999999,\"ww\":0.15625,\"wh\":0.15625,\"input\":-1,\"output\":-1,\"lock_move\":0,\"lock_input\":0,\"lock_output\":0,\"lock_value\":0,\"lock_min\":0,\"lock_max\":0,\"lock_pool\":0,\"lock_graph\":0},{\"title\":\"gives light\",\"type\":2,\"v\":1,\"min\":0,\"max\":10,\"pool\":1,\"graph\":false,\"wx\":-1.1204999999999998,\"wy\":0.09262500000000004,\"ww\":0.15625,\"wh\":0.15625,\"input\":3,\"output\":0,\"lock_move\":0,\"lock_input\":0,\"lock_output\":0,\"lock_value\":0,\"lock_min\":0,\"lock_max\":0,\"lock_pool\":0,\"lock_graph\":0},{\"title\":\"nourishes\",\"type\":2,\"v\":1,\"min\":-1,\"max\":1,\"pool\":1,\"graph\":false,\"wx\":-0.492375,\"wy\":0.20825,\"ww\":0.15625,\"wh\":0.15625,\"input\":0,\"output\":1,\"lock_move\":0,\"lock_input\":0,\"lock_output\":0,\"lock_value\":0,\"lock_min\":0,\"lock_max\":0,\"lock_pool\":0,\"lock_graph\":0},{\"title\":\"eats\",\"type\":2,\"v\":-0.5,\"min\":-1,\"max\":1,\"pool\":1,\"graph\":false,\"wx\":-0.52675,\"wy\":-0.06674999999999986,\"ww\":0.15625,\"wh\":0.15625,\"input\":1,\"output\":0,\"lock_move\":0,\"lock_input\":0,\"lock_output\":0,\"lock_value\":0,\"lock_min\":0,\"lock_max\":0,\"lock_pool\":0,\"lock_graph\":0},{\"title\":\"dies\",\"type\":2,\"v\":-0.5,\"min\":-1,\"max\":1,\"pool\":1,\"graph\":false,\"wx\":0.6540000000000006,\"wy\":0.07125000000000006,\"ww\":0.15625,\"wh\":0.15625,\"input\":2,\"output\":2,\"lock_move\":0,\"lock_input\":0,\"lock_output\":0,\"lock_value\":0,\"lock_min\":0,\"lock_max\":0,\"lock_pool\":0,\"lock_graph\":0}]}";
   l.primary_module_target_titles.push("Grass");
   l.primary_module_target_vals.push([1,10.5,19.75,24.13,19.19]);
   l.primary_module_target_titles.push("Herbivores");
@@ -846,9 +831,9 @@ var GamePlayScene = function(game, stage)
   levels.push(l);
 
   var x = 10;
-  var y = 10;
+  var y = 80;
   var w = 90;
-  var h = 90;
+  var h = 40;
   for(var i = 0; i < levels.length; i++)
   {
 
@@ -870,6 +855,16 @@ var GamePlayScene = function(game, stage)
     level_btns.push(btn);
 
     x += w*1.1;
+    switch(i)
+    {
+      case 0:
+      case 5:
+      case 9:
+      case 11:
+      case 14:
+        { x = 10; y += h*1.1; }
+        break;
+    }
     if(x+w > canv.width) { x = 10; y += h*1.1; }
   }
 
@@ -2453,6 +2448,7 @@ var GamePlayScene = function(game, stage)
 
   self.draw = function()
   {
+    ctx.lineWidth = 1;
     if(game_state == GAME_STATE_PLAY)
     {
       calc_caches();
@@ -2617,6 +2613,9 @@ var GamePlayScene = function(game, stage)
     }
     else if(game_state == GAME_STATE_MENU)
     {
+      ctx.font = "20px Arial";
+      ctx.fillText("Computational Modelling",20,50);
+      ctx.font = "12px Arial";
       for(var i = 0; i < level_btns.length; i++)
       {
         ctx.fillText(levels[i].title.substr(0,18),level_btns[i].x+10,level_btns[i].y+25);
