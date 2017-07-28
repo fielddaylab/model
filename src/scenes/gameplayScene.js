@@ -6,7 +6,7 @@ var GamePlayScene = function(game, stage)
   var ALLOW_SAVE = true;
 
   var precision = 2;
-  var predict = true;
+  var predict = false;
 
   ENUM = 0;
   var GAME_STATE_MENU = ENUM; ENUM++;
@@ -516,9 +516,40 @@ var GamePlayScene = function(game, stage)
   {
     selected_module = undefined;
     advance_timer_max = 250;
+    speed_slider.val = advance_timer_max;
   }
   l.draw = function()
   {
+    var targets = levels[cur_level_i].primary_module_target_vals;
+    if(t_i > 0 && modules[0].plot[1] != targets[0][1])
+    {
+      ctx.textAlign = "left";
+      ctx.font = "20px Arial";
+      ctx.fillStyle = black;
+      ctx.fillText("This doesn't conform",450,40);
+      ctx.fillText("to our data...",450,60);
+      ctx.textAlign = "center";
+      ctx.fillText("Select the Grows relationship",340,150);
+      ctx.fillText("And modify its multiplier",340,170);
+      ctx.font = "12px Arial";
+    }
+    if(t_i > 1 && advance_timer_max >= 250)
+    {
+      ctx.font = "12px Arial";
+      ctx.textAlign = "left";
+      ctx.fillText("(You can speed things up",220,300);
+      ctx.fillText("with this slider)",220,315);
+      ctx.font = "12px Arial";
+      ctx.textAlign = "center";
+    }
+    if(levelComplete() && t_i >= 4)
+    {
+      ctx.font = "20px Arial";
+      ctx.fillStyle = black;
+      ctx.fillText("Simulation Complete!",380,140);
+      ctx.fillText("Click Next Level",380,160);
+      ctx.font = "12px Arial";
+    }
   }
   l.click = function(evt)
   {
@@ -544,6 +575,36 @@ var GamePlayScene = function(game, stage)
   }
   l.draw = function()
   {
+    var targets = levels[cur_level_i].primary_module_target_vals;
+    if(t_i > 0 && modules[0].plot[1] != targets[0][1])
+    {
+      ctx.textAlign = "left";
+      ctx.font = "20px Arial";
+      ctx.fillStyle = black;
+      ctx.fillText("This doesn't conform",450,40);
+      ctx.fillText("to our data...",450,60);
+      ctx.textAlign = "center";
+      ctx.fillText("Select the Sunlight object",340,150);
+      ctx.fillText("And modify its value",340,170);
+      ctx.font = "12px Arial";
+    }
+    if(t_i > 1 && advance_timer_max >= 250)
+    {
+      ctx.font = "12px Arial";
+      ctx.textAlign = "left";
+      ctx.fillText("(You can speed things up",220,300);
+      ctx.fillText("with this slider)",220,315);
+      ctx.font = "12px Arial";
+      ctx.textAlign = "center";
+    }
+    if(levelComplete() && t_i >= 4)
+    {
+      ctx.font = "20px Arial";
+      ctx.fillStyle = black;
+      ctx.fillText("Simulation Complete!",380,140);
+      ctx.fillText("Click Next Level",380,160);
+      ctx.font = "12px Arial";
+    }
   }
   l.click = function(evt)
   {
@@ -604,7 +665,7 @@ var GamePlayScene = function(game, stage)
   //e multiple rels
   l = new level();
   l.title = "e multiple rels";
-  l.primary_module_template = "{\"modules\":[{\"title\":\"dst\",\"type\":0,\"v\":1,\"min\":0,\"max\":20,\"pool\":1,\"graph\":1,\"wx\":0.3,\"wy\":0,\"ww\":0.15625,\"wh\":0.15625,\"input\":-1,\"output\":-1,\"lock_move\":false,\"lock_input\":false,\"lock_output\":false,\"lock_value\":false,\"lock_min\":false,\"lock_max\":false,\"lock_pool\":false,\"lock_graph\":false},{\"title\":\"thinga\",\"type\":0,\"v\":1,\"min\":0,\"max\":10,\"pool\":1,\"graph\":1,\"wx\":-0.6,\"wy\":0.15,\"ww\":0.15625,\"wh\":0.15625,\"input\":-1,\"output\":-1,\"lock_move\":false,\"lock_input\":false,\"lock_output\":false,\"lock_value\":false,\"lock_min\":false,\"lock_max\":false,\"lock_pool\":false,\"lock_graph\":false},{\"title\":\"thingb\",\"type\":0,\"v\":1,\"min\":0,\"max\":10,\"pool\":1,\"graph\":1,\"wx\":-0.6,\"wy\":-0.15,\"ww\":0.15625,\"wh\":0.15625,\"input\":-1,\"output\":-1,\"lock_move\":false,\"lock_input\":false,\"lock_output\":false,\"lock_value\":false,\"lock_min\":false,\"lock_max\":false,\"lock_pool\":false,\"lock_graph\":false},{\"title\":\"thingarel\",\"type\":2,\"v\":1,\"min\":0,\"max\":10,\"pool\":1,\"graph\":0,\"wx\":-0.15,\"wy\":0.15,\"ww\":0.15625,\"wh\":0.15625,\"input\":1,\"output\":0,\"lock_move\":false,\"lock_input\":false,\"lock_output\":false,\"lock_value\":false,\"lock_min\":false,\"lock_max\":false,\"lock_pool\":false,\"lock_graph\":false},{\"title\":\"thingbrel\",\"type\":2,\"v\":1,\"min\":0,\"max\":10,\"pool\":1,\"graph\":0,\"wx\":-0.15,\"wy\":-0.15,\"ww\":0.15625,\"wh\":0.15625,\"input\":2,\"output\":0,\"lock_move\":false,\"lock_input\":false,\"lock_output\":false,\"lock_value\":false,\"lock_min\":false,\"lock_max\":false,\"lock_pool\":false,\"lock_graph\":false}]}";
+  l.primary_module_template = "{\"modules\":[{\"title\":\"Greenhouse Effect\",\"type\":0,\"v\":1,\"min\":0,\"max\":20,\"pool\":1,\"graph\":1,\"wx\":0.3,\"wy\":0,\"ww\":0.15625,\"wh\":0.15625,\"input\":-1,\"output\":-1,\"lock_move\":false,\"lock_input\":false,\"lock_output\":false,\"lock_value\":false,\"lock_min\":false,\"lock_max\":false,\"lock_pool\":false,\"lock_graph\":false},{\"title\":\"Cars\",\"type\":0,\"v\":1,\"min\":0,\"max\":10,\"pool\":1,\"graph\":1,\"wx\":-0.6,\"wy\":0.15,\"ww\":0.15625,\"wh\":0.15625,\"input\":-1,\"output\":-1,\"lock_move\":false,\"lock_input\":false,\"lock_output\":false,\"lock_value\":false,\"lock_min\":false,\"lock_max\":false,\"lock_pool\":false,\"lock_graph\":false},{\"title\":\"Cows\",\"type\":0,\"v\":1,\"min\":0,\"max\":10,\"pool\":1,\"graph\":1,\"wx\":-0.6,\"wy\":-0.15,\"ww\":0.15625,\"wh\":0.15625,\"input\":-1,\"output\":-1,\"lock_move\":false,\"lock_input\":false,\"lock_output\":false,\"lock_value\":false,\"lock_min\":false,\"lock_max\":false,\"lock_pool\":false,\"lock_graph\":false},{\"title\":\"CO2 Emissions\",\"type\":2,\"v\":1,\"min\":0,\"max\":10,\"pool\":1,\"graph\":0,\"wx\":-0.15,\"wy\":0.15,\"ww\":0.15625,\"wh\":0.15625,\"input\":1,\"output\":0,\"lock_move\":false,\"lock_input\":false,\"lock_output\":false,\"lock_value\":false,\"lock_min\":false,\"lock_max\":false,\"lock_pool\":false,\"lock_graph\":false},{\"title\":\"Methane Release\",\"type\":2,\"v\":1,\"min\":0,\"max\":10,\"pool\":1,\"graph\":0,\"wx\":-0.15,\"wy\":-0.15,\"ww\":0.15625,\"wh\":0.15625,\"input\":2,\"output\":0,\"lock_move\":false,\"lock_input\":false,\"lock_output\":false,\"lock_value\":false,\"lock_min\":false,\"lock_max\":false,\"lock_pool\":false,\"lock_graph\":false}]}";
   l.primary_module_target_titles.push("Plants");
   l.primary_module_target_vals.push([1,4,7,10,13]);
   l.add_object_enabled = false;
@@ -630,7 +691,7 @@ var GamePlayScene = function(game, stage)
   //e neg multiple rels
   l = new level();
   l.title = "e neg multiple rels";
-  l.primary_module_template = "{\"modules\":[{\"title\":\"dst\",\"type\":0,\"v\":1,\"min\":0,\"max\":20,\"pool\":1,\"graph\":1,\"wx\":0.3,\"wy\":0,\"ww\":0.15625,\"wh\":0.15625,\"input\":-1,\"output\":-1,\"lock_move\":false,\"lock_input\":false,\"lock_output\":false,\"lock_value\":false,\"lock_min\":false,\"lock_max\":false,\"lock_pool\":false,\"lock_graph\":false},{\"title\":\"thinga\",\"type\":0,\"v\":1,\"min\":0,\"max\":10,\"pool\":1,\"graph\":1,\"wx\":-0.6,\"wy\":0.15,\"ww\":0.15625,\"wh\":0.15625,\"input\":-1,\"output\":-1,\"lock_move\":false,\"lock_input\":false,\"lock_output\":false,\"lock_value\":false,\"lock_min\":false,\"lock_max\":false,\"lock_pool\":false,\"lock_graph\":false},{\"title\":\"thingb\",\"type\":0,\"v\":1,\"min\":0,\"max\":10,\"pool\":1,\"graph\":1,\"wx\":-0.6,\"wy\":-0.15,\"ww\":0.15625,\"wh\":0.15625,\"input\":-1,\"output\":-1,\"lock_move\":false,\"lock_input\":false,\"lock_output\":false,\"lock_value\":false,\"lock_min\":false,\"lock_max\":false,\"lock_pool\":false,\"lock_graph\":false},{\"title\":\"thingarel\",\"type\":2,\"v\":-1,\"min\":-1,\"max\":1,\"pool\":1,\"graph\":0,\"wx\":-0.15,\"wy\":0.15,\"ww\":0.15625,\"wh\":0.15625,\"input\":1,\"output\":0,\"lock_move\":false,\"lock_input\":false,\"lock_output\":false,\"lock_value\":true,\"lock_min\":false,\"lock_max\":false,\"lock_pool\":false,\"lock_graph\":false},{\"title\":\"thingbrel\",\"type\":2,\"v\":1,\"min\":0,\"max\":10,\"pool\":1,\"graph\":0,\"wx\":-0.15,\"wy\":-0.15,\"ww\":0.15625,\"wh\":0.15625,\"input\":2,\"output\":0,\"lock_move\":false,\"lock_input\":false,\"lock_output\":false,\"lock_value\":false,\"lock_min\":false,\"lock_max\":false,\"lock_pool\":false,\"lock_graph\":false}]}";
+  l.primary_module_template = "{\"modules\":[{\"title\":\"Greenhouse Effect\",\"type\":0,\"v\":1,\"min\":0,\"max\":20,\"pool\":1,\"graph\":1,\"wx\":0.3,\"wy\":0,\"ww\":0.15625,\"wh\":0.15625,\"input\":-1,\"output\":-1,\"lock_move\":false,\"lock_input\":false,\"lock_output\":false,\"lock_value\":false,\"lock_min\":false,\"lock_max\":false,\"lock_pool\":false,\"lock_graph\":false},{\"title\":\"Cars\",\"type\":0,\"v\":1,\"min\":0,\"max\":10,\"pool\":1,\"graph\":1,\"wx\":-0.6,\"wy\":0.15,\"ww\":0.15625,\"wh\":0.15625,\"input\":-1,\"output\":-1,\"lock_move\":false,\"lock_input\":false,\"lock_output\":false,\"lock_value\":false,\"lock_min\":false,\"lock_max\":false,\"lock_pool\":false,\"lock_graph\":false},{\"title\":\"Cows\",\"type\":0,\"v\":1,\"min\":0,\"max\":10,\"pool\":1,\"graph\":1,\"wx\":-0.6,\"wy\":-0.15,\"ww\":0.15625,\"wh\":0.15625,\"input\":-1,\"output\":-1,\"lock_move\":false,\"lock_input\":false,\"lock_output\":false,\"lock_value\":false,\"lock_min\":false,\"lock_max\":false,\"lock_pool\":false,\"lock_graph\":false},{\"title\":\"Trees\",\"type\":0,\"v\":1,\"min\":0,\"max\":10,\"pool\":1,\"graph\":1,\"wx\":-0.8,\"wy\":0,\"ww\":0.15625,\"wh\":0.15625,\"input\":-1,\"output\":-1,\"lock_move\":false,\"lock_input\":false,\"lock_output\":false,\"lock_value\":false,\"lock_min\":false,\"lock_max\":false,\"lock_pool\":false,\"lock_graph\":false},{\"title\":\"CO2 Emissions\",\"type\":2,\"v\":1,\"min\":-1,\"max\":1,\"pool\":1,\"graph\":0,\"wx\":-0.15,\"wy\":0.15,\"ww\":0.15625,\"wh\":0.15625,\"input\":1,\"output\":0,\"lock_move\":false,\"lock_input\":false,\"lock_output\":false,\"lock_value\":false,\"lock_min\":false,\"lock_max\":false,\"lock_pool\":false,\"lock_graph\":false},{\"title\":\"Methane Release\",\"type\":2,\"v\":1,\"min\":0,\"max\":10,\"pool\":1,\"graph\":0,\"wx\":-0.15,\"wy\":-0.15,\"ww\":0.15625,\"wh\":0.15625,\"input\":2,\"output\":0,\"lock_move\":false,\"lock_input\":false,\"lock_output\":false,\"lock_value\":false,\"lock_min\":false,\"lock_max\":false,\"lock_pool\":false,\"lock_graph\":false},{\"title\":\"CO2 Scrubbing\",\"type\":2,\"v\":-1,\"min\":-1,\"max\":1,\"pool\":1,\"graph\":0,\"wx\":-0.35,\"wy\":0,\"ww\":0.15625,\"wh\":0.15625,\"input\":3,\"output\":0,\"lock_move\":false,\"lock_input\":false,\"lock_output\":false,\"lock_value\":true,\"lock_min\":false,\"lock_max\":false,\"lock_pool\":false,\"lock_graph\":false}]}";
   l.primary_module_target_titles.push("Plants");
   l.primary_module_target_vals.push([1,4,7,10,13]);
   l.add_object_enabled = false;
@@ -786,8 +847,8 @@ var GamePlayScene = function(game, stage)
 
   var x = 10;
   var y = 10;
-  var w = 100;
-  var h = 100;
+  var w = 90;
+  var h = 90;
   for(var i = 0; i < levels.length; i++)
   {
 
@@ -1147,12 +1208,20 @@ var GamePlayScene = function(game, stage)
           else if(selected_module.output_dongle.attachment)
             ctx.fillText("contribution",   self.v_box.x     + self.v_box.w     + 10, self.v_box.y    +20);
           else if(selected_module.pool && !selected_module.output_dongle.attachment)
-            ctx.fillText("starting val",   self.v_box.x     + self.v_box.w     + 10, self.v_box.y    +20);
+          {
+            var found = false;
+            for(var i = 0; !found && i < modules.length; i++)
+              if(modules[i].output_dongle.attachment == selected_module) found = true;
+            if(found)
+              ctx.fillText("starting val",   self.v_box.x     + self.v_box.w     + 10, self.v_box.y    +20);
+            else
+              ctx.fillText("val",   self.v_box.x     + self.v_box.w     + 10, self.v_box.y    +20);
+          }
         }
         if(!selected_module.cache_const)
         {
-          if(!selected_module.lock_min) { self.min_box.draw(canv);   ctx.fillStyle = black; ctx.fillText("min",   self.min_box.x   + self.min_box.w   + 10, self.min_box.y+20); }
-          if(!selected_module.lock_max) { self.max_box.draw(canv);   ctx.fillStyle = black; ctx.fillText("max",   self.max_box.x   + self.max_box.w   + 10, self.max_box.y+20); }
+          if(!selected_module.lock_min) { self.min_box.draw(canv); ctx.fillStyle = black; ctx.fillText("min", self.min_box.x + self.min_box.w + 10, self.min_box.y+20); }
+          if(!selected_module.lock_max) { self.max_box.draw(canv); ctx.fillStyle = black; ctx.fillText("max", self.max_box.x + self.max_box.w + 10, self.max_box.y+20); }
         }
         if(!selected_module.cache_const && !selected_module.lock_pool) { self.pool_box.draw(canv);  ctx.fillStyle = black; ctx.fillText("pool",  self.pool_box.x  + self.pool_box.w  + 10, self.pool_box.y+20); }
         if(!selected_module.lock_graph)                                { self.graph_box.draw(canv); ctx.fillStyle = black; ctx.fillText("graph", self.graph_box.x + self.graph_box.w + 10, self.graph_box.y+20); }
