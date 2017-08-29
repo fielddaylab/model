@@ -55,7 +55,10 @@ var LoadingScene = function(game, stage)
     img_srcs = [];
     imgs = [];
 
-    //ctx.font = "12px Special Font"; //put font that nees loading here
+    ctx.font = "12px Roboto"; //put font that nees loading here
+    ctx.fillStyle = "#000000";
+    ctx.fillText(".",0,0);// funky way to encourage any custom font to load
+    ctx.font = "12px Roboto Mono"; //put font that nees loading here
     ctx.fillStyle = "#000000";
     ctx.fillText(".",0,0);// funky way to encourage any custom font to load
 
