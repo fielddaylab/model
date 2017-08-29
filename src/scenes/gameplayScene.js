@@ -1391,6 +1391,8 @@ var GamePlayScene = function(game, stage)
     var self = this;
     self.src = src;
     self.off = {x:offx,y:offy};
+    self.drag_x = 0;
+    self.drag_y = 0;
     self.drag_start_x = 0;
     self.drag_start_y = 0;
     self.r = r;
@@ -1425,7 +1427,12 @@ var GamePlayScene = function(game, stage)
     self.shouldDrag = function(evt)
     {
       if((dragging_obj && dragging_obj != self) || !self.srcShouldDrag()) return false;
-      return distsqr(self.src.x+self.src.w/2+self.off.x,self.src.y+self.src.h/2+self.off.y,evt.doX,evt.doY) < self.r*self.r;
+      if(distsqr(self.src.x+self.src.w/2+self.off.x,self.src.y+self.src.h/2+self.off.y,evt.doX,evt.doY) < self.r*self.r)
+      {
+        if(src.type == MODULE_TYPE_MODULE) src.swapIntoRelationship();
+        return true;
+      }
+      return false;
     }
     self.dragStart = function(evt)
     {
@@ -1446,6 +1453,7 @@ var GamePlayScene = function(game, stage)
     {
       self.drag_x = evt.doX;
       self.drag_y = evt.doY;
+      self.src.whippet_dragged(self);
     }
     self.dragFinish = function(evt)
     {
@@ -1472,60 +1480,12 @@ var GamePlayScene = function(game, stage)
   var module = function(wx,wy,ww,wh)
   {
     var self = this;
-
+    refreshModule(self);
     self.wx = wx;
     self.wy = wy;
     self.ww = ww;
     self.wh = wh;
-    self.x = 0;
-    self.y = 0;
-    self.w = 0;
-    self.h = 0;
     screenSpace(work_cam,canv,self);
-
-    self.title = "";
-    self.color = good_colors[randIntBelow(good_colors.length)];
-    self.primary = false;
-    self.primary_index = 0;
-    self.lock_move = false;
-    self.lock_input = false;
-    self.lock_output = false;
-    self.lock_value = false;
-    self.lock_min = false;
-    self.lock_max = false;
-    self.lock_pool = false;
-    self.lock_graph = false;
-
-    self.type = MODULE_TYPE_MODULE;
-    self.v_default = 1;
-    self.v = 1;
-    self.v_temp = 1;
-    self.v_lag = self.v;
-    self.v_vel = 0;
-    self.min = 0;
-    self.max =  10;
-    self.pool = 1;
-    self.graph = 1;
-
-    self.operator = OPERATOR_MUL;
-    self.sign = 1.;
-
-    self.cache_const = 0;
-    self.cache_delta = 0;
-
-    self.blob_s = 0;
-    self.blob_s_vel = 0.5;
-
-    self.val_s = 0.75;
-    self.val_s_vel = 0.25;
-
-    self.last_t = 1;
-
-    self.prev_plot = 0;
-    self.plot = [];
-
-    self.input_dongle_vel = {x:0,y:0};
-    self.output_dongle_vel = {x:0,y:0};
 
     self.shouldShowInputDongle = function()
     {
@@ -1576,6 +1536,18 @@ var GamePlayScene = function(game, stage)
       );
       return should;
     }
+    self.whippet_dragged = function(whippet)
+    {
+      if(whippet == self.output_dongle)
+      {
+        if(self.input_dongle.attachment)
+        {
+          self.x = lerp(self.output_dongle.drag_x,self.input_dongle.attachment.x+self.input_dongle.attachment.w/2,0.5)-self.w/2;
+          self.y = lerp(self.output_dongle.drag_y,self.input_dongle.attachment.y+self.input_dongle.attachment.h/2,0.5)-self.h/2;
+          worldSpaceCoords(work_cam,canv,self);
+        }
+      }
+    }
 
     self.input_dongle = new whippet_dongle( self.w,0,dongle_img.width/2,self,self.shouldShowInputDongle);
     self.output_dongle = new whippet_dongle(-self.w,0,dongle_img.width/2,self,self.shouldShowOutputDongle);
@@ -1619,6 +1591,32 @@ var GamePlayScene = function(game, stage)
         }
         if(self.title == "") s_editor.title_box.focus();
       }
+    }
+
+    self.swapIntoRelationship = function()
+    {
+      if(self.type != MODULE_TYPE_MODULE) return;
+      var clone = new module(self.wx, self.wy, self.ww, self.wh);
+      cloneModule(self,clone);
+      refreshModule(self);
+      self.wx = clone.wx;
+      self.wy = clone.wy;
+      self.ww = clone.ww;
+      self.wh = clone.wh;
+      screenSpace(work_cam,canv,self);
+      clone.input_dongle = new whippet_dongle( clone.w,0,dongle_img.width/2,clone,clone.shouldShowInputDongle);
+      clone.output_dongle = new whippet_dongle(-clone.w,0,dongle_img.width/2,clone,clone.shouldShowOutputDongle);
+      self.type = MODULE_TYPE_RELATIONSHIP;
+
+      self.input_dongle.attachment = clone;
+
+      for(var i = 0; i < modules.length; i++)
+      {
+        if(modules[i] == self) modules[i] = clone;
+        if(modules[i].input_dongle.attachment == self) modules[i].input_dongle.attachment = clone;
+        if(modules[i].output_dongle.attachment == self) modules[i].output_dongle.attachment = clone;
+      }
+      modules.push(self);
     }
 
     self.hover   = function(){}
@@ -2125,6 +2123,109 @@ var GamePlayScene = function(game, stage)
     }
   }
 
+  var cloneModule = function(src,dst)
+  {
+    dst.wx = src.wx;
+    dst.wy = src.wy;
+    dst.ww = src.ww;
+    dst.wh = src.wh;
+    dst.x = src.x;
+    dst.y = src.y;
+    dst.w = src.w;
+    dst.h = src.h;
+    dst.title = src.title;
+    dst.color = src.color;
+    dst.primary = src.primary;
+    dst.primary_index = src.primary_index;
+    dst.lock_move = src.lock_move;
+    dst.lock_input = src.lock_input;
+    dst.lock_value = src.lock_value;
+    dst.lock_min = src.lock_min;
+    dst.lock_max = src.lock_max;
+    dst.lock_pool = src.lock_pool;
+    dst.lock_graph = src.lock_graph;
+    dst.type = src.type;
+    dst.v_default = src.v_default;
+    dst.v = src.v;
+    dst.v_temp = src.v_temp;
+    dst.v_lag = src.v_lag;
+    dst.v_vel = src.v_vel;
+    dst.min = src.min;
+    dst.max = src.max;
+    dst.pool = src.pool;
+    dst.graph = src.graph;
+    dst.operator = src.operator;
+    dst.sign = src.sign;
+    dst.cache_const = src.cache_const;
+    dst.cache_delta = src.cache_delta;
+    dst.blob_s = src.blob_s;
+    dst.blob_s_vel = src.blob_s_vel;
+    dst.val_s = src.val_s_vel;
+    dst.last_t = src.last_t;
+    dst.prev_plot = src.prev_plot;
+    dst.plot = src.plot;
+    dst.input_dongle_vel = src.input_dongle_vel;
+    dst.output_dongle_vel = src.output_dongle_vel;
+    dst.input_dongle = src.input_dongle;
+    dst.output_dongle = src.output_dongle;
+  }
+
+  var refreshModule = function(mod)
+  {
+    mod.wx = 0;
+    mod.wy = 0;
+    mod.ww = 0;
+    mod.wh = 0;
+    mod.x = 0;
+    mod.y = 0;
+    mod.w = 0;
+    mod.h = 0;
+
+    mod.title = "";
+    mod.color = good_colors[randIntBelow(good_colors.length)];
+    mod.primary = false;
+    mod.primary_index = 0;
+    mod.lock_move = false;
+    mod.lock_input = false;
+    mod.lock_output = false;
+    mod.lock_value = false;
+    mod.lock_min = false;
+    mod.lock_max = false;
+    mod.lock_pool = false;
+    mod.lock_graph = false;
+
+    mod.type = MODULE_TYPE_MODULE;
+    mod.v_default = 1;
+    mod.v = 1;
+    mod.v_temp = 1;
+    mod.v_lag = mod.v;
+    mod.v_vel = 0;
+    mod.min = 0;
+    mod.max =  10;
+    mod.pool = 1;
+    mod.graph = 1;
+
+    mod.operator = OPERATOR_MUL;
+    mod.sign = 1.;
+
+    mod.cache_const = 0;
+    mod.cache_delta = 0;
+
+    mod.blob_s = 0;
+    mod.blob_s_vel = 0.5;
+
+    mod.val_s = 0.75;
+    mod.val_s_vel = 0.25;
+
+    mod.last_t = 1;
+
+    mod.prev_plot = 0;
+    mod.plot = [];
+
+    mod.input_dongle_vel = {x:0,y:0};
+    mod.output_dongle_vel = {x:0,y:0};
+  }
+
   self.ready = function()
   {
     clicker = new Clicker({source:stage.dispCanv.canvas});
@@ -2387,9 +2488,6 @@ var GamePlayScene = function(game, stage)
       if(clicker.filter(menu_btn))             clicked = true;
       if(clicker.filter(print_btn))            clicked = true;
       if(clicker.filter(load_btn))             clicked = true;
-      if(dragger.filter(add_object_btn))       clicked = true;
-      if(dragger.filter(add_generator_btn))    clicked = true;
-      if(dragger.filter(add_relationship_btn)) clicked = true;
       if(dragger.filter(add_module_btn))       clicked = true;
       clicker.filter(levels[cur_level_i]);
       if(!clicked)
@@ -2459,30 +2557,10 @@ var GamePlayScene = function(game, stage)
       ctx.strokeStyle = black;
       ctx.lineWidth = 1;
       ctx.textAlign = "left";
-      if(!levels[cur_level_i] || levels[cur_level_i].add_object_enabled)
-      {
-        ctx.fillText("+Object",add_object_btn.x+2,add_object_btn.y+10);
-        ctx.strokeRect(add_object_btn.x,add_object_btn.y,add_object_btn.w,add_object_btn.h);
-      }
-      if(!levels[cur_level_i] || levels[cur_level_i].add_generator_enabled)
-      {
-        ctx.fillText("+Generator",add_generator_btn.x+2,add_generator_btn.y+10);
-        ctx.strokeRect(add_generator_btn.x,add_generator_btn.y,add_generator_btn.w,add_generator_btn.h);
-      }
-      if(!levels[cur_level_i] || levels[cur_level_i].add_relationship_enabled)
-      {
-        ctx.fillText("+Relationship",add_relationship_btn.x+2,add_relationship_btn.y+10);
-        ctx.strokeRect(add_relationship_btn.x,add_relationship_btn.y,add_relationship_btn.w,add_relationship_btn.h);
-      }
       if(!levels[cur_level_i] || levels[cur_level_i].add_module_enabled)
       {
         ctx.fillText("+Module",add_module_btn.x+2,add_module_btn.y+10);
         ctx.strokeRect(add_module_btn.x,add_module_btn.y,add_module_btn.w,add_module_btn.h);
-      }
-      if(!levels[cur_level_i] || levels[cur_level_i].remove_enabled)
-      {
-        ctx.fillText("Remove",remove_module_btn.x+2,remove_module_btn.y+10);
-        ctx.strokeRect(remove_module_btn.x,remove_module_btn.y,remove_module_btn.w,remove_module_btn.h);
       }
       ctx.fillStyle = "#AAAAAA";
       if(!levelComplete())
