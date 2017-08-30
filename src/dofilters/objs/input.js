@@ -7,7 +7,7 @@ function Box(x,y,w,h)
   self.h = h;
 }
 
-function TextBox(x,y,w,h,txt,callback)
+function TextBox(x,y,w,h,txt,ellipse,callback)
 //register to keyer, dragger, blurer
 {
   var self = this;
@@ -16,6 +16,7 @@ function TextBox(x,y,w,h,txt,callback)
   self.w = w;
   self.h = h;
 
+  self.ellipse = ellipse;
   self.txt = txt;
 
   self.focused = false;
@@ -105,12 +106,12 @@ function TextBox(x,y,w,h,txt,callback)
          if(self.down)    canv.context.strokeStyle = "#00F400";
     else if(self.focused) canv.context.strokeStyle = "#F40000";
     else                  canv.context.strokeStyle = "#0000F4";
-    canv.context.strokeRect(self.x,self.y,self.w,self.h);
+    //canv.context.strokeRect(self.x,self.y,self.w,self.h);
     canv.context.fillStyle = "#000000";
-    if(self.txt.length < 5)
+    if(self.txt.length < self.ellipse)
       canv.context.fillText(self.txt,self.x+4,self.y+self.h*3/4,self.w-4);
     else
-      canv.context.fillText(self.txt.substring(0,5)+"...",self.x+4,self.y+self.h*3/4,self.w-4);
+      canv.context.fillText(self.txt.substring(0,self.ellipse)+"...",self.x+4,self.y+self.h*3/4,self.w-4);
   }
 
   self.print = function()
@@ -246,12 +247,12 @@ function NumberBox(x,y,w,h,val,delta,callback)
          if(self.down)    canv.context.strokeStyle = "#00F400";
     else if(self.focused) canv.context.strokeStyle = "#F40000";
     else                  canv.context.strokeStyle = "#0000F4";
-    canv.context.strokeRect(self.x,self.y,self.w,self.h);
+    //canv.context.strokeRect(self.x,self.y,self.w,self.h);
     canv.context.fillStyle = "#000000";
     if(self.value.length < 5)
-      canv.context.fillText(self.value,self.x+4,self.y+self.h*3/4,self.w-4);
+      canv.context.fillText(self.value,self.x+self.w-4,self.y+self.h*3/4,self.w-4);
     else
-      canv.context.fillText(self.value.substring(0,5)+"...",self.x+4,self.y+self.h*3/4,self.w-4);
+      canv.context.fillText(self.value.substring(0,5)+"...",self.x+self.w-4,self.y+self.h*3/4,self.w-4);
   }
 
   self.print = function()

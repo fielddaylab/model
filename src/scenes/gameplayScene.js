@@ -1025,7 +1025,7 @@ var GamePlayScene = function(game, stage)
     self.w = 0;
     self.h = 0;
 
-    self.title_box = new TextBox(0,0,0,0,"",   function(v){ if(selected_module.primary) return; var new_v = v; var old_v = selected_module.title; selected_module.title = new_v; });
+    self.title_box = new TextBox(0,0,0,0,"",10,function(v){ if(selected_module.primary) return; var new_v = v; var old_v = selected_module.title; selected_module.title = new_v; });
     self.v_box     = new NumberBox(0,0,0,0,0,0,function(v)
     {
       if(selected_module.lock_value) return;
@@ -1059,17 +1059,17 @@ var GamePlayScene = function(game, stage)
         var s = 10;
         var i = 0;
 
-        self.title_box.w = w;
+        self.title_box.w = self.w - s*2;
         self.title_box.h = h;
-        self.title_box.x = self.x + s;
+        self.title_box.x = self.x + self.w - self.title_box.w - s;
         self.title_box.y = self.y + s + (h+s)*i;
         i++;
 
         if(!selected_module.lock_value)
         {
-          self.v_box.w = w;
+          self.v_box.w = w*2;
           self.v_box.h = h;
-          self.v_box.x = self.x + s;
+          self.v_box.x = self.x + self.w - self.v_box.w - s;
           self.v_box.y = self.y + s + (h+s)*i;
           i++;
         }
@@ -1077,17 +1077,17 @@ var GamePlayScene = function(game, stage)
         {
           if(!selected_module.lock_min)
           {
-            self.min_box.w = w;
+            self.min_box.w = w*2;
             self.min_box.h = h;
-            self.min_box.x = self.x + s;
+            self.min_box.x = self.x + self.w - self.min_box.w - s;
             self.min_box.y = self.y + s + (h+s)*i;
             i++;
           }
           if(!selected_module.lock_max)
           {
-            self.max_box.w = w;
+            self.max_box.w = w*2;
             self.max_box.h = h;
-            self.max_box.x = self.x + s;
+            self.max_box.x = self.x + self.w - self.max_box.w - s;
             self.max_box.y = self.y + s + (h+s)*i;
             i++;
           }
@@ -1096,7 +1096,7 @@ var GamePlayScene = function(game, stage)
         {
           self.pool_box.w = w;
           self.pool_box.h = h;
-          self.pool_box.x = self.x + s;
+          self.pool_box.x = self.x + self.w - self.pool_box.w - s;
           self.pool_box.y = self.y + s + (h+s)*i;
           i++;
         }
@@ -1105,7 +1105,7 @@ var GamePlayScene = function(game, stage)
         {
           self.graph_box.w = w;
           self.graph_box.h = h;
-          self.graph_box.x = self.x + s;
+          self.graph_box.x = self.x + self.w - self.graph_box.w - s;
           self.graph_box.y = self.y + s + (h+s)*i;
           i++;
         }
@@ -1114,23 +1114,23 @@ var GamePlayScene = function(game, stage)
         {
           self.operator_box_mul.w = w;
           self.operator_box_mul.h = h;
-          self.operator_box_mul.x = self.x + s;
+          self.operator_box_mul.x = self.x + self.w - self.operator_box_mul.w - s;
           self.operator_box_mul.y = self.y + s + (h+s)*i;
 
           self.operator_box_div.w = w;
           self.operator_box_div.h = h;
-          self.operator_box_div.x = self.x + s + (w+s);
+          self.operator_box_div.x = self.x + self.w - self.operator_box_div.w - s - (w+s);
           self.operator_box_div.y = self.y + s + (h+s)*i;
           i++;
 
           self.sign_box_pos.w = w;
           self.sign_box_pos.h = h;
-          self.sign_box_pos.x = self.x + s;
+          self.sign_box_pos.x = self.x + self.w - self.sign_box_pos.w - s;
           self.sign_box_pos.y = self.y + s + (h+s)*i;
 
           self.sign_box_neg.w = w;
           self.sign_box_neg.h = h;
-          self.sign_box_neg.x = self.x + s + (w+s);
+          self.sign_box_neg.x = self.x + self.w - self.sign_box_neg.w - s - (w+s);
           self.sign_box_neg.y = self.y + s + (h+s)*i;
           i++;
         }
@@ -1157,7 +1157,7 @@ var GamePlayScene = function(game, stage)
       calc_caches();
       self.x = selected_module.x+selected_module.w/2-self.w/2;
       self.calc_sub_params();
-      self.y = selected_module.y-self.h-30;
+      self.y = selected_module.y-self.h-10;
       //double because 1 calculates h, 2 calculates y
       self.calc_sub_params();
     }
@@ -1223,48 +1223,56 @@ var GamePlayScene = function(game, stage)
       if(self.max_box.focused)   self.max_box.blur();
     }
 
+    self.drawRightAlign = function(obj)
+    {
+      ctx.textAlign = "right";
+      obj.draw(canv);
+      ctx.textAlign = "left";
+    }
     self.draw = function()
     {
-      ctx.font = "10px Roboto";
+      ctx.font = "10px Roboto Mono";
+      ctx.textAlign = "left";
       ctx.fillStyle = white;
       fillRBox(self,10,ctx);
+      ctx.fillStyle = black;
 
       if(selected_module)
       {
-        if(!selected_module.primary)    { self.title_box.draw(canv); ctx.fillStyle = black; ctx.fillText("title", self.title_box.x + self.title_box.w + 10, self.title_box.y+20); }
+        if(!selected_module.primary)    { self.title_box.draw(canv); if(!self.title_box.txt.length) { ctx.fillText("(title)",self.title_box.x+4,self.title_box.y+self.title_box.h*3/4); } }
         if(!selected_module.lock_value)
         {
-          self.v_box.draw(canv);
+          self.drawRightAlign(self.v_box);
           ctx.fillStyle = black;
           if(selected_module.output_dongle.attachment && selected_module.input_dongle.attachment)
-            ctx.fillText("multiplier",   self.v_box.x     + self.v_box.w     + 10, self.v_box.y    +20);
+            ctx.fillText("multiplier",   self.x + 10, self.v_box.y    +20);
           else if(selected_module.output_dongle.attachment)
-            ctx.fillText("contribution",   self.v_box.x     + self.v_box.w     + 10, self.v_box.y    +20);
+            ctx.fillText("contribution",   self.x + 10, self.v_box.y    +20);
           else if(selected_module.pool && !selected_module.output_dongle.attachment)
           {
             var found = false;
             for(var i = 0; !found && i < modules.length; i++)
               if(modules[i].output_dongle.attachment == selected_module) found = true;
             if(found)
-              ctx.fillText("starting val",   self.v_box.x     + self.v_box.w     + 10, self.v_box.y    +20);
+              ctx.fillText("starting val",   self.x + 10, self.v_box.y    +20);
             else
-              ctx.fillText("val",   self.v_box.x     + self.v_box.w     + 10, self.v_box.y    +20);
+              ctx.fillText("val",   self.x + 10, self.v_box.y    +20);
           }
         }
         if(!selected_module.cache_const)
         {
-          if(!selected_module.lock_min) { self.min_box.draw(canv); ctx.fillStyle = black; ctx.fillText("min", self.min_box.x + self.min_box.w + 10, self.min_box.y+20); }
-          if(!selected_module.lock_max) { self.max_box.draw(canv); ctx.fillStyle = black; ctx.fillText("max", self.max_box.x + self.max_box.w + 10, self.max_box.y+20); }
+          if(!selected_module.lock_min) { self.drawRightAlign(self.min_box); ctx.fillStyle = black; ctx.fillText("min", self.x + 10, self.min_box.y+20); }
+          if(!selected_module.lock_max) { self.drawRightAlign(self.max_box); ctx.fillStyle = black; ctx.fillText("max", self.x + 10, self.max_box.y+20); }
         }
-        if(!selected_module.cache_const && !selected_module.lock_pool) { self.pool_box.draw(canv);  ctx.fillStyle = black; ctx.fillText("pool",  self.pool_box.x  + self.pool_box.w  + 10, self.pool_box.y+20); }
-        if(!selected_module.lock_graph)                                { self.graph_box.draw(canv); ctx.fillStyle = black; ctx.fillText("graph", self.graph_box.x + self.graph_box.w + 10, self.graph_box.y+20); }
+        if(!selected_module.cache_const && !selected_module.lock_pool) { self.drawRightAlign(self.pool_box);  ctx.fillStyle = black; ctx.fillText("pool",  self.x + 10, self.pool_box.y+20); }
+        if(!selected_module.lock_graph)                                { self.drawRightAlign(self.graph_box); ctx.fillStyle = black; ctx.fillText("graph", self.x + 10, self.graph_box.y+20); }
 
         if(selected_module.input_dongle.attachment && !selected_module.cache_const)
         {
-          self.operator_box_mul.draw(canv);
-          self.operator_box_div.draw(canv); ctx.fillStyle = black; ctx.fillText("mul/div",  self.operator_box_div.x + self.operator_box_div.w + 10, self.operator_box_div.y+20);
-          self.sign_box_pos.draw(canv);
-          self.sign_box_neg.draw(canv);     ctx.fillStyle = black; ctx.fillText("pos/nev",  self.sign_box_neg.x     + self.sign_box_neg.w     + 10, self.sign_box_neg.y+20);
+          self.drawRightAlign(self.operator_box_mul);
+          self.drawRightAlign(self.operator_box_div); ctx.fillStyle = black; ctx.fillText("mul/div",  self.x + 10, self.operator_box_div.y+20);
+          self.drawRightAlign(self.sign_box_pos);
+          self.drawRightAlign(self.sign_box_neg);     ctx.fillStyle = black; ctx.fillText("pos/nev",  self.x + 10, self.sign_box_neg.y+20);
         }
       }
     }
@@ -2842,6 +2850,7 @@ var GamePlayScene = function(game, stage)
       s_graph.draw();
       ctx.textAlign = "left";
       if(selected_module) s_editor.draw();
+      ctx.font = "10px Roboto";
       if(levels[cur_level_i].speed_enabled)
       {
         ctx.fillStyle = black;
