@@ -60,6 +60,7 @@ var GamePlayScene = function(game, stage)
 
   var s_dragger;
   var s_graph;
+  var s_ctrls;
   var s_editor;
   var speed_slider;
 
@@ -302,7 +303,7 @@ var GamePlayScene = function(game, stage)
   }
   l.click = function(evt)
   {
-    if(doEvtWithinBB(evt, s_graph.advance_btn)) levels[cur_level_i].dismissed++;
+    if(doEvtWithinBB(evt, s_ctrls.advance_btn)) levels[cur_level_i].dismissed++;
   }
   levels.push(l);
 
@@ -737,7 +738,7 @@ var GamePlayScene = function(game, stage)
   }
   l.click = function(evt)
   {
-    if(doEvtWithinBB(evt, s_graph.advance_btn)) levels[cur_level_i].dismissed++;
+    if(doEvtWithinBB(evt, s_ctrls.advance_btn)) levels[cur_level_i].dismissed++;
   }
   levels.push(l);
 
@@ -829,7 +830,7 @@ var GamePlayScene = function(game, stage)
   }
   l.click = function(evt)
   {
-    if(doEvtWithinBB(evt, s_graph.advance_btn)) levels[cur_level_i].dismissed++;
+    if(doEvtWithinBB(evt, s_ctrls.advance_btn)) levels[cur_level_i].dismissed++;
   }
   levels.push(l);
 
@@ -871,18 +872,13 @@ var GamePlayScene = function(game, stage)
     if(x+w > canv.width) { x = 10; y += h*1.1; }
   }
 
-  var graph = function()
+  var controls = function()
   {
     var self = this;
     self.x = 0;
     self.y = 0;
     self.w = 0;
     self.h = 0;
-
-    self.graph_x = 0;
-    self.graph_y = 0;
-    self.graph_w = 0;
-    self.graph_h = 0;
 
     var playback_btn_size = 20;
     self.pause_btn = new btn();
@@ -910,6 +906,17 @@ var GamePlayScene = function(game, stage)
       if(!dragging_obj) resetGraph();
     }
 
+    self.speed_slider = new SliderBox(self.x+100,self.y-20,100,15,1,250,advance_timer_max,
+      function(v)
+      {
+        if(!levels[cur_level_i].speed_enabled) return;
+        v = round(v);
+        var t = advance_timer/advance_timer_max;
+        advance_timer_max = v;
+        advance_timer = ceil(advance_timer_max * t);
+      }
+    );
+
     self.calc_sub_params = function()
     {
       self.pause_btn.w = playback_btn_size;
@@ -927,6 +934,41 @@ var GamePlayScene = function(game, stage)
       self.reset_btn.x = self.x + (playback_btn_size + 10)*2;
       self.reset_btn.y = self.y - playback_btn_size;
 
+      self.speed_slider.x = self.x+100;
+      self.speed_slider.y = self.y-20;
+      self.speed_slider.w = 100;
+      self.speed_slider.h = 15;
+    }
+
+    self.draw = function()
+    {
+      ctx.lineWidth = 1;
+      if(levels[cur_level_i].play_enabled)
+      {
+        if(full_pause) ctx.fillText("||",self.pause_btn.x+10,self.pause_btn.y+10);
+        else           ctx.fillText(">",self.pause_btn.x+10,self.pause_btn.y+10);
+        ctx.strokeRect(self.pause_btn.x,self.pause_btn.y,self.pause_btn.w,self.pause_btn.h);
+      }
+      if(full_pause)
+      {
+        ctx.fillText("->",self.advance_btn.x+10,self.advance_btn.y+10);
+        ctx.strokeRect(self.advance_btn.x,self.advance_btn.y,self.advance_btn.w,self.advance_btn.h);
+      }
+      ctx.fillText("<-",self.reset_btn.x+10,self.reset_btn.y+10);
+      ctx.strokeRect(self.reset_btn.x,self.reset_btn.y,self.reset_btn.w,self.reset_btn.h);
+    }
+  }
+
+  var graph = function()
+  {
+    var self = this;
+    self.x = 0;
+    self.y = 0;
+    self.w = 0;
+    self.h = 0;
+
+    self.calc_sub_params = function()
+    {
       self.graph_x = self.x+10;
       self.graph_y = self.y+10;
       self.graph_w = self.w-20;
@@ -999,21 +1041,6 @@ var GamePlayScene = function(game, stage)
 
       ctx.strokeRect(self.x,self.y,self.w,self.h);
       ctx.strokeRect(self.graph_x,self.graph_y,self.graph_w,self.graph_h);
-
-      ctx.lineWidth = 1;
-      if(levels[cur_level_i].play_enabled)
-      {
-        if(full_pause) ctx.fillText("||",self.pause_btn.x+10,self.pause_btn.y+10);
-        else           ctx.fillText(">",self.pause_btn.x+10,self.pause_btn.y+10);
-        ctx.strokeRect(self.pause_btn.x,self.pause_btn.y,self.pause_btn.w,self.pause_btn.h);
-      }
-      if(full_pause)
-      {
-        ctx.fillText("->",self.advance_btn.x+10,self.advance_btn.y+10);
-        ctx.strokeRect(self.advance_btn.x,self.advance_btn.y,self.advance_btn.w,self.advance_btn.h);
-      }
-      ctx.fillText("<-",self.reset_btn.x+10,self.reset_btn.y+10);
-      ctx.strokeRect(self.reset_btn.x,self.reset_btn.y,self.reset_btn.w,self.reset_btn.h);
     }
   }
 
@@ -2424,28 +2451,23 @@ var GamePlayScene = function(game, stage)
 
     s_dragger = new screen_dragger();
     s_graph = new graph();
-    s_graph.x = 0;
-    s_graph.y = canv.height-100;
-    s_graph.w = canv.width-100;
+    s_graph.x = 10;
+    s_graph.y = 50;
+    s_graph.w = 200;
     s_graph.h = 100;
     s_graph.calc_sub_params();
+    s_ctrls = new controls();
+    s_ctrls.x = 10;
+    s_ctrls.y = canv.h-20;
+    s_ctrls.w = 200;
+    s_ctrls.h = 20;
+    s_ctrls.calc_sub_params();
     s_editor = new module_editor();
     s_editor.x = canv.width-100;
     s_editor.y = 100;
     s_editor.w = 100;
     s_editor.h = 150;
     s_editor.calc_sub_params();
-
-    speed_slider = new SliderBox(s_graph.x+100,s_graph.y-20,100,15,1,250,advance_timer_max,
-      function(v)
-      {
-        if(!levels[cur_level_i].speed_enabled) return;
-        v = round(v);
-        var t = advance_timer/advance_timer_max;
-        advance_timer_max = v;
-        advance_timer = ceil(advance_timer_max * t);
-      }
-    )
 
     var dragOutModule = function(type,btn,evt)
     {
@@ -2645,10 +2667,10 @@ var GamePlayScene = function(game, stage)
     {
       var clicked = false;
       if(selected_module) if(s_editor.filter())                    clicked = true;
-      if(dragger.filter(speed_slider))         clicked = true;
-      if(clicker.filter(s_graph.pause_btn))    clicked = true;
-      if(clicker.filter(s_graph.advance_btn))  clicked = true;
-      if(clicker.filter(s_graph.reset_btn))    clicked = true;
+      if(dragger.filter(s_ctrls.speed_slider))         clicked = true;
+      if(clicker.filter(s_ctrls.pause_btn))    clicked = true;
+      if(clicker.filter(s_ctrls.advance_btn))  clicked = true;
+      if(clicker.filter(s_ctrls.reset_btn))    clicked = true;
       if(clicker.filter(next_level_btn))       clicked = true;
       if(clicker.filter(menu_btn))             clicked = true;
       if(clicker.filter(print_btn))            clicked = true;
@@ -2851,8 +2873,8 @@ var GamePlayScene = function(game, stage)
       if(levels[cur_level_i].speed_enabled)
       {
         ctx.fillStyle = black;
-        ctx.fillText("Speed:",speed_slider.x,speed_slider.y-10);
-        speed_slider.draw(canv);
+        ctx.fillText("Speed:",s_ctrls.speed_slider.x,s_ctrls.speed_slider.y-10);
+        s_ctrls.speed_slider.draw(canv);
       }
     }
     else if(game_state == GAME_STATE_MENU)
