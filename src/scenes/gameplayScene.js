@@ -1694,21 +1694,31 @@ var GamePlayScene = function(game, stage)
       {
         if(self.cache_const)
         {
-          ctx.fillStyle = bg_color;
-          fillRBox(self,10,ctx);
-          ctx.strokeStyle = self.color;
-          strokeRBox(self,10,ctx);
+          if(!self.body_cache.module_const)
+          {
+            self.body_cache.module_const = GenIcon(self.w+self.body_cache.buffer*2,self.h+self.body_cache.buffer*2);
+            self.body_cache.module_const.context.fillStyle = bg_color;
+            self.body_cache.module_const.context.strokeStyle = self.color;
+            fillR(self.body_cache.buffer,self.body_cache.buffer,self.w,self.h,10,self.body_cache.module_const.context);
+            strokeR(self.body_cache.buffer,self.body_cache.buffer,self.w,self.h,10,self.body_cache.module_const.context);
+          }
+          ctx.drawImage(self.body_cache.module_const,self.x-self.body_cache.buffer,self.y-self.body_cache.buffer,self.w+self.body_cache.buffer*2,self.h+self.body_cache.buffer*2);
         }
         else
         {
           if(self.pool)
           {
-            ctx.fillStyle = bg_color;
-            ctx.strokeStyle = self.color;
-            ctx.beginPath();
-            ctx.arc(self.x+self.w/2,self.y+self.h/2,self.w/2,0,twopi);
-            ctx.fill();
-            ctx.stroke();
+            if(!self.body_cache.module_nconst)
+            {
+              self.body_cache.module_nconst = GenIcon(self.w+self.body_cache.buffer*2,self.h+self.body_cache.buffer*2);
+              self.body_cache.module_nconst.context.fillStyle = bg_color;
+              self.body_cache.module_nconst.context.strokeStyle = self.color;
+              self.body_cache.module_nconst.context.beginPath();
+              self.body_cache.module_nconst.context.arc(self.body_cache.buffer+self.w/2,self.body_cache.buffer+self.h/2,self.w/2,0,twopi);
+              self.body_cache.module_nconst.context.fill();
+              self.body_cache.module_nconst.context.stroke();
+            }
+            ctx.drawImage(self.body_cache.module_nconst,self.x-self.body_cache.buffer,self.y-self.body_cache.buffer,self.w+self.body_cache.buffer*2,self.h+self.body_cache.buffer*2);
           }
           else
           {
@@ -1721,20 +1731,30 @@ var GamePlayScene = function(game, stage)
         {
           if(self.v != 1)
           {
-            ctx.fillStyle = bg_color;
-            fillR(self.x+self.w/4,self.y+self.h/3,self.w/2,self.h/3,5,ctx);
-            ctx.strokeStyle = line_color;
-            strokeR(self.x+self.w/4,self.y+self.h/3,self.w/2,self.h/3,5,ctx);
+            if(!self.body_cache.rel_const)
+            {
+              self.body_cache.rel_const = GenIcon(self.w+self.body_cache.buffer*2,self.h+self.body_cache.buffer*2);
+              self.body_cache.rel_const.context.fillStyle = bg_color;
+              fillR(self.body_cache.buffer+self.w/4,self.body_cache.buffer+self.h/3,self.w/2,self.h/3,5,self.body_cache.rel_const.context);
+              self.body_cache.rel_const.context.strokeStyle = line_color;
+              strokeR(self.body_cache.buffer+self.w/4,self.body_cache.buffer+self.h/3,self.w/2,self.h/3,5,self.body_cache.rel_const.context);
+            }
+            ctx.drawImage(self.body_cache.rel_const,self.x-self.body_cache.buffer,self.y-self.body_cache.buffer,self.w+self.body_cache.buffer*2,self.h+self.body_cache.buffer*2);
           }
         }
         else
         {
-          ctx.fillStyle = bg_color;
-          ctx.strokeStyle = line_color;
-          ctx.beginPath();
-          ctx.arc(self.x+self.w/2,self.y+self.h/2,self.w/4,0,twopi);
-          ctx.fill();
-          ctx.stroke();
+          if(!self.body_cache.rel_nconst)
+          {
+            self.body_cache.rel_nconst = GenIcon(self.w+self.body_cache.buffer*2,self.h+self.body_cache.buffer*2);
+            self.body_cache.rel_nconst.context.fillStyle = bg_color;
+            self.body_cache.rel_nconst.context.strokeStyle = line_color;
+            self.body_cache.rel_nconst.context.beginPath();
+            self.body_cache.rel_nconst.context.arc(self.body_cache.buffer+self.w/2,self.body_cache.buffer+self.h/2,self.w/4,0,twopi);
+            self.body_cache.rel_nconst.context.fill();
+            self.body_cache.rel_nconst.context.stroke();
+          }
+          ctx.drawImage(self.body_cache.rel_nconst,self.x-self.body_cache.buffer,self.y-self.body_cache.buffer,self.w+self.body_cache.buffer*2,self.h+self.body_cache.buffer*2);
         }
       }
 
@@ -1983,8 +2003,8 @@ var GamePlayScene = function(game, stage)
       if(self.type == MODULE_TYPE_MODULE)
       {
         ctx.fillStyle = white;
-        ctx.font = "20px Roboto";
-        ctx.fillText(fdisp(self.v,2),self.x+self.w/2,self.y+self.h/2+5);
+        ctx.font = "30px Roboto";
+        ctx.fillText(fdisp(self.v,2),self.x+self.w/2,self.y+self.h/2+10);
       }
       else
       {
@@ -2251,6 +2271,7 @@ var GamePlayScene = function(game, stage)
     dst.output_dongle_vel = src.output_dongle_vel;
     dst.input_dongle = src.input_dongle;
     dst.output_dongle = src.output_dongle;
+    dst.body_cache = src.body_cache;
   }
 
   var refreshModule = function(mod)
@@ -2307,6 +2328,8 @@ var GamePlayScene = function(game, stage)
 
     mod.input_dongle_vel = {x:0,y:0};
     mod.output_dongle_vel = {x:0,y:0};
+
+    mod.body_cache = {buffer:10};
   }
 
   self.ready = function()
