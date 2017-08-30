@@ -1052,68 +1052,90 @@ var GamePlayScene = function(game, stage)
 
     self.calc_sub_params = function()
     {
-      var h = 20;
-      var w = 20;
-      var s = 10;
-      var i = 0;
+      if(selected_module)
+      {
+        var h = 20;
+        var w = 20;
+        var s = 10;
+        var i = 0;
 
-      self.title_box.w = w;
-      self.title_box.h = h;
-      self.title_box.x = self.x + s;
-      self.title_box.y = self.y + s + (h+s)*i;
-      i++;
+        self.title_box.w = w;
+        self.title_box.h = h;
+        self.title_box.x = self.x + s;
+        self.title_box.y = self.y + s + (h+s)*i;
+        i++;
 
-      self.v_box.w = w;
-      self.v_box.h = h;
-      self.v_box.x = self.x + s;
-      self.v_box.y = self.y + s + (h+s)*i;
-      i++;
+        if(!selected_module.lock_value)
+        {
+          self.v_box.w = w;
+          self.v_box.h = h;
+          self.v_box.x = self.x + s;
+          self.v_box.y = self.y + s + (h+s)*i;
+          i++;
+        }
+        if(!selected_module.cache_const)
+        {
+          if(!selected_module.lock_min)
+          {
+            self.min_box.w = w;
+            self.min_box.h = h;
+            self.min_box.x = self.x + s;
+            self.min_box.y = self.y + s + (h+s)*i;
+            i++;
+          }
+          if(!selected_module.lock_max)
+          {
+            self.max_box.w = w;
+            self.max_box.h = h;
+            self.max_box.x = self.x + s;
+            self.max_box.y = self.y + s + (h+s)*i;
+            i++;
+          }
+        }
+        if(!selected_module.cache_const && !selected_module.lock_pool)
+        {
+          self.pool_box.w = w;
+          self.pool_box.h = h;
+          self.pool_box.x = self.x + s;
+          self.pool_box.y = self.y + s + (h+s)*i;
+          i++;
+        }
 
-      self.min_box.w = w;
-      self.min_box.h = h;
-      self.min_box.x = self.x + s;
-      self.min_box.y = self.y + s + (h+s)*i;
-      i++;
+        if(!selected_module.lock_graph)
+        {
+          self.graph_box.w = w;
+          self.graph_box.h = h;
+          self.graph_box.x = self.x + s;
+          self.graph_box.y = self.y + s + (h+s)*i;
+          i++;
+        }
 
-      self.max_box.w = w;
-      self.max_box.h = h;
-      self.max_box.x = self.x + s;
-      self.max_box.y = self.y + s + (h+s)*i;
-      i++;
+        if(selected_module.input_dongle.attachment && !selected_module.cache_const)
+        {
+          self.operator_box_mul.w = w;
+          self.operator_box_mul.h = h;
+          self.operator_box_mul.x = self.x + s;
+          self.operator_box_mul.y = self.y + s + (h+s)*i;
 
-      self.pool_box.w = w;
-      self.pool_box.h = h;
-      self.pool_box.x = self.x + s;
-      self.pool_box.y = self.y + s + (h+s)*i;
-      i++;
+          self.operator_box_div.w = w;
+          self.operator_box_div.h = h;
+          self.operator_box_div.x = self.x + s + (w+s);
+          self.operator_box_div.y = self.y + s + (h+s)*i;
+          i++;
 
-      self.graph_box.w = w;
-      self.graph_box.h = h;
-      self.graph_box.x = self.x + s;
-      self.graph_box.y = self.y + s + (h+s)*i;
-      i++;
+          self.sign_box_pos.w = w;
+          self.sign_box_pos.h = h;
+          self.sign_box_pos.x = self.x + s;
+          self.sign_box_pos.y = self.y + s + (h+s)*i;
 
-      self.operator_box_mul.w = w;
-      self.operator_box_mul.h = h;
-      self.operator_box_mul.x = self.x + s;
-      self.operator_box_mul.y = self.y + s + (h+s)*i;
-
-      self.operator_box_div.w = w;
-      self.operator_box_div.h = h;
-      self.operator_box_div.x = self.x + s + (w+s);
-      self.operator_box_div.y = self.y + s + (h+s)*i;
-      i++;
-
-      self.sign_box_pos.w = w;
-      self.sign_box_pos.h = h;
-      self.sign_box_pos.x = self.x + s;
-      self.sign_box_pos.y = self.y + s + (h+s)*i;
-
-      self.sign_box_neg.w = w;
-      self.sign_box_neg.h = h;
-      self.sign_box_neg.x = self.x + s + (w+s);
-      self.sign_box_neg.y = self.y + s + (h+s)*i;
-      i++;
+          self.sign_box_neg.w = w;
+          self.sign_box_neg.h = h;
+          self.sign_box_neg.x = self.x + s + (w+s);
+          self.sign_box_neg.y = self.y + s + (h+s)*i;
+          i++;
+        }
+      }
+      self.h = s+(h+s)*i;
     }
 
     self.calc_sub_values = function()
@@ -1127,6 +1149,17 @@ var GamePlayScene = function(game, stage)
 
       if(selected_module.operator == OPERATOR_MUL) self.operator_box_mul.set(1); else self.operator_box_mul.set(0);
       if(selected_module.sign     == 1)            self.sign_box_pos.set(1); else self.sign_box_pos.set(0);
+    }
+
+    self.center = function()
+    {
+      if(!selected_module) return;
+      calc_caches();
+      self.x = selected_module.x+selected_module.w/2-self.w/2;
+      self.calc_sub_params();
+      self.y = selected_module.y-self.h-30;
+      //double because 1 calculates h, 2 calculates y
+      self.calc_sub_params();
     }
 
     self.shouldDrag = function(evt)
@@ -1192,7 +1225,9 @@ var GamePlayScene = function(game, stage)
 
     self.draw = function()
     {
-      ctx.strokeRect(self.x,self.y,self.w,self.h);
+      ctx.font = "10px Roboto";
+      ctx.fillStyle = white;
+      fillRBox(self,10,ctx);
 
       if(selected_module)
       {
@@ -1452,6 +1487,7 @@ var GamePlayScene = function(game, stage)
         resetGraph();
       }
       self.src.whippet_dragged(self);
+      s_editor.center();
     }
     self.drag = function(evt)
     {
@@ -1472,6 +1508,7 @@ var GamePlayScene = function(game, stage)
       if(!self.attachment)
         deleteModule(self.src);
       resetGraph();
+      s_editor.center();
     }
   }
 
@@ -1577,15 +1614,17 @@ var GamePlayScene = function(game, stage)
     {
       dragging_obj = self;
       selected_module = self;
-      s_editor.calc_sub_values();
       self.drag_start_x = evt.doX-self.x;
       self.drag_start_y = evt.doY-self.y;
+      s_editor.center();
+      s_editor.calc_sub_values();
     }
     self.drag = function(evt)
     {
       self.x = evt.doX-self.drag_start_x;
       self.y = evt.doY-self.drag_start_y;
       worldSpaceCoords(work_cam,canv,self);
+      s_editor.center();
     }
     self.dragFinish = function(evt)
     {
@@ -1624,6 +1663,7 @@ var GamePlayScene = function(game, stage)
         if(modules[i].output_dongle.attachment == self) modules[i].output_dongle.attachment = clone;
       }
       modules.push(self);
+      if(selected_module == self) selected_module = clone;
     }
 
     self.hover   = function(){}
@@ -2238,6 +2278,7 @@ var GamePlayScene = function(game, stage)
       if(modules[i] == mod) modules.splice(i,1);
     for(var i = 0; i < queued_delete.length; i++)
       deleteModule(queued_delete[i]);
+    s_editor.center();
   }
   var cloneModule = function(src,dst)
   {
@@ -2387,7 +2428,7 @@ var GamePlayScene = function(game, stage)
     s_editor.x = canv.width-100;
     s_editor.y = 100;
     s_editor.w = 100;
-    s_editor.h = canv.height-100;
+    s_editor.h = 150;
     s_editor.calc_sub_params();
 
     speed_slider = new SliderBox(s_graph.x+100,s_graph.y-20,100,15,1,250,advance_timer_max,
@@ -2598,7 +2639,7 @@ var GamePlayScene = function(game, stage)
     if(game_state == GAME_STATE_PLAY)
     {
       var clicked = false;
-      if(s_editor.filter())                    clicked = true;
+      if(selected_module) if(s_editor.filter())                    clicked = true;
       if(dragger.filter(speed_slider))         clicked = true;
       if(clicker.filter(s_graph.pause_btn))    clicked = true;
       if(clicker.filter(s_graph.advance_btn))  clicked = true;
@@ -2800,7 +2841,7 @@ var GamePlayScene = function(game, stage)
 
       s_graph.draw();
       ctx.textAlign = "left";
-      s_editor.draw();
+      if(selected_module) s_editor.draw();
       if(levels[cur_level_i].speed_enabled)
       {
         ctx.fillStyle = black;
