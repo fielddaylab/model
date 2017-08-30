@@ -14,6 +14,7 @@ var GamePlayScene = function(game, stage)
   var game_state;
 
   var line_color = "#0A182E";
+  var graph_bg_color = "#2A3544";
   var bg_color = "#4E5F75";
 
   var green = "#00AA00";
@@ -977,6 +978,13 @@ var GamePlayScene = function(game, stage)
 
     self.draw = function()
     {
+      ctx.strokeStyle = line_color;
+      ctx.fillStyle = graph_bg_color;
+      fillRBox(self,10,ctx);
+      strokeRBox(self,10,ctx);
+
+      //ctx.strokeRect(self.x,self.y,self.w,self.h);
+      //ctx.strokeRect(self.graph_x,self.graph_y,self.graph_w,self.graph_h);
       ctx.lineWidth = 1;
       var x = 0;
       var y = 0;
@@ -1038,9 +1046,6 @@ var GamePlayScene = function(game, stage)
       ctx.moveTo(x,self.graph_y);
       ctx.lineTo(x,self.graph_y+self.graph_h);
       ctx.stroke();
-
-      ctx.strokeRect(self.x,self.y,self.w,self.h);
-      ctx.strokeRect(self.graph_x,self.graph_y,self.graph_w,self.graph_h);
     }
   }
 
@@ -2437,7 +2442,7 @@ var GamePlayScene = function(game, stage)
     advance_timer_max = 100;
     advance_timer = advance_timer_max;
     t_i = 0;
-    t_max = 50;
+    t_max = 10;
     n_ticks = 0;
 
     load_template_i = 0;
@@ -2458,7 +2463,7 @@ var GamePlayScene = function(game, stage)
     s_graph.calc_sub_params();
     s_ctrls = new controls();
     s_ctrls.x = 10;
-    s_ctrls.y = canv.h-20;
+    s_ctrls.y = canv.height-20;
     s_ctrls.w = 200;
     s_ctrls.h = 20;
     s_ctrls.calc_sub_params();
@@ -2867,6 +2872,7 @@ var GamePlayScene = function(game, stage)
       ctx.lineWidth = 1;
 
       s_graph.draw();
+      s_ctrls.draw();
       ctx.textAlign = "left";
       if(selected_module) s_editor.draw();
       ctx.font = "10px Roboto";
