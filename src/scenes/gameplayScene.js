@@ -1451,6 +1451,7 @@ var GamePlayScene = function(game, stage)
         self.attachment = 0;
         resetGraph();
       }
+      self.src.whippet_dragged(self);
     }
     self.drag = function(evt)
     {
@@ -1549,6 +1550,15 @@ var GamePlayScene = function(game, stage)
         {
           self.x = lerp(self.output_dongle.drag_x,self.input_dongle.attachment.x+self.input_dongle.attachment.w/2,0.5)-self.w/2;
           self.y = lerp(self.output_dongle.drag_y,self.input_dongle.attachment.y+self.input_dongle.attachment.h/2,0.5)-self.h/2;
+          worldSpaceCoords(work_cam,canv,self);
+        }
+      }
+      if(whippet == self.input_dongle)
+      {
+        if(self.output_dongle.attachment)
+        {
+          self.x = lerp(self.input_dongle.drag_x,self.output_dongle.attachment.x+self.output_dongle.attachment.w/2,0.5)-self.w/2;
+          self.y = lerp(self.input_dongle.drag_y,self.output_dongle.attachment.y+self.output_dongle.attachment.h/2,0.5)-self.h/2;
           worldSpaceCoords(work_cam,canv,self);
         }
       }
