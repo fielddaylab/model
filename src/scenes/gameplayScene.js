@@ -1250,10 +1250,7 @@ var GamePlayScene = function(game, stage)
             ctx.fillText("contribution",   self.x + 10, self.v_box.y    +20);
           else if(selected_module.pool && !selected_module.output_dongle.attachment)
           {
-            var found = false;
-            for(var i = 0; !found && i < modules.length; i++)
-              if(modules[i].output_dongle.attachment == selected_module) found = true;
-            if(found)
+            if(!selected_module.cache_const)
               ctx.fillText("starting val",   self.x + 10, self.v_box.y    +20);
             else
               ctx.fillText("val",   self.x + 10, self.v_box.y    +20);
