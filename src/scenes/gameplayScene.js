@@ -2216,15 +2216,18 @@ var GamePlayScene = function(game, stage)
 
   var deleteModule = function(mod)
   {
+    var queued_delete = [];
     if(selected_module == mod)
       selected_module = 0;
     for(var i = 0; i < modules.length; i++)
     {
-      if(modules[i].input_dongle.attachment  == mod) modules[i].input_dongle.attachment = 0;
-      if(modules[i].output_dongle.attachment == mod) modules[i].output_dongle.attachment = 0;
+      if(modules[i].input_dongle.attachment  == mod) { modules[i].input_dongle.attachment = 0;  queued_delete.push(modules[i]); }
+      if(modules[i].output_dongle.attachment == mod) { modules[i].output_dongle.attachment = 0; queued_delete.push(modules[i]); }
     }
     for(var i = 0; i < modules.length; i++)
       if(modules[i] == mod) modules.splice(i,1);
+    for(var i = 0; i < queued_delete.length; i++)
+      deleteModule(queued_delete[i]);
   }
   var cloneModule = function(src,dst)
   {
