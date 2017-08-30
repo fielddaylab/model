@@ -249,10 +249,11 @@ function NumberBox(x,y,w,h,val,delta,callback)
     else                  canv.context.strokeStyle = "#0000F4";
     //canv.context.strokeRect(self.x,self.y,self.w,self.h);
     canv.context.fillStyle = "#000000";
-    if(self.value.length < 5)
+    var ellipse = 6;
+    if(self.value.length < ellipse)
       canv.context.fillText(self.value,self.x+self.w-4,self.y+self.h*3/4,self.w-4);
     else
-      canv.context.fillText(self.value.substring(0,5)+"...",self.x+self.w-4,self.y+self.h*3/4,self.w-4);
+      canv.context.fillText(self.value.substring(0,ellipse)+"...",self.x+self.w-4,self.y+self.h*3/4,self.w-4);
   }
 
   self.print = function()
