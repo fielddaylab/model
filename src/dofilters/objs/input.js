@@ -380,8 +380,12 @@ function SliderBox(x,y,w,h,min_val,max_val,val,callback)
   self.w = w;
   self.h = h;
 
-  self.slit_x = Math.round(self.x + self.w/20);
-  self.slit_w = Math.round(self.w - self.w/10);
+  self.calc_slit = function()
+  {
+    self.slit_x = Math.round(self.x + self.w/20);
+    self.slit_w = Math.round(self.w - self.w/10);
+  }
+  self.calc_slit();
 
   self.min_val = min_val;
   self.max_val = max_val;
@@ -453,8 +457,12 @@ function SmoothSliderBox(x,y,w,h,min_val,max_val,val,callback)
   self.w = w;
   self.h = h;
 
-  self.slit_x = self.x + self.w/20;
-  self.slit_w = self.w - self.w/10;
+  self.calc_slit = function()
+  {
+    self.slit_x = Math.round(self.x + self.w/20);
+    self.slit_w = Math.round(self.w - self.w/10);
+  }
+  self.calc_slit();
 
   self.min_val = min_val;
   self.max_val = max_val;

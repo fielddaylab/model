@@ -15,7 +15,7 @@ var GamePlayScene = function(game, stage)
 
   var line_color = "#0A182E";
   var graph_bg_color = "#2A3544";
-  var bg_color = "#4E5F75";
+  var bg_color = "#485973";
 
   var green = "#00AA00";
   var red = "#AA0000";
@@ -60,7 +60,6 @@ var GamePlayScene = function(game, stage)
   var s_graph;
   var s_ctrls;
   var s_editor;
-  var speed_slider;
 
   var w;
   var h;
@@ -170,6 +169,33 @@ var GamePlayScene = function(game, stage)
   glob_neg_img.context.beginPath();
   glob_neg_img.context.arc(w/2,h/2,(w-5)/2,0,2*Math.PI);
   glob_neg_img.context.fill();
+
+  var bg_img = new Image();
+  bg_img.src = "assets/bg.jpg";
+  var add_btn_img = new Image();
+  add_btn_img.src = "assets/add_btn.png";
+  var menu_btn_img = new Image();
+  menu_btn_img.src = "assets/menu_btn.png";
+  var gotit_btn_img = new Image();
+  gotit_btn_img.src = "assets/gotit_btn.png";
+  var next_level_btn_img = new Image();
+  next_level_btn_img.src = "assets/next_level_btn.png";
+  var reset_btn_img = new Image();
+  reset_btn_img.src = "assets/reset_btn.png";
+  var next_step_btn_img = new Image();
+  next_step_btn_img.src = "assets/next_step_btn.png";
+  var speed_slow_btn_img = new Image();
+  speed_slow_btn_img.src = "assets/speed_slow_btn.png";
+  var speed_slow_btn_down_img = new Image();
+  speed_slow_btn_down_img.src = "assets/speed_slow_btn_down.png";
+  var speed_med_btn_img = new Image();
+  speed_med_btn_img.src = "assets/speed_med_btn.png";
+  var speed_med_btn_down_img = new Image();
+  speed_med_btn_down_img.src = "assets/speed_med_btn_down.png";
+  var speed_fast_btn_img = new Image();
+  speed_fast_btn_img.src = "assets/speed_fast_btn.png";
+  var speed_fast_btn_down_img = new Image();
+  speed_fast_btn_down_img.src = "assets/speed_fast_btn_down.png";
 
   var level = function()
   {
@@ -488,7 +514,7 @@ var GamePlayScene = function(game, stage)
   {
     selected_module = undefined;
     advance_timer_max = 250;
-    speed_slider.val = advance_timer_max;
+    s_ctrls.speed_slider.val = advance_timer_max;
   }
   l.draw = function()
   {
@@ -828,7 +854,6 @@ var GamePlayScene = function(game, stage)
     self.w = 0;
     self.h = 0;
 
-    var playback_btn_size = 20;
     self.pause_btn = new btn();
     self.pause_btn.click = function(evt)
     {
@@ -865,46 +890,97 @@ var GamePlayScene = function(game, stage)
       }
     );
 
+    self.speed_slow_btn = new btn();
+    self.speed_slow_btn.click = function(evt)
+    {
+      if(dragging_obj) return;
+      advance_timer_max = 250;
+      s_ctrls.speed_slider.val = advance_timer_max;
+    }
+
+    self.speed_med_btn = new btn();
+    self.speed_med_btn.click = function(evt)
+    {
+      if(dragging_obj) return;
+      advance_timer_max = 100;
+      s_ctrls.speed_slider.val = advance_timer_max;
+    }
+
+    self.speed_fast_btn = new btn();
+    self.speed_fast_btn.click = function(evt)
+    {
+      if(dragging_obj) return;
+      advance_timer_max = 10;
+      s_ctrls.speed_slider.val = advance_timer_max;
+    }
+
     self.calc_sub_params = function()
     {
-      self.pause_btn.w = playback_btn_size;
-      self.pause_btn.h = playback_btn_size;
-      self.pause_btn.x = self.x + (playback_btn_size + 10)*0;
-      self.pause_btn.y = self.y - playback_btn_size;
-
-      self.advance_btn.w = playback_btn_size;
-      self.advance_btn.h = playback_btn_size;
-      self.advance_btn.x = self.x + (playback_btn_size + 10)*1;
-      self.advance_btn.y = self.y - playback_btn_size;
-
-      self.reset_btn.w = playback_btn_size;
-      self.reset_btn.h = playback_btn_size;
-      self.reset_btn.x = self.x + (playback_btn_size + 10)*2;
-      self.reset_btn.y = self.y - playback_btn_size;
+    /*
+      self.pause_btn.w = self.h;
+      self.pause_btn.h = self.h;
+      self.pause_btn.x = self.x + (self.h + 10)*0;
+      self.pause_btn.y = self.y - self.h;
 
       self.speed_slider.x = self.x+100;
       self.speed_slider.y = self.y-20;
       self.speed_slider.w = 100;
       self.speed_slider.h = 15;
+      self.speed_slider.calc_slit();
+    */
+
+      var prev_btn;
+
+      self.reset_btn.h = self.h;
+      self.reset_btn.w = reset_btn_img.width*(self.reset_btn.h/reset_btn_img.height);
+      self.reset_btn.x = self.x;
+      self.reset_btn.y = self.y;
+      prev_btn = self.reset_btn;
+
+      self.advance_btn.h = self.h;
+      self.advance_btn.w = next_step_btn_img.width*(self.advance_btn.h/next_step_btn_img.height);
+      self.advance_btn.x = prev_btn.x+prev_btn.w+10;
+      self.advance_btn.y = self.y;
+      prev_btn = self.advance_btn;
+
+      self.speed_slow_btn.h = self.h;
+      self.speed_slow_btn.w = speed_slow_btn_img.width*(self.speed_slow_btn.h/speed_slow_btn_img.height);
+      self.speed_slow_btn.x = prev_btn.x+prev_btn.w+10;
+      self.speed_slow_btn.y = self.y;
+      prev_btn = self.speed_slow_btn;
+
+      self.speed_med_btn.h = self.h;
+      self.speed_med_btn.w = speed_med_btn_img.width*(self.speed_med_btn.h/speed_med_btn_img.height);
+      self.speed_med_btn.x = prev_btn.x+prev_btn.w;
+      self.speed_med_btn.y = self.y;
+      prev_btn = self.speed_med_btn;
+
+      self.speed_fast_btn.h = self.h;
+      self.speed_fast_btn.w = speed_fast_btn_img.width*(self.speed_fast_btn.h/speed_fast_btn_img.height);
+      self.speed_fast_btn.x = prev_btn.x+prev_btn.w;
+      self.speed_fast_btn.y = self.y;
+      prev_btn = self.speed_fast_btn;
+
+      self.w = prev_btn.x+prev_btn.w-self.x;
     }
 
     self.draw = function()
     {
       ctx.font = "10px Roboto Mono";
       ctx.lineWidth = 1;
+      /*
       if(levels[cur_level_i].play_enabled)
       {
         if(full_pause) ctx.fillText("||",self.pause_btn.x+10,self.pause_btn.y+10);
         else           ctx.fillText(">",self.pause_btn.x+10,self.pause_btn.y+10);
         ctx.strokeRect(self.pause_btn.x,self.pause_btn.y,self.pause_btn.w,self.pause_btn.h);
       }
-      if(full_pause)
-      {
-        ctx.fillText("->",self.advance_btn.x+10,self.advance_btn.y+10);
-        ctx.strokeRect(self.advance_btn.x,self.advance_btn.y,self.advance_btn.w,self.advance_btn.h);
-      }
-      ctx.fillText("<-",self.reset_btn.x+10,self.reset_btn.y+10);
-      ctx.strokeRect(self.reset_btn.x,self.reset_btn.y,self.reset_btn.w,self.reset_btn.h);
+      */
+      imageBox(reset_btn_img,self.reset_btn,ctx);
+      if(full_pause) imageBox(next_step_btn_img,self.advance_btn,ctx);
+      if(advance_timer_max == 250) imageBox(speed_slow_btn_down_img,self.speed_slow_btn,ctx); else imageBox(speed_slow_btn_img,self.speed_slow_btn,ctx);
+      if(advance_timer_max == 100) imageBox(speed_med_btn_down_img, self.speed_med_btn,ctx);  else imageBox(speed_med_btn_img, self.speed_med_btn,ctx);
+      if(advance_timer_max ==  10) imageBox(speed_fast_btn_down_img,self.speed_fast_btn,ctx); else imageBox(speed_fast_btn_img,self.speed_fast_btn,ctx);
     }
   }
 
@@ -1510,6 +1586,7 @@ var GamePlayScene = function(game, stage)
   {
     var self = this;
     refreshModule(self);
+    self.cache_const = true;
     self.wx = wx;
     self.wy = wy;
     self.ww = ww;
@@ -2431,10 +2508,12 @@ var GamePlayScene = function(game, stage)
     s_graph.h = 100;
     s_graph.calc_sub_params();
     s_ctrls = new controls();
-    s_ctrls.x = 10;
-    s_ctrls.y = canv.height-20;
-    s_ctrls.w = 200;
-    s_ctrls.h = 20;
+    s_ctrls.w = 400;
+    s_ctrls.h = 30;
+    s_ctrls.x = canv.width-s_ctrls.w-10;
+    s_ctrls.y = canv.height-s_ctrls.h-10;
+    s_ctrls.calc_sub_params();
+    s_ctrls.x = canv.width-s_ctrls.w-10;
     s_ctrls.calc_sub_params();
     s_editor = new module_editor();
     s_editor.x = canv.width-100;
@@ -2463,10 +2542,10 @@ var GamePlayScene = function(game, stage)
     }
 
     add_module_btn = new btn();
-    add_module_btn.w = 50;
-    add_module_btn.h = 20;
+    add_module_btn.w = 70;
+    add_module_btn.h = 70;
     add_module_btn.x = 10;
-    add_module_btn.y = 130;
+    add_module_btn.y = canv.height-add_module_btn.h-10;
     add_module_btn.shouldDrag = function(evt)
     {
       if(levels[cur_level_i] && !levels[cur_level_i].add_module_enabled) return false;
@@ -2480,24 +2559,24 @@ var GamePlayScene = function(game, stage)
     remove_module_btn.x = 10;
     remove_module_btn.y = 130;
 
-    next_level_btn = new btn();
-    next_level_btn.w = 60;
-    next_level_btn.h = 20;
-    next_level_btn.x = 440;
-    next_level_btn.y = 80;
-    next_level_btn.click = function(evt)
-    {
-      if(levelComplete()) nextLevel();
-    }
-
     menu_btn = new btn();
-    menu_btn.w = 60;
-    menu_btn.h = 20;
+    menu_btn.h = 30;
+    menu_btn.w = menu_btn_img.width*(menu_btn.h/menu_btn_img.height);
     menu_btn.x = canv.width-menu_btn.w-10;
-    menu_btn.y = 0;
+    menu_btn.y = 10;
     menu_btn.click = function(evt)
     {
       game_state = GAME_STATE_MENU;
+    }
+
+    next_level_btn = new btn();
+    next_level_btn.h = 30;
+    next_level_btn.w = next_level_btn_img.width*(next_level_btn.h/next_level_btn_img.height);
+    next_level_btn.x = canv.width-next_level_btn.w-10;
+    next_level_btn.y = 10+menu_btn.h+10;
+    next_level_btn.click = function(evt)
+    {
+      if(levelComplete()) nextLevel();
     }
 
     print_btn = new btn();
@@ -2607,16 +2686,19 @@ var GamePlayScene = function(game, stage)
     if(game_state == GAME_STATE_PLAY)
     {
       var clicked = false;
-      if(selected_module) if(s_editor.filter())                    clicked = true;
-      if(dragger.filter(s_ctrls.speed_slider))         clicked = true;
-      if(clicker.filter(s_ctrls.pause_btn))    clicked = true;
-      if(clicker.filter(s_ctrls.advance_btn))  clicked = true;
-      if(clicker.filter(s_ctrls.reset_btn))    clicked = true;
-      if(clicker.filter(next_level_btn))       clicked = true;
-      if(clicker.filter(menu_btn))             clicked = true;
-      if(clicker.filter(print_btn))            clicked = true;
-      if(clicker.filter(load_btn))             clicked = true;
-      if(dragger.filter(add_module_btn))       clicked = true;
+      if(selected_module) if(s_editor.filter())  clicked = true;
+      if(dragger.filter(s_ctrls.speed_slider))   clicked = true;
+      if(clicker.filter(s_ctrls.pause_btn))      clicked = true;
+      if(clicker.filter(s_ctrls.advance_btn))    clicked = true;
+      if(clicker.filter(s_ctrls.reset_btn))      clicked = true;
+      if(clicker.filter(s_ctrls.speed_slow_btn)) clicked = true;
+      if(clicker.filter(s_ctrls.speed_med_btn))  clicked = true;
+      if(clicker.filter(s_ctrls.speed_fast_btn)) clicked = true;
+      if(clicker.filter(next_level_btn))         clicked = true;
+      if(clicker.filter(menu_btn))               clicked = true;
+      if(clicker.filter(print_btn))              clicked = true;
+      if(clicker.filter(load_btn))               clicked = true;
+      if(dragger.filter(add_module_btn))         clicked = true;
       clicker.filter(levels[cur_level_i]);
       if(!clicked)
       {
@@ -2680,25 +2762,17 @@ var GamePlayScene = function(game, stage)
       calc_caches();
       ctx.fillStyle = bg_color;
       ctx.fillRect(0,0,canv.width,canv.height);
+      ctx.drawImage(bg_img,0,0,canv.width,canv.height);
 
       ctx.fillStyle = black;
       ctx.strokeStyle = black;
       ctx.lineWidth = 1;
       ctx.textAlign = "left";
       if(!levels[cur_level_i] || levels[cur_level_i].add_module_enabled)
-      {
-        ctx.fillText("+Module",add_module_btn.x+2,add_module_btn.y+10);
-        ctx.strokeRect(add_module_btn.x,add_module_btn.y,add_module_btn.w,add_module_btn.h);
-      }
+        imageBox(add_btn_img,add_module_btn,ctx);
       ctx.fillStyle = "#AAAAAA";
-      if(!levelComplete())
-        ctx.fillRect(next_level_btn.x,next_level_btn.y,next_level_btn.w,next_level_btn.h);
-      ctx.fillStyle = black;
-      ctx.textAlign = "right";
-      ctx.fillText("Next Level",next_level_btn.x+next_level_btn.w-2,next_level_btn.y+10);
-      ctx.strokeRect(next_level_btn.x,next_level_btn.y,next_level_btn.w,next_level_btn.h);
-      ctx.fillText("Menu",menu_btn.x+menu_btn.w-2,menu_btn.y+10);
-      ctx.strokeRect(menu_btn.x,menu_btn.y,menu_btn.w,menu_btn.h);
+      if(levelComplete()) imageBox(next_level_btn_img,next_level_btn,ctx);
+      imageBox(menu_btn_img,menu_btn,ctx);
       if(ALLOW_SAVE || !levels[cur_level_i] || levels[cur_level_i].save_enabled)
       {
         ctx.fillText("Save",print_btn.x+print_btn.w-2,print_btn.y+10);
@@ -2821,6 +2895,7 @@ var GamePlayScene = function(game, stage)
     }
     else if(game_state == GAME_STATE_MENU)
     {
+      ctx.fillStyle = black;
       ctx.font = "20px Roboto";
       ctx.fillText("Computational Modelling",20,50);
       ctx.font = "12px Roboto";

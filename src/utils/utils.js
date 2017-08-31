@@ -500,6 +500,10 @@ var bounce2 = function(targetx=0,targety=0,vx=0,vy=0,velx=0,vely=0,pull=0.1,drag
   }
 }
 
+function imageBox(image,box,ctx)
+{
+  ctx.drawImage(image,box.x,box.y,box.w,box.h);
+}
 function strokeBox(box,ctx)
 {
   ctx.strokeRect(box.x,box.y,box.w,box.h);
