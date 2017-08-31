@@ -175,6 +175,8 @@ var GamePlayScene = function(game, stage)
   bg_img.src = "assets/bg.jpg";
   var add_btn_img = new Image();
   add_btn_img.src = "assets/add_btn.png";
+  var remove_btn_img = new Image();
+  remove_btn_img.src = "assets/remove_btn.png";
   var menu_btn_img = new Image();
   menu_btn_img.src = "assets/menu_btn.png";
   var gotit_btn_img = new Image();
@@ -197,6 +199,10 @@ var GamePlayScene = function(game, stage)
   speed_fast_btn_img.src = "assets/speed_fast_btn.png";
   var speed_fast_btn_down_img = new Image();
   speed_fast_btn_down_img.src = "assets/speed_fast_btn_down.png";
+  var wrong_img = new Image();
+  wrong_img.src = "assets/wrong.png";
+  var right_img = new Image();
+  right_img.src = "assets/right.png";
 
   var level = function()
   {
@@ -811,11 +817,10 @@ var GamePlayScene = function(game, stage)
 
   var x = 10;
   var y = 80;
-  var w = 90;
+  var w = 150;
   var h = 40;
   for(var i = 0; i < levels.length; i++)
   {
-
     var btn =
     {
       x:x,
@@ -1049,6 +1054,26 @@ var GamePlayScene = function(game, stage)
         ctx.textAlign = "left";
         ctx.fillText(modules[i].title,self.x+(graph_i*(self.w+10))+5,self.y+25)
 
+        ctx.strokeStyle = modules[i].color;
+        x = self.x+(graph_i*(self.w+10))+10;
+        y = self.graph_y+self.graph_h;
+
+        ctx.beginPath();
+        if(!isNaN(modules[i].plot[0])) y = self.graph_y+self.graph_h - clamp(0,1,mapVal(modules[i].min,modules[i].max,0,1,modules[i].plot[0]))*self.graph_h;
+        ctx.moveTo(x,y);
+        for(var j = 0; j <= t_i || (predict && j < t_max); j++)
+        {
+          x = self.x+(graph_i*(self.w+10))+10 + (j/(t_max-1)) * self.graph_w;
+          if(!isNaN(modules[i].plot[j])) y = self.graph_y+self.graph_h - (clamp(0,1,mapVal(modules[i].min,modules[i].max,0,1,modules[i].plot[j]))*self.graph_h);
+          ctx.lineTo(x,y);
+          if(j == t_i)
+          {
+            if(!isNaN(modules[i].prev_plot)) y = self.graph_y+self.graph_h - (clamp(0,1,mapVal(modules[i].min,modules[i].max,0,1,modules[i].prev_plot))*self.graph_h);
+            ctx.lineTo(x,y);
+          }
+        }
+        ctx.stroke();
+
         if(levels[cur_level_i] && levels[cur_level_i].primary_module_target_vals[i])
         {
           var targets = levels[cur_level_i].primary_module_target_vals[i];
@@ -1085,30 +1110,13 @@ var GamePlayScene = function(game, stage)
                 ctx.font = "20px Roboto Mono";
                 ctx.textAlign = "left";
                 ctx.fillStyle = modules[i].color;
+                if(j < targets.length)
+                  ctx.drawImage(wrong_img,x-5,y-5,10,10);
               }
             }
           }
         }
 
-        ctx.strokeStyle = modules[i].color;
-        x = self.x+(graph_i*(self.w+10))+10;
-        y = self.graph_y+self.graph_h;
-
-        ctx.beginPath();
-        if(!isNaN(modules[i].plot[0])) y = self.graph_y+self.graph_h - clamp(0,1,mapVal(modules[i].min,modules[i].max,0,1,modules[i].plot[0]))*self.graph_h;
-        ctx.moveTo(x,y);
-        for(var j = 0; j <= t_i || (predict && j < t_max); j++)
-        {
-          x = self.x+(graph_i*(self.w+10))+10 + (j/(t_max-1)) * self.graph_w;
-          if(!isNaN(modules[i].plot[j])) y = self.graph_y+self.graph_h - (clamp(0,1,mapVal(modules[i].min,modules[i].max,0,1,modules[i].plot[j]))*self.graph_h);
-          ctx.lineTo(x,y);
-          if(j == t_i)
-          {
-            if(!isNaN(modules[i].prev_plot)) y = self.graph_y+self.graph_h - (clamp(0,1,mapVal(modules[i].min,modules[i].max,0,1,modules[i].prev_plot))*self.graph_h);
-            ctx.lineTo(x,y);
-          }
-        }
-        ctx.stroke();
         graph_i++;
       }
       ctx.textAlign = "center";
@@ -1737,9 +1745,7 @@ var GamePlayScene = function(game, stage)
       {
         dragging_obj = 0;
         if(!self.primary && rectCollide(self.x,self.y,self.w,self.h,remove_module_btn.x,remove_module_btn.y,remove_module_btn.w,remove_module_btn.h))
-        {
           deleteModule(self);
-        }
         if(self.title == "") s_editor.title_box.focus();
       }
     }
@@ -2594,10 +2600,10 @@ var GamePlayScene = function(game, stage)
 
     //kind of a hack- just placeholder that gets checked by modules themselves
     remove_module_btn = new btn();
-    remove_module_btn.w = 50;
-    remove_module_btn.h = 20;
-    remove_module_btn.x = 10;
-    remove_module_btn.y = 130;
+    remove_module_btn.w = 80;
+    remove_module_btn.h = 80;
+    remove_module_btn.x = add_module_btn.x+add_module_btn.w+10;
+    remove_module_btn.y = canv.height-remove_module_btn.h-10;
 
     menu_btn = new btn();
     menu_btn.h = 30;
@@ -2810,6 +2816,8 @@ var GamePlayScene = function(game, stage)
       ctx.textAlign = "left";
       if(!levels[cur_level_i] || levels[cur_level_i].add_module_enabled)
         imageBox(add_btn_img,add_module_btn,ctx);
+      if(dragging_obj && !dragging_obj.primary && !dragging_obj.src) //src implies whippet
+        imageBox(remove_btn_img,remove_module_btn,ctx);
       ctx.fillStyle = "#AAAAAA";
       if(levelComplete()) imageBox(next_level_btn_img,next_level_btn,ctx);
       imageBox(menu_btn_img,menu_btn,ctx);

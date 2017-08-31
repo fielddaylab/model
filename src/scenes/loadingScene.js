@@ -82,6 +82,7 @@ var LoadingScene = function(game, stage)
 
     img_srcs.push("assets/bg.jpg");
     img_srcs.push("assets/add_btn.png");
+    img_srcs.push("assets/remove_btn.png");
     img_srcs.push("assets/menu_btn.png");
     img_srcs.push("assets/gotit_btn.png");
     img_srcs.push("assets/next_level_btn.png");
@@ -93,6 +94,8 @@ var LoadingScene = function(game, stage)
     img_srcs.push("assets/speed_med_btn_down.png");
     img_srcs.push("assets/speed_fast_btn.png");
     img_srcs.push("assets/speed_fast_btn_down.png");
+    img_srcs.push("assets/wrong.png");
+    img_srcs.push("assets/right.png");
     for(var i = 0; i < 3; i++)
       img_srcs.push("assets/comic/comic_"+i+".png");
     for(var i = 0; i < img_srcs.length; i++)
