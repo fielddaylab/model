@@ -222,6 +222,7 @@ var GamePlayScene = function(game, stage)
 
   var beginLevel = function()
   {
+    selected_module = 0;
     levels[cur_level_i].gen_modules();
     levels[cur_level_i].ready();
     resetGraph();
@@ -2053,17 +2054,19 @@ var GamePlayScene = function(game, stage)
     self.drawValue = function()
     {
       //new
+      ctx.fillStyle = white
+      ctx.font = "10px Roboto";
       if(self.type == MODULE_TYPE_MODULE)
       {
-        ctx.fillStyle = white;
+        ctx.fillText(self.title,self.x+self.w/2,self.y-10);
         ctx.font = "30px Roboto";
         ctx.fillText(fdisp(self.v,2),self.x+self.w/2,self.y+self.h/2+10);
       }
       else
       {
+        ctx.fillText(self.title,self.x+self.w/2,self.y+10);
         if(self.v != 1 || !self.cache_const)
         {
-          ctx.fillStyle = white;
           ctx.font = "10px Roboto";
           ctx.fillText("x"+fdisp(self.v,2),self.x+self.w/2,self.y+self.h/2+5);
         }
@@ -2436,7 +2439,7 @@ var GamePlayScene = function(game, stage)
     s_editor = new module_editor();
     s_editor.x = canv.width-100;
     s_editor.y = 100;
-    s_editor.w = 120;
+    s_editor.w = 140;
     s_editor.h = 150;
     s_editor.calc_sub_params();
 
@@ -2716,11 +2719,11 @@ var GamePlayScene = function(game, stage)
       for(var i = 0; i < modules.length; i++)
         modules[i].drawLines();
       for(var i = 0; i < modules.length; i++)
+        modules[i].drawBlob();
+      for(var i = 0; i < modules.length; i++)
         modules[i].drawBody();
       for(var i = 0; i < modules.length; i++)
         modules[i].drawDongles();
-      for(var i = 0; i < modules.length; i++)
-        modules[i].drawBlob();
       for(var i = 0; i < modules.length; i++)
         modules[i].drawValue();
 
