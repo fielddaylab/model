@@ -71,15 +71,16 @@ var GamePlayScene = function(game, stage)
   var module_inner_s = 30;
 
   var good_colors = [];
-  good_colors.push("#ED6857");
-  good_colors.push("#EEBC39");
-  good_colors.push("#F28693");
-  good_colors.push("#009DA6");
-  good_colors.push("#9E9E9E");
-  good_colors.push("#FBAB33");
-  good_colors.push("#671318");
-  good_colors.push("#008362");
-  good_colors.push("#512EAF");
+  good_colors.push("#AFF865");
+  good_colors.push("#87E2FF");
+  good_colors.push("#F5A623");
+  good_colors.push("#FFF46F");
+  good_colors.push("#FFAEAE");
+  good_colors.push("#E774FF");
+  good_colors.push("#ACF9D2");
+  good_colors.push("#FF6578");
+  good_colors.push("#95F32E");
+  good_colors.push("#BDAEFF");
 
   w = 30;
   h = 30;
