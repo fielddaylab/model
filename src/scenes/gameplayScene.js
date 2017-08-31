@@ -1215,6 +1215,7 @@ var GamePlayScene = function(game, stage)
       ctx.fillStyle = white;
       fillRBox(self,10,ctx);
       ctx.fillStyle = black;
+      var label_yoff = 15;
 
       if(selected_module)
       {
@@ -1224,31 +1225,31 @@ var GamePlayScene = function(game, stage)
           self.drawRightAlign(self.v_box);
           ctx.fillStyle = black;
           if(selected_module.output_dongle.attachment && selected_module.input_dongle.attachment)
-            ctx.fillText("multiplier",   self.x + 10, self.v_box.y    +20);
+            ctx.fillText("multiplier",   self.x + 10, self.v_box.y+label_yoff);
           else if(selected_module.output_dongle.attachment)
-            ctx.fillText("contribution",   self.x + 10, self.v_box.y    +20);
-          else if(selected_module.pool && !selected_module.output_dongle.attachment)
+            ctx.fillText("contribution",   self.x + 10, self.v_box.y+label_yoff);
+          else if(!selected_module.output_dongle.attachment)
           {
             if(!selected_module.cache_const)
-              ctx.fillText("starting val",   self.x + 10, self.v_box.y    +20);
+              ctx.fillText("starting val",   self.x + 10, self.v_box.y+label_yoff);
             else
-              ctx.fillText("val",   self.x + 10, self.v_box.y    +20);
+              ctx.fillText("val",   self.x + 10, self.v_box.y+label_yoff);
           }
         }
         if(!selected_module.cache_const)
         {
-          if(!selected_module.lock_min) { self.drawRightAlign(self.min_box); ctx.fillStyle = black; ctx.fillText("min", self.x + 10, self.min_box.y+20); }
-          if(!selected_module.lock_max) { self.drawRightAlign(self.max_box); ctx.fillStyle = black; ctx.fillText("max", self.x + 10, self.max_box.y+20); }
+          if(!selected_module.lock_min) { self.drawRightAlign(self.min_box); ctx.fillStyle = black; ctx.fillText("min", self.x + 10, self.min_box.y+label_yoff); }
+          if(!selected_module.lock_max) { self.drawRightAlign(self.max_box); ctx.fillStyle = black; ctx.fillText("max", self.x + 10, self.max_box.y+label_yoff); }
         }
-        if(!selected_module.cache_const && !selected_module.lock_pool) { self.drawRightAlign(self.pool_box);  ctx.fillStyle = black; ctx.fillText("pool",  self.x + 10, self.pool_box.y+20); }
-        if(!selected_module.lock_graph)                                { self.drawRightAlign(self.graph_box); ctx.fillStyle = black; ctx.fillText("graph", self.x + 10, self.graph_box.y+20); }
+        if(!selected_module.cache_const && !selected_module.lock_pool) { self.drawRightAlign(self.pool_box);  ctx.fillStyle = black; ctx.fillText("pool",  self.x + 10, self.pool_box.y+label_yoff); }
+        if(!selected_module.lock_graph)                                { self.drawRightAlign(self.graph_box); ctx.fillStyle = black; ctx.fillText("graph", self.x + 10, self.graph_box.y+label_yoff); }
 
         if(selected_module.input_dongle.attachment && !selected_module.cache_const)
         {
           self.drawRightAlign(self.operator_box_mul);
-          self.drawRightAlign(self.operator_box_div); ctx.fillStyle = black; ctx.fillText("mul/div",  self.x + 10, self.operator_box_div.y+20);
+          self.drawRightAlign(self.operator_box_div); ctx.fillStyle = black; ctx.fillText("mul/div",  self.x + 10, self.operator_box_div.y+label_yoff);
           self.drawRightAlign(self.sign_box_pos);
-          self.drawRightAlign(self.sign_box_neg);     ctx.fillStyle = black; ctx.fillText("pos/nev",  self.x + 10, self.sign_box_neg.y+20);
+          self.drawRightAlign(self.sign_box_neg);     ctx.fillStyle = black; ctx.fillText("pos/nev",  self.x + 10, self.sign_box_neg.y+label_yoff);
         }
       }
     }
@@ -1637,6 +1638,7 @@ var GamePlayScene = function(game, stage)
       clone.input_dongle = new whippet_dongle( clone.w,0,dongle_img.width/4,clone,clone.shouldShowInputDongle);
       clone.output_dongle = new whippet_dongle(-clone.w,0,dongle_img.width/4,clone,clone.shouldShowOutputDongle);
       self.type = MODULE_TYPE_RELATIONSHIP;
+      self.graph = false;
 
       self.input_dongle.attachment = clone;
 
@@ -2434,7 +2436,7 @@ var GamePlayScene = function(game, stage)
     s_editor = new module_editor();
     s_editor.x = canv.width-100;
     s_editor.y = 100;
-    s_editor.w = 100;
+    s_editor.w = 120;
     s_editor.h = 150;
     s_editor.calc_sub_params();
 
