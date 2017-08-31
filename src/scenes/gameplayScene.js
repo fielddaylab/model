@@ -15,6 +15,7 @@ var GamePlayScene = function(game, stage)
 
   var line_color = "#0A182E";
   var graph_bg_color = "#2A3544";
+  var graph_fg_color = "#1F2D3F";
   var bg_color = "#485973";
 
   var green = "#00AA00";
@@ -303,18 +304,18 @@ var GamePlayScene = function(game, stage)
   {
     if(advance_timer == advance_timer_max && t_i < 4)
     {
-      ctx.font = "20px Roboto";
+      ctx.font = "20px Roboto Mono";
       ctx.fillStyle = black;
       ctx.fillText("Click Advance",70,280);
-      ctx.font = "12px Roboto";
+      ctx.font = "12px Roboto Mono";
     }
     if(t_i >= 4)
     {
-      ctx.font = "20px Roboto";
+      ctx.font = "20px Roboto Mono";
       ctx.fillStyle = black;
       ctx.fillText("Simulation Complete!",380,140);
       ctx.fillText("Click Next Level",380,160);
-      ctx.font = "12px Roboto";
+      ctx.font = "12px Roboto Mono";
     }
   }
   l.click = function(evt)
@@ -342,22 +343,22 @@ var GamePlayScene = function(game, stage)
     if(t_i > 0 && modules[0].plot[1] != targets[0][1])
     {
       ctx.textAlign = "left";
-      ctx.font = "20px Roboto";
+      ctx.font = "20px Roboto Mono";
       ctx.fillStyle = black;
       ctx.fillText("This doesn't conform",450,40);
       ctx.fillText("to our data...",450,60);
       ctx.textAlign = "center";
       ctx.fillText("Select the Growth Rate module",340,150);
       ctx.fillText("And set its contribution",340,170);
-      ctx.font = "12px Roboto";
+      ctx.font = "12px Roboto Mono";
     }
     if(levelComplete() && t_i >= 4)
     {
-      ctx.font = "20px Roboto";
+      ctx.font = "20px Roboto Mono";
       ctx.fillStyle = black;
       ctx.fillText("Simulation Complete!",380,140);
       ctx.fillText("Click Next Level",380,160);
-      ctx.font = "12px Roboto";
+      ctx.font = "12px Roboto Mono";
     }
   }
   l.click = function(evt)
@@ -385,22 +386,22 @@ var GamePlayScene = function(game, stage)
     if(modules[0].plot[0] != targets[0][0])
     {
       ctx.textAlign = "left";
-      ctx.font = "20px Roboto";
+      ctx.font = "20px Roboto Mono";
       ctx.fillStyle = black;
       ctx.fillText("This doesn't conform",450,40);
       ctx.fillText("to our data...",450,60);
       ctx.textAlign = "center";
       ctx.fillText("Select the Tree Height module",340,150);
       ctx.fillText("And set its starting value",340,170);
-      ctx.font = "12px Roboto";
+      ctx.font = "12px Roboto Mono";
     }
     if(levelComplete() && t_i >= 4)
     {
-      ctx.font = "20px Roboto";
+      ctx.font = "20px Roboto Mono";
       ctx.fillStyle = black;
       ctx.fillText("Simulation Complete!",380,140);
       ctx.fillText("Click Next Level",380,160);
-      ctx.font = "12px Roboto";
+      ctx.font = "12px Roboto Mono";
     }
   }
   l.click = function(evt)
@@ -429,30 +430,30 @@ var GamePlayScene = function(game, stage)
     if(t_i > 0 && modules[0].plot[1] != targets[0][1])
     {
       ctx.textAlign = "left";
-      ctx.font = "20px Roboto";
+      ctx.font = "20px Roboto Mono";
       ctx.fillStyle = black;
       ctx.fillText("This doesn't conform",450,40);
       ctx.fillText("to our data...",450,60);
       ctx.textAlign = "center";
       ctx.fillText("Drag out a generator module",340,150);
       ctx.fillText("And set its output to Tree Height",340,170);
-      ctx.font = "12px Roboto";
+      ctx.font = "12px Roboto Mono";
     }
     if(modules.length > 1 && !modules[1].output_dongle.attachment && !dragging_obj)
     {
-      ctx.font = "20px Roboto";
+      ctx.font = "20px Roboto Mono";
       ctx.fillStyle = black;
       ctx.fillText("Drag the output arrow",modules[1].x+modules[1].w/2,modules[1].y-50);
       ctx.fillText("To the tree height module",modules[1].x+modules[1].w/2,modules[1].y-30);
-      ctx.font = "12px Roboto";
+      ctx.font = "12px Roboto Mono";
     }
     if(levelComplete() && t_i >= 4)
     {
-      ctx.font = "20px Roboto";
+      ctx.font = "20px Roboto Mono";
       ctx.fillStyle = black;
       ctx.fillText("Simulation Complete!",380,140);
       ctx.fillText("Click Next Level",380,160);
-      ctx.font = "12px Roboto";
+      ctx.font = "12px Roboto Mono";
     }
   }
   levels.push(l);
@@ -522,31 +523,31 @@ var GamePlayScene = function(game, stage)
     if(t_i > 0 && modules[0].plot[1] != targets[0][1])
     {
       ctx.textAlign = "left";
-      ctx.font = "20px Roboto";
+      ctx.font = "20px Roboto Mono";
       ctx.fillStyle = black;
       ctx.fillText("This doesn't conform",450,40);
       ctx.fillText("to our data...",450,60);
       ctx.textAlign = "center";
       ctx.fillText("Select the Grows relationship",340,150);
       ctx.fillText("And modify its multiplier",340,170);
-      ctx.font = "12px Roboto";
+      ctx.font = "12px Roboto Mono";
     }
     if(t_i > 1 && advance_timer_max >= 250)
     {
-      ctx.font = "12px Roboto";
+      ctx.font = "12px Roboto Mono";
       ctx.textAlign = "left";
       ctx.fillText("(You can speed things up",220,300);
       ctx.fillText("with this slider)",220,315);
-      ctx.font = "12px Roboto";
+      ctx.font = "12px Roboto Mono";
       ctx.textAlign = "center";
     }
     if(levelComplete() && t_i >= 4)
     {
-      ctx.font = "20px Roboto";
+      ctx.font = "20px Roboto Mono";
       ctx.fillStyle = black;
       ctx.fillText("Simulation Complete!",380,140);
       ctx.fillText("Click Next Level",380,160);
-      ctx.font = "12px Roboto";
+      ctx.font = "12px Roboto Mono";
     }
   }
   l.click = function(evt)
@@ -573,31 +574,31 @@ var GamePlayScene = function(game, stage)
     if(t_i > 0 && modules[0].plot[1] != targets[0][1])
     {
       ctx.textAlign = "left";
-      ctx.font = "20px Roboto";
+      ctx.font = "20px Roboto Mono";
       ctx.fillStyle = black;
       ctx.fillText("This doesn't conform",450,40);
       ctx.fillText("to our data...",450,60);
       ctx.textAlign = "center";
       ctx.fillText("Select the Sunlight object",340,150);
       ctx.fillText("And modify its value",340,170);
-      ctx.font = "12px Roboto";
+      ctx.font = "12px Roboto Mono";
     }
     if(t_i > 1 && advance_timer_max >= 250)
     {
-      ctx.font = "12px Roboto";
+      ctx.font = "12px Roboto Mono";
       ctx.textAlign = "left";
       ctx.fillText("(You can speed things up",220,300);
       ctx.fillText("with this slider)",220,315);
-      ctx.font = "12px Roboto";
+      ctx.font = "12px Roboto Mono";
       ctx.textAlign = "center";
     }
     if(levelComplete() && t_i >= 4)
     {
-      ctx.font = "20px Roboto";
+      ctx.font = "20px Roboto Mono";
       ctx.fillStyle = black;
       ctx.fillText("Simulation Complete!",380,140);
       ctx.fillText("Click Next Level",380,160);
-      ctx.font = "12px Roboto";
+      ctx.font = "12px Roboto Mono";
     }
   }
   l.click = function(evt)
@@ -712,11 +713,11 @@ var GamePlayScene = function(game, stage)
     var targets = levels[cur_level_i].primary_module_target_vals;
     if(levelComplete() && t_i >= 4)
     {
-      ctx.font = "20px Roboto";
+      ctx.font = "20px Roboto Mono";
       ctx.fillStyle = black;
       ctx.fillText("Simulation Complete!",380,140);
       ctx.fillText("Click Next Level",380,160);
-      ctx.font = "12px Roboto";
+      ctx.font = "12px Roboto Mono";
     }
   }
   l.click = function(evt)
@@ -795,11 +796,11 @@ var GamePlayScene = function(game, stage)
     var targets = levels[cur_level_i].primary_module_target_vals;
     if(levelComplete() && t_i >= 4)
     {
-      ctx.font = "20px Roboto";
+      ctx.font = "20px Roboto Mono";
       ctx.fillStyle = black;
       ctx.fillText("Simulation Complete!",380,140);
       ctx.fillText("Click Next Level",380,160);
-      ctx.font = "12px Roboto";
+      ctx.font = "12px Roboto Mono";
     }
   }
   l.click = function(evt)
@@ -1020,7 +1021,7 @@ var GamePlayScene = function(game, stage)
       {
         if(!modules[i].graph) continue;
 
-        ctx.strokeStyle = line_color;
+        ctx.strokeStyle = graph_fg_color;
         ctx.fillStyle = graph_bg_color;
         fillR(self.x+(graph_i*(self.w+10)),self.y,self.w,self.h,10,ctx);
         ctx.lineWidth = 2;
@@ -1044,7 +1045,7 @@ var GamePlayScene = function(game, stage)
         ctx.strokeStyle = modules[i].color;
         ctx.fillStyle = modules[i].color;
 
-        ctx.font = "20px Roboto";
+        ctx.font = "20px Roboto Mono";
         ctx.textAlign = "left";
         ctx.fillText(modules[i].title,self.x+(graph_i*(self.w+10))+5,self.y+25)
 
@@ -1064,11 +1065,11 @@ var GamePlayScene = function(game, stage)
               else
                 ctx.stroke();
 
-              ctx.font = "10px Roboto";
+              ctx.font = "10px Roboto Mono";
               ctx.textAlign = "center";
               ctx.fillStyle = white;
               ctx.fillText(targets[j],x,y-8);
-              ctx.font = "20px Roboto";
+              ctx.font = "20px Roboto Mono";
               ctx.textAlign = "left";
               ctx.fillStyle = modules[i].color;
             }
@@ -1076,12 +1077,12 @@ var GamePlayScene = function(game, stage)
             {
               if((j < targets.length && modules[i].plot[j] != targets[j]) || j >= targets.length)
               {
-                ctx.font = "10px Roboto";
+                ctx.font = "10px Roboto Mono";
                 ctx.textAlign = "center";
                 ctx.fillStyle = white;
                 y = self.graph_y + self.graph_h - (clamp(0,1,mapVal(modules[i].min,modules[i].max,0,1,modules[i].plot[j]))*self.graph_h);
                 ctx.fillText(modules[i].plot[j],x,y+14);
-                ctx.font = "20px Roboto";
+                ctx.font = "20px Roboto Mono";
                 ctx.textAlign = "left";
                 ctx.fillStyle = modules[i].color;
               }
@@ -1111,7 +1112,6 @@ var GamePlayScene = function(game, stage)
         graph_i++;
       }
       ctx.textAlign = "center";
-
     }
   }
 
@@ -1123,7 +1123,7 @@ var GamePlayScene = function(game, stage)
     self.w = 0;
     self.h = 0;
 
-    self.title_box = new TextBox(0,0,0,0,"",10,function(v){ if(selected_module.primary) return; var new_v = v; var old_v = selected_module.title; selected_module.title = new_v; });
+    self.title_box = new TextBox(0,0,0,0,"",18,function(v){ if(selected_module.primary) return; var new_v = v; var old_v = selected_module.title; selected_module.title = new_v; });
     self.v_box     = new NumberBox(0,0,0,0,0,0,function(v)
     {
       if(selected_module.lock_value) return;
@@ -2172,11 +2172,11 @@ var GamePlayScene = function(game, stage)
     {
       //new
       ctx.fillStyle = white
-      ctx.font = "10px Roboto";
+      ctx.font = "10px Roboto Mono";
       if(self.type == MODULE_TYPE_MODULE || self.type == MODULE_TYPE_OBJECT)
       {
         ctx.fillText(self.title,self.x+self.w/2,self.y-10);
-        ctx.font = "30px Roboto";
+        ctx.font = "30px Roboto Mono";
         ctx.fillText(fdisp(self.v,2),self.x+self.w/2,self.y+self.h/2+10);
       }
       else
@@ -2184,7 +2184,7 @@ var GamePlayScene = function(game, stage)
         ctx.fillText(self.title,self.x+self.w/2,self.y+10);
         if(self.v != 1 || !self.cache_const)
         {
-          ctx.font = "10px Roboto";
+          ctx.font = "10px Roboto Mono";
           ctx.fillText("x"+fdisp(self.v,2),self.x+self.w/2,self.y+self.h/2+5);
         }
       }
@@ -2855,6 +2855,7 @@ var GamePlayScene = function(game, stage)
         ctx.fillRect(0,0,canv.width,canv.height);
       }
 
+      /*
       var targets = levels[cur_level_i].primary_module_target_vals;
       var titles = levels[cur_level_i].primary_module_target_titles;
       var targets_x = 350;
@@ -2917,6 +2918,7 @@ var GamePlayScene = function(game, stage)
           }
         }
       }
+      */
       levels[cur_level_i].draw();
       ctx.lineWidth = 1;
 
@@ -2924,7 +2926,7 @@ var GamePlayScene = function(game, stage)
       s_ctrls.draw();
       ctx.textAlign = "left";
       if(selected_module) s_editor.draw();
-      ctx.font = "10px Roboto";
+      ctx.font = "10px Roboto Mono";
       if(levels[cur_level_i].speed_enabled)
       {
         ctx.fillStyle = black;
@@ -2935,9 +2937,9 @@ var GamePlayScene = function(game, stage)
     else if(game_state == GAME_STATE_MENU)
     {
       ctx.fillStyle = black;
-      ctx.font = "20px Roboto";
+      ctx.font = "20px Roboto Mono";
       ctx.fillText("Computational Modelling",20,50);
-      ctx.font = "12px Roboto";
+      ctx.font = "12px Roboto Mono";
       for(var i = 0; i < level_btns.length; i++)
       {
         ctx.fillText(levels[i].title.substr(0,18),level_btns[i].x+10,level_btns[i].y+25);
