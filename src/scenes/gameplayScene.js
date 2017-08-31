@@ -18,7 +18,7 @@ var GamePlayScene = function(game, stage)
   var graph_fg_color = "#1F2D3F";
   var bg_color = "#485973";
 
-  var green = "#00AA00";
+  var green = "#92CF48";
   var red = "#AA0000";
   var white = "#FFFFFF";
   var black = "#000000";
@@ -1295,8 +1295,11 @@ var GamePlayScene = function(game, stage)
 
       if(dragger.filter(self)) hit = true;
 
+      if(!selected_module.primary)
+      {
       if(keyer.filter(self.title_box)) hit = true;
       if(dragger.filter(self.title_box)) hit = true;
+      }
       blurer.filter(self.title_box);
 
       if(keyer.filter(self.v_box)) hit = true;
@@ -1346,7 +1349,7 @@ var GamePlayScene = function(game, stage)
 
       if(selected_module)
       {
-        if(!selected_module.primary)    { self.title_box.draw(canv); if(!self.title_box.txt.length) { ctx.fillText("(title)",self.title_box.x+4,self.title_box.y+self.title_box.h*3/4); } }
+        { self.title_box.draw(canv); if(!self.title_box.txt.length) { ctx.fillText("(title)",self.title_box.x+4,self.title_box.y+self.title_box.h*3/4); } }
         if(!selected_module.lock_value)
         {
           self.drawRightAlign(self.v_box);
@@ -2816,8 +2819,11 @@ var GamePlayScene = function(game, stage)
       ctx.textAlign = "left";
       if(!levels[cur_level_i] || levels[cur_level_i].add_module_enabled)
         imageBox(add_btn_img,add_module_btn,ctx);
-      if(dragging_obj && !dragging_obj.primary && !dragging_obj.src) //src implies whippet
+      if(dragging_obj && !dragging_obj.primary && dragging_obj != s_dragger && dragging_obj != s_editor && !dragging_obj.src) //src implies whippet
+      {
+        console.log(dragging_obj);
         imageBox(remove_btn_img,remove_module_btn,ctx);
+      }
       ctx.fillStyle = "#AAAAAA";
       if(levelComplete()) imageBox(next_level_btn_img,next_level_btn,ctx);
       imageBox(menu_btn_img,menu_btn,ctx);
