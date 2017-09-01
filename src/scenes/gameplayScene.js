@@ -206,6 +206,10 @@ var GamePlayScene = function(game, stage)
   wrong_img.src = "assets/wrong.png";
   var right_img = new Image();
   right_img.src = "assets/right.png";
+  var close_img = new Image();
+  close_img.src = "assets/close.png";
+  var girl_img = new Image();
+  girl_img.src = "assets/girl.png";
 
   var level = function()
   {
@@ -877,7 +881,7 @@ var GamePlayScene = function(game, stage)
       self.q = txt;
       self.q_i = 0;
       self.g_viz = 1;
-      self.dom.popDismissableMessage(textToLines(canv, font, self.w, self.q[self.q_i]),self.x,self.y,self.w,self.h,function(){});
+      self.dom.popDismissableMessage(textToLines(canv, font, self.w-120, self.q[self.q_i]),self.x+20,self.y+15,self.w-80,self.h,function(){});
     }
 
     self.dismiss = function()
@@ -885,7 +889,7 @@ var GamePlayScene = function(game, stage)
       if(self.q_i < self.q.length-1)
       {
         self.q_i++;
-        self.dom.popDismissableMessage(textToLines(canv, font, self.w, self.q[self.q_i]),self.x,self.y,self.w,self.h,function(){});
+        self.dom.popDismissableMessage(textToLines(canv, font, self.w-120, self.q[self.q_i]),self.x+20,self.y+15,self.w-80,self.h,function(){});
       }
       else
       {
@@ -897,7 +901,7 @@ var GamePlayScene = function(game, stage)
     {
       self.viz = lerp(self.viz,self.g_viz,0.1);
       self.y = lerp(self.inviz_y,self.viz_y,self.viz);
-      self.dom.y = self.y;
+      self.dom.y = self.y+15;
     }
 
     self.click = function()
@@ -908,8 +912,19 @@ var GamePlayScene = function(game, stage)
 
     self.draw = function()
     {
+      ctx.strokeStyle = graph_fg_color;
+      ctx.fillStyle = graph_bg_color;
+      self.h -= 10;
+      self.w -= 10;
+      fillRBox(self,20,ctx);
+      strokeRBox(self,20,ctx);
+      self.h += 10;
+      self.w += 10;
       ctx.font = font;
+      ctx.fillStyle = white;
       self.dom.draw(font_size,canv);
+      var w = 100;
+      ctx.drawImage(girl_img,self.x+self.w-w-20,self.y+50,w,girl_img.height*(w/girl_img.width));
     }
   }
 
@@ -1072,12 +1087,29 @@ var GamePlayScene = function(game, stage)
     self.w = 0;
     self.h = 0;
 
+    self.graph_x = 0;
+    self.graph_y = 0;
+    self.graph_w = 0;
+    self.graph_h = 0;
+
+    self.subgraph_x = 0;
+    self.subgraph_y = 0;
+    self.subgraph_w = 0;
+    self.subgraph_h = 0;
+
+    self.off_x = 0;
+
     self.calc_sub_params = function()
     {
       self.graph_x = self.x+10;
       self.graph_y = self.y+10;
-      self.graph_w = self.w-20;
+      //self.graph_w = self.w-20; //needs to be explicitly set!
       self.graph_h = self.h-20;
+
+      self.subgraph_x = self.graph_x+10;
+      self.subgraph_y = self.graph_y+10;
+      self.subgraph_w = self.graph_w-20; //needs to be explicitly set!
+      self.subgraph_h = self.graph_h-20;
     }
 
     self.draw = function()
@@ -1093,23 +1125,23 @@ var GamePlayScene = function(game, stage)
 
         ctx.strokeStyle = graph_fg_color;
         ctx.fillStyle = graph_bg_color;
-        fillR(self.x+(graph_i*(self.w+10)),self.y,self.w,self.h,10,ctx);
+        fillR(self.graph_x+self.off_x+(graph_i*(self.graph_w+10)),self.graph_y,self.graph_w,self.graph_h,10,ctx);
         ctx.lineWidth = 2;
-        strokeR(self.x+(graph_i*(self.w+10)),self.y,self.w,self.h,10,ctx);
+        strokeR(self.graph_x+self.off_x+(graph_i*(self.graph_w+10)),self.graph_y,self.graph_w,self.graph_h,10,ctx);
         ctx.beginPath();
         for(var j = 0; j < t_max; j++)
         {
-          var x = self.x+(graph_i*(self.w+10))+10+ (j/(t_max-1)) * self.graph_w;
-          ctx.moveTo(x,self.y);
-          ctx.lineTo(x,self.y+self.h);
+          var x = self.graph_x+self.off_x+(graph_i*(self.graph_w+10))+10+ (j/(t_max-1)) * self.subgraph_w;
+          ctx.moveTo(x,self.graph_y);
+          ctx.lineTo(x,self.graph_y+self.graph_h);
         }
         ctx.stroke();
 
         ctx.strokeStyle = "#888888";
-        x = self.x+(graph_i*(self.w+10))+10+ ((t_i+(1-(advance_timer/advance_timer_max)))/(t_max-1)) * self.graph_w;
+        x = self.graph_x+self.off_x+(graph_i*(self.graph_w+10))+10+ ((t_i+(1-(advance_timer/advance_timer_max)))/(t_max-1)) * self.subgraph_w;
         ctx.beginPath();
-        ctx.moveTo(x,self.y);
-        ctx.lineTo(x,self.y+self.h);
+        ctx.moveTo(x,self.graph_y);
+        ctx.lineTo(x,self.graph_y+self.graph_h);
         ctx.stroke();
 
         ctx.strokeStyle = modules[i].color;
@@ -1117,23 +1149,23 @@ var GamePlayScene = function(game, stage)
 
         ctx.font = "20px Roboto Mono";
         ctx.textAlign = "left";
-        ctx.fillText(modules[i].title,self.x+(graph_i*(self.w+10))+5,self.y+25)
+        ctx.fillText(modules[i].title,self.graph_x+self.off_x+(graph_i*(self.graph_w+10))+5,self.graph_y+25)
 
         ctx.strokeStyle = modules[i].color;
-        x = self.x+(graph_i*(self.w+10))+10;
-        y = self.graph_y+self.graph_h;
+        x = self.graph_x+self.off_x+(graph_i*(self.graph_w+10))+10;
+        y = self.subgraph_y+self.subgraph_h;
 
         ctx.beginPath();
-        if(!isNaN(modules[i].plot[0])) y = self.graph_y+self.graph_h - clamp(0,1,mapVal(modules[i].min,modules[i].max,0,1,modules[i].plot[0]))*self.graph_h;
+        if(!isNaN(modules[i].plot[0])) y = self.subgraph_y+self.subgraph_h - clamp(0,1,mapVal(modules[i].min,modules[i].max,0,1,modules[i].plot[0]))*self.subgraph_h;
         ctx.moveTo(x,y);
         for(var j = 0; j <= t_i || (predict && j < t_max); j++)
         {
-          x = self.x+(graph_i*(self.w+10))+10 + (j/(t_max-1)) * self.graph_w;
-          if(!isNaN(modules[i].plot[j])) y = self.graph_y+self.graph_h - (clamp(0,1,mapVal(modules[i].min,modules[i].max,0,1,modules[i].plot[j]))*self.graph_h);
+          x = self.graph_x+self.off_x+(graph_i*(self.graph_w+10))+10 + (j/(t_max-1)) * self.subgraph_w;
+          if(!isNaN(modules[i].plot[j])) y = self.subgraph_y+self.subgraph_h - (clamp(0,1,mapVal(modules[i].min,modules[i].max,0,1,modules[i].plot[j]))*self.subgraph_h);
           ctx.lineTo(x,y);
           if(j == t_i)
           {
-            if(!isNaN(modules[i].prev_plot)) y = self.graph_y+self.graph_h - (clamp(0,1,mapVal(modules[i].min,modules[i].max,0,1,modules[i].prev_plot))*self.graph_h);
+            if(!isNaN(modules[i].prev_plot)) y = self.subgraph_y+self.subgraph_h - (clamp(0,1,mapVal(modules[i].min,modules[i].max,0,1,modules[i].prev_plot))*self.subgraph_h);
             ctx.lineTo(x,y);
           }
         }
@@ -1144,10 +1176,10 @@ var GamePlayScene = function(game, stage)
           var targets = levels[cur_level_i].primary_module_target_vals[i];
           for(var j = 0; j < targets.length || !isNaN(modules[i].plot[j]); j++)
           {
-            x = self.x+(graph_i*(self.w+10))+10 + (j/(t_max-1)) * self.graph_w;
+            x = self.graph_x+self.off_x+(graph_i*(self.graph_w+10))+10 + (j/(t_max-1)) * self.subgraph_w;
             if(j < targets.length)
             {
-              y = self.graph_y + self.graph_h - (clamp(0,1,mapVal(modules[i].min,modules[i].max,0,1,targets[j]))*self.graph_h);
+              y = self.subgraph_y + self.subgraph_h - (clamp(0,1,mapVal(modules[i].min,modules[i].max,0,1,targets[j]))*self.subgraph_h);
               ctx.beginPath();
               ctx.arc(x,y,4,0,twopi);
               if(j <= t_i && !isNaN(modules[i].plot[j]) && modules[i].plot[j] == targets[j])
@@ -1170,7 +1202,7 @@ var GamePlayScene = function(game, stage)
                 ctx.font = "10px Roboto Mono";
                 ctx.textAlign = "center";
                 ctx.fillStyle = white;
-                y = self.graph_y + self.graph_h - (clamp(0,1,mapVal(modules[i].min,modules[i].max,0,1,modules[i].plot[j]))*self.graph_h);
+                y = self.subgraph_y + self.subgraph_h - (clamp(0,1,mapVal(modules[i].min,modules[i].max,0,1,modules[i].plot[j]))*self.subgraph_h);
                 ctx.fillText(modules[i].plot[j],x,y+14);
                 ctx.font = "20px Roboto Mono";
                 ctx.textAlign = "left";
@@ -2617,10 +2649,11 @@ var GamePlayScene = function(game, stage)
 
     s_dragger = new screen_dragger();
     s_graph = new graph();
-    s_graph.x = 10;
-    s_graph.y = 10;
-    s_graph.w = 200;
+    s_graph.x = 0;
+    s_graph.y = 0;
+    s_graph.w = canv.width;
     s_graph.h = 160;
+    s_graph.graph_w = 200;
     s_graph.calc_sub_params();
     s_ctrls = new controls();
     s_ctrls.w = 400;
@@ -2638,8 +2671,8 @@ var GamePlayScene = function(game, stage)
     s_editor.calc_sub_params();
 
     blurb = new blurb_box();
-    blurb.w = 300;
-    blurb.h = 100;
+    blurb.w = 400;
+    blurb.h = 200;
     blurb.x = canv.width-blurb.w;
     blurb.y = canv.height;
     blurb.inviz_y = canv.height;
