@@ -211,6 +211,21 @@ var GamePlayScene = function(game, stage)
   var girl_img = new Image();
   girl_img.src = "assets/girl.png";
 
+  var lock_img = GenIcon(40,40);
+  lock_img.context.strokeStyle = white;
+  lock_img.context.lineWidth = 2;
+  strokeR(8,20,26,18,4,lock_img.context);
+  lock_img.context.beginPath();
+  lock_img.context.arc(20,20,10,0,pi,true);
+  lock_img.context.stroke();
+  lock_img.context.beginPath();
+  lock_img.context.arc(20,27,4,quarterpi,-(pi+quarterpi),true);
+  lock_img.context.lineTo(16,34);
+  lock_img.context.lineTo(24,34);
+  lock_img.context.closePath();
+  lock_img.context.stroke();
+
+
   var level = function()
   {
     var self = this;
@@ -948,9 +963,11 @@ var GamePlayScene = function(game, stage)
       i:i,
       fill_color:fill_colors[color_i],
       stroke_color:stroke_colors[color_i],
+      prev_level:levels[i-1],
       level:levels[i],
       click:function(evt)
       {
+        if(evt.clickable.prev_level && !evt.clickable.prev_level.complete) return;
         game_state = GAME_STATE_PLAY;
         cur_level_i = evt.clickable.i;
         beginLevel();
@@ -963,9 +980,7 @@ var GamePlayScene = function(game, stage)
         strokeRBox(self,20,ctx);
         ctx.fillStyle = white;
         ctx.fillText(level.title.substr(0,18),self.x+10,self.y+25);
-        //ctx.strokeRect(self.x,self.y,self.w,self.h);
-        //if(level.complete)
-          //ctx.strokeRect(self.x+2,self.y+2,self.w-4,self.h-4);
+        if(self.prev_level && !self.prev_level.complete) ctx.drawImage(lock_img,self.x+self.w-50,self.y+self.h-30,40,40);
       }
     };
     level_btns.push(btn);
@@ -985,6 +1000,7 @@ var GamePlayScene = function(game, stage)
   }
   level_btns[0].x = canv.width-w-20;
   level_btns[0].y = canv.height-h-20;
+  levels[0].complete = true;
 
   var blurb_box = function()
   {
@@ -2860,7 +2876,7 @@ var GamePlayScene = function(game, stage)
     menu_btn.click = function(evt)
     {
       game_state = GAME_STATE_MENU;
-      if(blurb.g_viz == 1) blurb.dismiss();
+      if(blurb.g_viz == 1) blurb.g_viz = 0;
     }
 
     next_level_btn = new btn();
@@ -2874,7 +2890,7 @@ var GamePlayScene = function(game, stage)
       {
         if(levels[cur_level_i]) levels[cur_level_i].complete = true;
         game_state = GAME_STATE_MENU;
-        if(blurb.g_viz == 1) blurb.dismiss();
+        if(blurb.g_viz == 1) blurb.g_viz = 0;
       }
     }
 
