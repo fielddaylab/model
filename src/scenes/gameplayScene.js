@@ -62,6 +62,8 @@ var GamePlayScene = function(game, stage)
   var s_ctrls;
   var s_editor;
 
+  var blurb;
+
   var w;
   var h;
 
@@ -229,6 +231,7 @@ var GamePlayScene = function(game, stage)
     self.complete = false;
     self.click = function(){ self.dismissed++; };
     self.should_allow_creation = function(type){ return true; }
+    self.should_dismiss_blurb = function(){ return true; }
     self.gen_modules = function()
     {
       load_template(self.primary_module_template);
@@ -257,6 +260,7 @@ var GamePlayScene = function(game, stage)
   var beginLevel = function()
   {
     selected_module = 0;
+    if(blurb.g_viz == 1) blurb.dismiss();
     levels[cur_level_i].gen_modules();
     levels[cur_level_i].ready();
     resetGraph();
@@ -307,22 +311,22 @@ var GamePlayScene = function(game, stage)
   {
     selected_module = undefined;
   }
+  l.should_dismiss_blurb = function()
+  {
+    return false;
+  }
   l.draw = function()
   {
-    if(advance_timer == advance_timer_max && t_i < 4)
+    if(t_i < 4)
     {
-      ctx.font = "20px Roboto Mono";
-      ctx.fillStyle = black;
-      ctx.fillText("Click Advance",70,280);
-      ctx.font = "12px Roboto Mono";
+      if(advance_timer == advance_timer_max && blurb.g_viz != 1)
+        blurb.enq(["Click \"Next Step\"!"]);
+      if(advance_timer != advance_timer_max && blurb.g_viz == 1)
+        blurb.dismiss();
     }
-    if(t_i >= 4)
+    if(t_i >= 4 && blurb.g_viz != 1)
     {
-      ctx.font = "20px Roboto Mono";
-      ctx.fillStyle = black;
-      ctx.fillText("Simulation Complete!",380,140);
-      ctx.fillText("Click Next Level",380,160);
-      ctx.font = "12px Roboto Mono";
+      blurb.enq(["Simulation Complete! Click \"Next Level\""]);
     }
   }
   l.click = function(evt)
@@ -344,28 +348,25 @@ var GamePlayScene = function(game, stage)
   {
     selected_module = undefined;
   }
+  l.should_dismiss_blurb = function()
+  {
+    return false;
+  }
   l.draw = function()
   {
     var targets = levels[cur_level_i].primary_module_target_vals;
-    if(t_i > 0 && modules[0].plot[1] != targets[0][1])
+    if(t_i > 0 && modules[0].plot[1] != targets[0][1] && blurb.g_viz != 1)
     {
-      ctx.textAlign = "left";
-      ctx.font = "20px Roboto Mono";
-      ctx.fillStyle = black;
-      ctx.fillText("This doesn't conform",450,40);
-      ctx.fillText("to our data...",450,60);
-      ctx.textAlign = "center";
-      ctx.fillText("Select the Growth Rate module",340,150);
-      ctx.fillText("And set its contribution",340,170);
-      ctx.font = "12px Roboto Mono";
+      blurb.enq(["This doesn't conform to our data... Select the Growth Rate module and set its contribution."]);
     }
     if(levelComplete() && t_i >= 4)
     {
-      ctx.font = "20px Roboto Mono";
-      ctx.fillStyle = black;
-      ctx.fillText("Simulation Complete!",380,140);
-      ctx.fillText("Click Next Level",380,160);
-      ctx.font = "12px Roboto Mono";
+      if(blurb.g_viz != 1)
+        blurb.enq(["Simulation Complete! Click \"Next Level\""]);
+    }
+    else if(t_i > 0 && modules[0].plot[1] == targets[0][1] && blurb.g_viz == 1)
+    {
+      blurb.dismiss();
     }
   }
   l.click = function(evt)
@@ -387,28 +388,25 @@ var GamePlayScene = function(game, stage)
   {
     selected_module = undefined;
   }
+  l.should_dismiss_blurb = function()
+  {
+    return false;
+  }
   l.draw = function()
   {
     var targets = levels[cur_level_i].primary_module_target_vals;
-    if(modules[0].plot[0] != targets[0][0])
+    if(modules[0].plot[0] != targets[0][0] && blurb.g_viz != 1)
     {
-      ctx.textAlign = "left";
-      ctx.font = "20px Roboto Mono";
-      ctx.fillStyle = black;
-      ctx.fillText("This doesn't conform",450,40);
-      ctx.fillText("to our data...",450,60);
-      ctx.textAlign = "center";
-      ctx.fillText("Select the Tree Height module",340,150);
-      ctx.fillText("And set its starting value",340,170);
-      ctx.font = "12px Roboto Mono";
+      blurb.enq(["This doesn't conform to our data... Select the Tree Height module and set its starting value."]);
     }
     if(levelComplete() && t_i >= 4)
     {
-      ctx.font = "20px Roboto Mono";
-      ctx.fillStyle = black;
-      ctx.fillText("Simulation Complete!",380,140);
-      ctx.fillText("Click Next Level",380,160);
-      ctx.font = "12px Roboto Mono";
+      if(blurb.g_viz != 1)
+        blurb.enq(["Simulation Complete! Click \"Next Level\""]);
+    }
+    else if(modules[0].plot[0] == targets[0][0] && blurb.g_viz == 1)
+    {
+      blurb.dismiss();
     }
   }
   l.click = function(evt)
@@ -853,6 +851,68 @@ var GamePlayScene = function(game, stage)
     if(x+w > canv.width) { x = 10; y += h*1.1; }
   }
 
+  var blurb_box = function()
+  {
+    var self = this;
+    self.x = 0;
+    self.y = 0;
+    self.w = 0;
+    self.h = 0;
+
+    self.viz_y = 0;
+    self.inviz_y = 0;
+
+    self.viz = 0;
+    self.g_viz = 0;
+
+    self.q = [];
+    self.q_i = 0;
+
+    var font_size = 20;
+    var font = font_size+"px Roboto Mono";
+    self.dom = new CanvDom(canv);
+
+    self.enq = function(txt)
+    {
+      self.q = txt;
+      self.q_i = 0;
+      self.g_viz = 1;
+      self.dom.popDismissableMessage(textToLines(canv, font, self.w, self.q[self.q_i]),self.x,self.y,self.w,self.h,function(){});
+    }
+
+    self.dismiss = function()
+    {
+      if(self.q_i < self.q.length-1)
+      {
+        self.q_i++;
+        self.dom.popDismissableMessage(textToLines(canv, font, self.w, self.q[self.q_i]),self.x,self.y,self.w,self.h,function(){});
+      }
+      else
+      {
+        self.g_viz = 0;
+      }
+    }
+
+    self.tick = function()
+    {
+      self.viz = lerp(self.viz,self.g_viz,0.1);
+      self.y = lerp(self.inviz_y,self.viz_y,self.viz);
+      self.dom.y = self.y;
+    }
+
+    self.click = function()
+    {
+      if(levels[cur_level_i] && levels[cur_level_i].should_dismiss_blurb && !levels[cur_level_i].should_dismiss_blurb()) return;
+      self.dismiss();
+    }
+
+    self.draw = function()
+    {
+      ctx.font = font;
+      self.dom.draw(font_size,canv);
+    }
+  }
+
   var controls = function()
   {
     var self = this;
@@ -877,7 +937,11 @@ var GamePlayScene = function(game, stage)
     self.advance_btn = new btn();
     self.advance_btn.click = function(evt)
     {
-      if(!dragging_obj && advance_timer == advance_timer_max && t_i < t_max-1) advance_timer--;
+      if(!dragging_obj && advance_timer == advance_timer_max && t_i < t_max-1)
+      {
+        selected_module = 0;
+        advance_timer--;
+      }
     }
 
     self.reset_btn = new btn();
@@ -2046,6 +2110,7 @@ var GamePlayScene = function(game, stage)
     }
     self.drawBlob = function()
     {
+      ctx.font = "10px Roboto Mono";
       t_t = 1-(advance_timer/advance_timer_max);
       if(t_t > 0.1 && self.output_dongle.attachment)
       {
@@ -2572,6 +2637,14 @@ var GamePlayScene = function(game, stage)
     s_editor.h = 150;
     s_editor.calc_sub_params();
 
+    blurb = new blurb_box();
+    blurb.w = 300;
+    blurb.h = 100;
+    blurb.x = canv.width-blurb.w;
+    blurb.y = canv.height;
+    blurb.inviz_y = canv.height;
+    blurb.viz_y = canv.height-blurb.h;
+
     var dragOutModule = function(type,btn,evt)
     {
       if(dragging_obj) return false;
@@ -2736,6 +2809,7 @@ var GamePlayScene = function(game, stage)
     if(game_state == GAME_STATE_PLAY)
     {
       var clicked = false;
+      if(clicker.filter(blurb))                  clicked = true;
       if(selected_module) if(s_editor.filter())  clicked = true;
       if(dragger.filter(s_ctrls.speed_slider))   clicked = true;
       if(clicker.filter(s_ctrls.pause_btn))      clicked = true;
@@ -2794,6 +2868,9 @@ var GamePlayScene = function(game, stage)
       for(var i = 0; i < level_btns.length; i++)
         clicker.filter(level_btns[i]);
     }
+    blurb.tick();
+    s_ctrls.y = blurb.y-s_ctrls.h-10;
+    s_ctrls.calc_sub_params();
 
     clicker.flush();
     dragger.flush();
@@ -2963,6 +3040,7 @@ var GamePlayScene = function(game, stage)
           ctx.strokeRect(level_btns[i].x+2,level_btns[i].y+2,level_btns[i].w-4,level_btns[i].h-4);
       }
     }
+    blurb.draw();
   };
 
   self.cleanup = function()
