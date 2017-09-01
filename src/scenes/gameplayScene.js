@@ -2723,6 +2723,7 @@ var GamePlayScene = function(game, stage)
     menu_btn.click = function(evt)
     {
       game_state = GAME_STATE_MENU;
+      if(blurb.g_viz == 1) blurb.dismiss();
     }
 
     next_level_btn = new btn();
@@ -2732,7 +2733,12 @@ var GamePlayScene = function(game, stage)
     next_level_btn.y = 10+menu_btn.h+10;
     next_level_btn.click = function(evt)
     {
-      if(levelComplete()) nextLevel();
+      if(levelComplete()) //nextLevel();
+      {
+        if(levels[cur_level_i]) levels[cur_level_i].complete = true;
+        game_state = GAME_STATE_MENU;
+        if(blurb.g_viz == 1) blurb.dismiss();
+      }
     }
 
     print_btn = new btn();
