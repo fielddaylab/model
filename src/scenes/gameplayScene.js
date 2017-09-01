@@ -381,7 +381,7 @@ var GamePlayScene = function(game, stage)
 
   l = new level();
   l.title = "Start";
-  l.primary_module_template = "{\"modules\":[{\"title\":\"Tree Height (M)\",\"type\":0,\"v\":1,\"min\":0,\"max\":40,\"pool\":1,\"graph\":1,\"wx\":0.2,\"wy\":-0.08,\"ww\":0.15625,\"wh\":0.15625,\"input\":-1,\"output\":-1,\"lock_move\":false,\"lock_input\":true,\"lock_output\":true,\"lock_value\":false,\"lock_min\":true,\"lock_max\":true,\"lock_pool\":true,\"lock_graph\":true},{\"title\":\"Growth Rate (M/T)\",\"type\":1,\"v\":2,\"min\":0,\"max\":10,\"pool\":1,\"graph\":0,\"wx\":-0.2,\"wy\":-0.08,\"ww\":0.15625,\"wh\":0.15625,\"input\":-1,\"output\":0,\"lock_move\":false,\"lock_input\":true,\"lock_output\":true,\"lock_value\":true,\"lock_min\":true,\"lock_max\":true,\"lock_pool\":true,\"lock_graph\":false}]}";
+  l.primary_module_template = "{\"modules\":[{\"title\":\"Tree Height (M)\",\"type\":0,\"v\":1,\"min\":0,\"max\":20,\"pool\":1,\"graph\":1,\"wx\":0.2,\"wy\":-0.08,\"ww\":0.15625,\"wh\":0.15625,\"input\":-1,\"output\":-1,\"lock_move\":false,\"lock_input\":true,\"lock_output\":true,\"lock_value\":false,\"lock_min\":true,\"lock_max\":true,\"lock_pool\":true,\"lock_graph\":true},{\"title\":\"Growth Rate (M/T)\",\"type\":1,\"v\":2,\"min\":0,\"max\":10,\"pool\":1,\"graph\":0,\"wx\":-0.2,\"wy\":-0.08,\"ww\":0.15625,\"wh\":0.15625,\"input\":-1,\"output\":0,\"lock_move\":false,\"lock_input\":true,\"lock_output\":true,\"lock_value\":true,\"lock_min\":true,\"lock_max\":true,\"lock_pool\":true,\"lock_graph\":false}]}";
   l.primary_module_target_titles.push("Height(M)");
   l.primary_module_target_vals.push([2,4,6,8,10]);
   l.add_module_enabled = false;
@@ -424,7 +424,7 @@ var GamePlayScene = function(game, stage)
   l.primary_module_template = "{\"modules\":[{\"title\":\"Tree Height (M)\",\"type\":0,\"v\":1,\"min\":0,\"max\":10,\"pool\":1,\"graph\":1,\"wx\":0.2,\"wy\":-0.08,\"ww\":0.15625,\"wh\":0.15625,\"input\":-1,\"output\":-1,\"lock_move\":false,\"lock_input\":true,\"lock_output\":true,\"lock_value\":true,\"lock_min\":true,\"lock_max\":true,\"lock_pool\":true,\"lock_graph\":true}]}";
   l.primary_module_target_titles.push("Height(M)");
   l.primary_module_target_vals.push([1,2,3,4,5]);
-  l.add_module_enabled = false;
+  l.add_module_enabled = true;
   l.remove_enabled = false;
   l.play_enabled = false;
   l.speed_enabled = false;
@@ -433,37 +433,31 @@ var GamePlayScene = function(game, stage)
   {
     selected_module = undefined;
   }
+  l.should_dismiss_blurb = function()
+  {
+    return false;
+  }
   l.draw = function()
   {
-    var targets = levels[cur_level_i].primary_module_target_vals;
-    if(t_i > 0 && modules[0].plot[1] != targets[0][1])
+    if(modules.length == 1 && blurb.g_viz != 1)
     {
-      ctx.textAlign = "left";
-      ctx.font = "20px Roboto Mono";
-      ctx.fillStyle = black;
-      ctx.fillText("This doesn't conform",450,40);
-      ctx.fillText("to our data...",450,60);
-      ctx.textAlign = "center";
-      ctx.fillText("Drag out a generator module",340,150);
-      ctx.fillText("And set its output to Tree Height",340,170);
-      ctx.font = "12px Roboto Mono";
+      blurb.enq(["Create a module to reproduce our collected data. Click and drag a new module from the + icon."]);
     }
-    if(modules.length > 1 && !modules[1].output_dongle.attachment && !dragging_obj)
+    if(modules.length == 2 && dragging_obj && blurb.g_viz == 1)
     {
-      ctx.font = "20px Roboto Mono";
-      ctx.fillStyle = black;
-      ctx.fillText("Drag the output arrow",modules[1].x+modules[1].w/2,modules[1].y-50);
-      ctx.fillText("To the tree height module",modules[1].x+modules[1].w/2,modules[1].y-30);
-      ctx.font = "12px Roboto Mono";
+      blurb.dismiss();
+    }
+    else if(modules.length == 2 && !dragging_obj && blurb.g_viz == 0)
+    {
+      blurb.enq(["Hover over your new module, and drag the arrow to the Tree Height Module"]);
     }
     if(levelComplete() && t_i >= 4)
     {
-      ctx.font = "20px Roboto Mono";
-      ctx.fillStyle = black;
-      ctx.fillText("Simulation Complete!",380,140);
-      ctx.fillText("Click Next Level",380,160);
-      ctx.font = "12px Roboto Mono";
+      if(blurb.g_viz != 1)
+        blurb.enq(["Simulation Complete! Click \"Next Level\""]);
     }
+    else if(modules.length == 3 && blurb.g_viz == 1)
+      blurb.dismiss();
   }
   levels.push(l);
 
@@ -472,7 +466,7 @@ var GamePlayScene = function(game, stage)
   l.primary_module_template = "{\"modules\":[]}";
   l.primary_module_target_titles.push("Height(M)");
   l.primary_module_target_vals.push([0.5,1,1.5,2,2.5]);
-  l.add_module_enabled = false;
+  l.add_module_enabled = true;
   l.remove_enabled = false;
   l.play_enabled = false;
   l.speed_enabled = false;
@@ -496,14 +490,24 @@ var GamePlayScene = function(game, stage)
   {
     selected_module = undefined;
   }
+  l.should_dismiss_blurb = function()
+  {
+    return false;
+  }
   l.draw = function()
   {
-    //HACK!!
-    if(modules.length > 1 && modules[0].type == MODULE_TYPE_GENERATOR)
+    if(modules.length == 0 && blurb.g_viz != 1)
     {
-      var m = modules[0];
-      modules[0] = modules[1];
-      modules[1] = m;
+      blurb.enq(["Create the Tree Growth Model from scratch!"]);
+    }
+    if(levelComplete() && t_i >= 4)
+    {
+      if(blurb.g_viz != 1)
+        blurb.enq(["Simulation Complete! Click \"Next Level\""]);
+    }
+    else if(modules.length > 0 && blurb.g_viz == 1)
+    {
+      blurb.dismiss();
     }
   }
   l.click = function(evt)
@@ -2930,33 +2934,15 @@ var GamePlayScene = function(game, stage)
       ctx.fillRect(0,0,canv.width,canv.height);
       ctx.drawImage(bg_img,0,0,canv.width,canv.height);
 
-      ctx.fillStyle = black;
-      ctx.strokeStyle = black;
       ctx.lineWidth = 1;
       ctx.textAlign = "left";
       if(!levels[cur_level_i] || levels[cur_level_i].add_module_enabled)
         imageBox(add_btn_img,add_module_btn,ctx);
       if(dragging_obj && !dragging_obj.primary && dragging_obj != s_dragger && dragging_obj != s_editor && !dragging_obj.src) //src implies whippet
-      {
-        console.log(dragging_obj);
         imageBox(remove_btn_img,remove_module_btn,ctx);
-      }
-      ctx.fillStyle = "#AAAAAA";
-      if(levelComplete()) imageBox(next_level_btn_img,next_level_btn,ctx);
-      imageBox(menu_btn_img,menu_btn,ctx);
-      if(ALLOW_SAVE || !levels[cur_level_i] || levels[cur_level_i].save_enabled)
-      {
-        ctx.fillText("Save",print_btn.x+print_btn.w-2,print_btn.y+10);
-        ctx.strokeRect(print_btn.x,print_btn.y,print_btn.w,print_btn.h);
-      }
-      if(!levels[cur_level_i] || levels[cur_level_i].load_enabled)
-      {
-        ctx.fillText("Load Next",load_btn.x+load_btn.w-2,load_btn.y+10);
-        ctx.fillText("("+load_template_i+"/"+(templates.length-1)+")",load_btn.x+load_btn.w-2,load_btn.y+30);
-        ctx.strokeRect(load_btn.x,load_btn.y,load_btn.w,load_btn.h);
-      }
 
       ctx.textAlign = "center";
+
 
       for(var i = 0; i < modules.length; i++)
         screenSpace(work_cam,canv,modules[i]);
@@ -2985,76 +2971,31 @@ var GamePlayScene = function(game, stage)
         ctx.fillStyle = "rgba(0,0,0,0.05)";
         ctx.fillRect(0,0,canv.width,canv.height);
       }
-
-      /*
-      var targets = levels[cur_level_i].primary_module_target_vals;
-      var titles = levels[cur_level_i].primary_module_target_titles;
-      var targets_x = 350;
-      var targets_y = 10;
-      var xpad = 35;
-      var ypad = 14;
-      if(targets && targets.length)
-      {
-        ctx.lineWidth = 1;
-        ctx.textAlign = "center";
-        ctx.fillStyle = black;
-        var c_t_i = t_i+(1-(advance_timer/advance_timer_max));
-        var window_t_i = min(c_t_i, targets[0].length);
-        var window_y = targets_y+(window_t_i+2)*ypad+2;
-        var box_w = (targets.length*2)*xpad;
-        var box_h = (targets[0].length+3)*ypad+2;
-        ctx.strokeRect(targets_x, targets_y, box_w, box_h);
-        ctx.strokeRect(targets_x, window_y, box_w, ypad);
-        for(var j = 0; j < targets.length; j++)
-        {
-          ctx.fillText(titles[j],targets_x+xpad*(2*j+0.5)+xpad/2,targets_y+ypad);
-          ctx.fillText("data",targets_x+xpad*(2*j)+xpad/2,targets_y+ypad*2);
-          ctx.fillText("sim",targets_x+xpad*(2*j+1)+xpad/2,targets_y+ypad*2);
-        }
-        for(var i = 0; i < targets[0].length; i++) //inverted loop
-        {
-          ctx.fillStyle = black;
-          for(var j = 0; j < targets.length; j++)
-          {
-            ctx.fillStyle = black;
-            var y = targets_y+ypad*(i+3);
-            ctx.fillText(targets[j][i],targets_x+xpad*(2*j)+xpad/2,y); //target
-            if(t_i >= i)
-            {
-              var x = targets_x+xpad*(2*j+1)+xpad/2;
-              if(modules[j] && modules[j].plot[i] == targets[j][i])
-              {
-                ctx.fillStyle = green;
-                ctx.fillText("✔",x+10,y);
-              }
-              else
-              {
-                ctx.fillStyle = red;
-                ctx.fillText("✘",x+10,y);
-              }
-              if(modules[j])
-              ctx.fillText(modules[j].plot[i],x,y); //value
-            }
-          }
-        }
-        ctx.fillStyle = black;
-        for(var j = 0; j < targets.length; j++)
-        {
-          var y = targets_y+ypad*(i+3);
-          ctx.fillText("?",targets_x+xpad*(2*j)+xpad/2,y); //target
-          if(t_i >= i && modules[j])
-          {
-            var x = targets_x+xpad*(2*j+1)+xpad/2;
-            ctx.fillText(modules[j].plot[i],x,y); //value
-          }
-        }
-      }
-      */
       levels[cur_level_i].draw();
       ctx.lineWidth = 1;
 
       s_graph.draw();
       s_ctrls.draw();
+
+      ctx.fillStyle = black;
+      ctx.strokeStyle = black;
+      ctx.lineWidth = 1;
+      ctx.textAlign = "left";
+      ctx.fillStyle = "#AAAAAA";
+      if(levelComplete()) imageBox(next_level_btn_img,next_level_btn,ctx);
+      imageBox(menu_btn_img,menu_btn,ctx);
+      if(ALLOW_SAVE || !levels[cur_level_i] || levels[cur_level_i].save_enabled)
+      {
+        ctx.fillText("Save",print_btn.x+print_btn.w-2,print_btn.y+10);
+        ctx.strokeRect(print_btn.x,print_btn.y,print_btn.w,print_btn.h);
+      }
+      if(!levels[cur_level_i] || levels[cur_level_i].load_enabled)
+      {
+        ctx.fillText("Load Next",load_btn.x+load_btn.w-2,load_btn.y+10);
+        ctx.fillText("("+load_template_i+"/"+(templates.length-1)+")",load_btn.x+load_btn.w-2,load_btn.y+30);
+        ctx.strokeRect(load_btn.x,load_btn.y,load_btn.w,load_btn.h);
+      }
+
       ctx.textAlign = "left";
       if(selected_module) s_editor.draw();
       ctx.font = "10px Roboto Mono";
