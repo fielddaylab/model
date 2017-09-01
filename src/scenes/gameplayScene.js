@@ -530,37 +530,25 @@ var GamePlayScene = function(game, stage)
     advance_timer_max = 250;
     s_ctrls.speed_slider.val = advance_timer_max;
   }
+  l.should_dismiss_blurb = function()
+  {
+    return false;
+  }
   l.draw = function()
   {
     var targets = levels[cur_level_i].primary_module_target_vals;
-    if(t_i > 0 && modules[0].plot[1] != targets[0][1])
+    if(t_i > 0 && modules[0].plot[1] != targets[0][1] && blurb.g_viz != 1)
     {
-      ctx.textAlign = "left";
-      ctx.font = "20px Roboto Mono";
-      ctx.fillStyle = black;
-      ctx.fillText("This doesn't conform",450,40);
-      ctx.fillText("to our data...",450,60);
-      ctx.textAlign = "center";
-      ctx.fillText("Select the Grows relationship",340,150);
-      ctx.fillText("And modify its multiplier",340,170);
-      ctx.font = "12px Roboto Mono";
-    }
-    if(t_i > 1 && advance_timer_max >= 250)
-    {
-      ctx.font = "12px Roboto Mono";
-      ctx.textAlign = "left";
-      ctx.fillText("(You can speed things up",220,300);
-      ctx.fillText("with this slider)",220,315);
-      ctx.font = "12px Roboto Mono";
-      ctx.textAlign = "center";
+      blurb.enq(["This doesn't conform to our data... Select the Grows relationship and modify its multiplier."]);
     }
     if(levelComplete() && t_i >= 4)
     {
-      ctx.font = "20px Roboto Mono";
-      ctx.fillStyle = black;
-      ctx.fillText("Simulation Complete!",380,140);
-      ctx.fillText("Click Next Level",380,160);
-      ctx.font = "12px Roboto Mono";
+      if(blurb.g_viz != 1)
+        blurb.enq(["Simulation Complete! Click \"Next Level\""]);
+    }
+    else if(t_i > 0 && modules[0].plot[1] == targets[0][1] && blurb.g_viz == 1)
+    {
+      blurb.dismiss();
     }
   }
   l.click = function(evt)
@@ -1186,15 +1174,19 @@ var GamePlayScene = function(game, stage)
               y = self.subgraph_y + self.subgraph_h - (clamp(0,1,mapVal(modules[i].min,modules[i].max,0,1,targets[j]))*self.subgraph_h);
               ctx.beginPath();
               ctx.arc(x,y,4,0,twopi);
+              var off = -8;
               if(j <= t_i && !isNaN(modules[i].plot[j]) && modules[i].plot[j] == targets[j])
                 ctx.fill();
               else
+              {
                 ctx.stroke();
+                if(j <= t_i && modules[i].plot[j] > targets[j]) off = 14;
+              }
 
               ctx.font = "10px Roboto Mono";
               ctx.textAlign = "center";
               ctx.fillStyle = white;
-              ctx.fillText(targets[j],x,y-8);
+              ctx.fillText(targets[j],x,y+off);
               ctx.font = "20px Roboto Mono";
               ctx.textAlign = "left";
               ctx.fillStyle = modules[i].color;
@@ -1207,7 +1199,9 @@ var GamePlayScene = function(game, stage)
                 ctx.textAlign = "center";
                 ctx.fillStyle = white;
                 y = self.subgraph_y + self.subgraph_h - (clamp(0,1,mapVal(modules[i].min,modules[i].max,0,1,modules[i].plot[j]))*self.subgraph_h);
-                ctx.fillText(modules[i].plot[j],x,y+14);
+                var off = 14;
+                if(j < targets.length && modules[i].plot[j] > targets[j]) off = -8;
+                ctx.fillText(modules[i].plot[j],x,y+off);
                 ctx.font = "20px Roboto Mono";
                 ctx.textAlign = "left";
                 ctx.fillStyle = modules[i].color;
