@@ -285,7 +285,7 @@ var GamePlayScene = function(game, stage)
   var l;
 
   l = new level();
-  l.title = "sandbox";
+  l.title = "Sandbox";
   l.primary_module_template = "{\"modules\":[]}";
   l.add_module_enabled = true;
   l.remove_enabled = true;
@@ -293,6 +293,11 @@ var GamePlayScene = function(game, stage)
   l.speed_enabled = true;
   l.ready = function()
   {
+    blurb.enq(["This is a sandbox- you can create whatever models you want here!","Feel free to play around, or click \"Next Level\" to begin the tutorial!","Once you've figured things out, come back here and build whatever you want!"]);
+  }
+  l.should_dismiss_blurb = function()
+  {
+    return true;
   }
   l.draw = function()
   {
@@ -517,7 +522,7 @@ var GamePlayScene = function(game, stage)
 
   l = new level();
   l.title = "Relationships";
-  l.primary_module_template = "{\"modules\":[{\"title\":\"Plant Population\",\"type\":0,\"v\":1,\"min\":0,\"max\":50,\"pool\":1,\"graph\":1,\"wx\":0.3,\"wy\":-0.08,\"ww\":0.15625,\"wh\":0.15625,\"input\":-1,\"output\":-1,\"lock_move\":false,\"lock_input\":true,\"lock_output\":true,\"lock_value\":true,\"lock_min\":true,\"lock_max\":true,\"lock_pool\":true,\"lock_graph\":false},{\"title\":\"Sunlight\",\"type\":0,\"v\":10,\"min\":0,\"max\":50,\"pool\":1,\"graph\":0,\"wx\":-0.6,\"wy\":-0.08,\"ww\":0.15625,\"wh\":0.15625,\"input\":-1,\"output\":-1,\"lock_move\":false,\"lock_input\":true,\"lock_output\":true,\"lock_value\":true,\"lock_min\":true,\"lock_max\":true,\"lock_pool\":true,\"lock_graph\":false},{\"title\":\"Grows\",\"type\":2,\"v\":0.5,\"min\":0,\"max\":10,\"pool\":1,\"graph\":0,\"wx\":-0.2,\"wy\":0.1,\"ww\":0.15625,\"wh\":0.15625,\"input\":1,\"output\":0,\"lock_move\":false,\"lock_input\":true,\"lock_output\":true,\"lock_value\":false,\"lock_min\":true,\"lock_max\":true,\"lock_pool\":true,\"lock_graph\":false}]}";
+  l.primary_module_template = "{\"modules\":[{\"title\":\"Plant Population\",\"type\":0,\"v\":1,\"min\":0,\"max\":50,\"pool\":1,\"graph\":1,\"wx\":0.3,\"wy\":-0.08,\"ww\":0.15625,\"wh\":0.15625,\"input\":-1,\"output\":-1,\"lock_move\":false,\"lock_input\":true,\"lock_output\":true,\"lock_value\":true,\"lock_min\":true,\"lock_max\":true,\"lock_pool\":true,\"lock_graph\":false},{\"title\":\"Sunlight\",\"type\":3,\"v\":10,\"min\":0,\"max\":50,\"pool\":1,\"graph\":0,\"wx\":-0.6,\"wy\":-0.08,\"ww\":0.15625,\"wh\":0.15625,\"input\":-1,\"output\":-1,\"lock_move\":false,\"lock_input\":true,\"lock_output\":true,\"lock_value\":true,\"lock_min\":true,\"lock_max\":true,\"lock_pool\":true,\"lock_graph\":false},{\"title\":\"Grows\",\"type\":2,\"v\":0.5,\"min\":0,\"max\":10,\"pool\":1,\"graph\":0,\"wx\":-0.2,\"wy\":0.1,\"ww\":0.15625,\"wh\":0.15625,\"input\":1,\"output\":0,\"lock_move\":false,\"lock_input\":true,\"lock_output\":true,\"lock_value\":false,\"lock_min\":true,\"lock_max\":true,\"lock_pool\":true,\"lock_graph\":false}]}";
   l.primary_module_target_titles.push("Plants");
   l.primary_module_target_vals.push([1,2,3,4,5]);
   l.add_module_enabled = false;
@@ -558,7 +563,7 @@ var GamePlayScene = function(game, stage)
 
   l = new level();
   l.title = "Source";
-  l.primary_module_template = "{\"modules\":[{\"title\":\"Plant Population\",\"type\":0,\"v\":1,\"min\":0,\"max\":50,\"pool\":1,\"graph\":1,\"wx\":0.3,\"wy\":-0.08,\"ww\":0.15625,\"wh\":0.15625,\"input\":-1,\"output\":-1,\"lock_move\":false,\"lock_input\":true,\"lock_output\":true,\"lock_value\":true,\"lock_min\":true,\"lock_max\":true,\"lock_pool\":true,\"lock_graph\":false},{\"title\":\"Sunlight\",\"type\":0,\"v\":10,\"min\":0,\"max\":50,\"pool\":1,\"graph\":1,\"wx\":-0.6,\"wy\":-0.08,\"ww\":0.15625,\"wh\":0.15625,\"input\":-1,\"output\":-1,\"lock_move\":false,\"lock_input\":true,\"lock_output\":true,\"lock_value\":false,\"lock_min\":true,\"lock_max\":true,\"lock_pool\":true,\"lock_graph\":false},{\"title\":\"Grows\",\"type\":2,\"v\":0.5,\"min\":0,\"max\":10,\"pool\":1,\"graph\":0,\"wx\":-0.2,\"wy\":0.1,\"ww\":0.15625,\"wh\":0.15625,\"input\":1,\"output\":0,\"lock_move\":false,\"lock_input\":true,\"lock_output\":true,\"lock_value\":true,\"lock_min\":true,\"lock_max\":true,\"lock_pool\":true,\"lock_graph\":false}]}";
+  l.primary_module_template = "{\"modules\":[{\"title\":\"Plant Population\",\"type\":0,\"v\":1,\"min\":0,\"max\":50,\"pool\":1,\"graph\":1,\"wx\":0.3,\"wy\":-0.08,\"ww\":0.15625,\"wh\":0.15625,\"input\":-1,\"output\":-1,\"lock_move\":false,\"lock_input\":true,\"lock_output\":true,\"lock_value\":true,\"lock_min\":true,\"lock_max\":true,\"lock_pool\":true,\"lock_graph\":false},{\"title\":\"Sunlight\",\"type\":3,\"v\":10,\"min\":0,\"max\":50,\"pool\":1,\"graph\":1,\"wx\":-0.6,\"wy\":-0.08,\"ww\":0.15625,\"wh\":0.15625,\"input\":-1,\"output\":-1,\"lock_move\":false,\"lock_input\":true,\"lock_output\":true,\"lock_value\":false,\"lock_min\":true,\"lock_max\":true,\"lock_pool\":true,\"lock_graph\":false},{\"title\":\"Grows\",\"type\":2,\"v\":0.5,\"min\":0,\"max\":10,\"pool\":1,\"graph\":0,\"wx\":-0.2,\"wy\":0.1,\"ww\":0.15625,\"wh\":0.15625,\"input\":1,\"output\":0,\"lock_move\":false,\"lock_input\":true,\"lock_output\":true,\"lock_value\":true,\"lock_min\":true,\"lock_max\":true,\"lock_pool\":true,\"lock_graph\":false}]}";
   l.primary_module_target_titles.push("Plants");
   l.primary_module_target_vals.push([1,2,3,4,5]);
   l.add_module_enabled = false;
@@ -569,37 +574,25 @@ var GamePlayScene = function(game, stage)
   {
     selected_module = undefined;
   }
+  l.should_dismiss_blurb = function()
+  {
+    return false;
+  }
   l.draw = function()
   {
     var targets = levels[cur_level_i].primary_module_target_vals;
-    if(t_i > 0 && modules[0].plot[1] != targets[0][1])
+    if(t_i > 0 && modules[0].plot[1] != targets[0][1] && blurb.g_viz != 1)
     {
-      ctx.textAlign = "left";
-      ctx.font = "20px Roboto Mono";
-      ctx.fillStyle = black;
-      ctx.fillText("This doesn't conform",450,40);
-      ctx.fillText("to our data...",450,60);
-      ctx.textAlign = "center";
-      ctx.fillText("Select the Sunlight object",340,150);
-      ctx.fillText("And modify its value",340,170);
-      ctx.font = "12px Roboto Mono";
-    }
-    if(t_i > 1 && advance_timer_max >= 250)
-    {
-      ctx.font = "12px Roboto Mono";
-      ctx.textAlign = "left";
-      ctx.fillText("(You can speed things up",220,300);
-      ctx.fillText("with this slider)",220,315);
-      ctx.font = "12px Roboto Mono";
-      ctx.textAlign = "center";
+      blurb.enq(["This doesn't conform to our data... Select the Sunlight module and modify its value."]);
     }
     if(levelComplete() && t_i >= 4)
     {
-      ctx.font = "20px Roboto Mono";
-      ctx.fillStyle = black;
-      ctx.fillText("Simulation Complete!",380,140);
-      ctx.fillText("Click Next Level",380,160);
-      ctx.font = "12px Roboto Mono";
+      if(blurb.g_viz != 1)
+        blurb.enq(["Simulation Complete! Click \"Next Level\""]);
+    }
+    else if(t_i > 0 && modules[0].plot[1] == targets[0][1] && blurb.g_viz == 1)
+    {
+      blurb.dismiss();
     }
   }
   l.click = function(evt)
@@ -609,7 +602,7 @@ var GamePlayScene = function(game, stage)
 
   l = new level();
   l.title = "Two ways";
-  l.primary_module_template = "{\"modules\":[{\"title\":\"Plant Population\",\"type\":0,\"v\":1,\"min\":0,\"max\":80,\"pool\":1,\"graph\":1,\"wx\":0.3,\"wy\":-0.08,\"ww\":0.15625,\"wh\":0.15625,\"input\":-1,\"output\":-1,\"lock_move\":false,\"lock_input\":true,\"lock_output\":true,\"lock_value\":false,\"lock_min\":true,\"lock_max\":true,\"lock_pool\":true,\"lock_graph\":false},{\"title\":\"Sunlight\",\"type\":0,\"v\":10,\"min\":0,\"max\":50,\"pool\":1,\"graph\":1,\"wx\":-0.6,\"wy\":-0.08,\"ww\":0.15625,\"wh\":0.15625,\"input\":-1,\"output\":-1,\"lock_move\":false,\"lock_input\":true,\"lock_output\":true,\"lock_value\":false,\"lock_min\":true,\"lock_max\":true,\"lock_pool\":true,\"lock_graph\":false},{\"title\":\"Grows\",\"type\":2,\"v\":0.5,\"min\":0,\"max\":10,\"pool\":1,\"graph\":0,\"wx\":-0.2,\"wy\":0.1,\"ww\":0.15625,\"wh\":0.15625,\"input\":1,\"output\":0,\"lock_move\":false,\"lock_input\":true,\"lock_output\":true,\"lock_value\":false,\"lock_min\":true,\"lock_max\":true,\"lock_pool\":true,\"lock_graph\":false}]}";
+  l.primary_module_template = "{\"modules\":[{\"title\":\"Plant Population\",\"type\":0,\"v\":1,\"min\":0,\"max\":80,\"pool\":1,\"graph\":1,\"wx\":0.3,\"wy\":-0.08,\"ww\":0.15625,\"wh\":0.15625,\"input\":-1,\"output\":-1,\"lock_move\":false,\"lock_input\":true,\"lock_output\":true,\"lock_value\":false,\"lock_min\":true,\"lock_max\":true,\"lock_pool\":true,\"lock_graph\":false},{\"title\":\"Sunlight\",\"type\":3,\"v\":10,\"min\":0,\"max\":50,\"pool\":1,\"graph\":1,\"wx\":-0.6,\"wy\":-0.08,\"ww\":0.15625,\"wh\":0.15625,\"input\":-1,\"output\":-1,\"lock_move\":false,\"lock_input\":true,\"lock_output\":true,\"lock_value\":false,\"lock_min\":true,\"lock_max\":true,\"lock_pool\":true,\"lock_graph\":false},{\"title\":\"Grows\",\"type\":2,\"v\":0.5,\"min\":0,\"max\":10,\"pool\":1,\"graph\":0,\"wx\":-0.2,\"wy\":0.1,\"ww\":0.15625,\"wh\":0.15625,\"input\":1,\"output\":0,\"lock_move\":false,\"lock_input\":true,\"lock_output\":true,\"lock_value\":false,\"lock_min\":true,\"lock_max\":true,\"lock_pool\":true,\"lock_graph\":false}]}";
   l.primary_module_target_titles.push("Plants");
   l.primary_module_target_vals.push([10,20,30,40,50]);
   l.add_module_enabled = false;
@@ -620,8 +613,26 @@ var GamePlayScene = function(game, stage)
   {
     selected_module = undefined;
   }
+  l.should_dismiss_blurb = function()
+  {
+    return false;
+  }
   l.draw = function()
   {
+    var targets = levels[cur_level_i].primary_module_target_vals;
+    if(modules[0].plot[0] != targets[0][0] && blurb.g_viz != 1)
+    {
+      blurb.enq(["This doesn't conform to our data... Find a way to modify it so that it does! Hint: There's more than one solution!"]);
+    }
+    if(levelComplete() && t_i >= 4)
+    {
+      if(blurb.g_viz != 1)
+        blurb.enq(["Simulation Complete! Click \"Next Level\""]);
+    }
+    else if(modules[0].plot[0] == targets[0][0] && blurb.g_viz == 1)
+    {
+      blurb.dismiss();
+    }
   }
   l.click = function(evt)
   {
@@ -630,7 +641,7 @@ var GamePlayScene = function(game, stage)
 
   l = new level();
   l.title = "Connect the dots";
-  l.primary_module_template = "{\"modules\":[{\"title\":\"Plant Population\",\"type\":0,\"v\":1,\"min\":0,\"max\":50,\"pool\":1,\"graph\":1,\"wx\":0.3,\"wy\":-0.08,\"ww\":0.15625,\"wh\":0.15625,\"input\":-1,\"output\":-1,\"lock_move\":false,\"lock_input\":true,\"lock_output\":true,\"lock_value\":false,\"lock_min\":true,\"lock_max\":true,\"lock_pool\":true,\"lock_graph\":false},{\"title\":\"Sunlight\",\"type\":0,\"v\":10,\"min\":0,\"max\":50,\"pool\":1,\"graph\":1,\"wx\":-0.6,\"wy\":-0.08,\"ww\":0.15625,\"wh\":0.15625,\"input\":-1,\"output\":-1,\"lock_move\":false,\"lock_input\":true,\"lock_output\":true,\"lock_value\":false,\"lock_min\":true,\"lock_max\":true,\"lock_pool\":true,\"lock_graph\":false}]}";
+  l.primary_module_template = "{\"modules\":[{\"title\":\"Plant Population\",\"type\":0,\"v\":1,\"min\":0,\"max\":50,\"pool\":1,\"graph\":1,\"wx\":0.3,\"wy\":-0.08,\"ww\":0.15625,\"wh\":0.15625,\"input\":-1,\"output\":-1,\"lock_move\":false,\"lock_input\":true,\"lock_output\":true,\"lock_value\":false,\"lock_min\":true,\"lock_max\":true,\"lock_pool\":true,\"lock_graph\":false},{\"title\":\"Sunlight\",\"type\":3,\"v\":10,\"min\":0,\"max\":50,\"pool\":1,\"graph\":1,\"wx\":-0.6,\"wy\":-0.08,\"ww\":0.15625,\"wh\":0.15625,\"input\":-1,\"output\":-1,\"lock_move\":false,\"lock_input\":true,\"lock_output\":false,\"lock_value\":true,\"lock_min\":true,\"lock_max\":true,\"lock_pool\":true,\"lock_graph\":false}]}";
   l.primary_module_target_titles.push("Plants");
   l.primary_module_target_vals.push([1,2,3,4,5]);
   l.add_module_enabled = false;
@@ -642,8 +653,26 @@ var GamePlayScene = function(game, stage)
   {
     selected_module = undefined;
   }
+  l.should_dismiss_blurb = function()
+  {
+    return false;
+  }
   l.draw = function()
   {
+    var targets = levels[cur_level_i].primary_module_target_vals;
+    if(modules[0].plot[1] != targets[0][1] && blurb.g_viz != 1)
+    {
+      blurb.enq(["Create the Relationship required to model our collected data."]);
+    }
+    if(levelComplete() && t_i >= 4)
+    {
+      if(blurb.g_viz != 1)
+        blurb.enq(["Simulation Complete! Click \"Next Level\""]);
+    }
+    else if(modules[0].plot[1] == targets[0][1] && blurb.g_viz == 1)
+    {
+      blurb.dismiss();
+    }
   }
   l.click = function(evt)
   {
@@ -664,8 +693,26 @@ var GamePlayScene = function(game, stage)
   {
     selected_module = undefined;
   }
+  l.should_dismiss_blurb = function()
+  {
+    return false;
+  }
   l.draw = function()
   {
+    var targets = levels[cur_level_i].primary_module_target_vals;
+    if(modules[0].plot[1] != targets[0][1] && blurb.g_viz != 1)
+    {
+      blurb.enq(["Create the Relationship required to model our collected data."]);
+    }
+    if(levelComplete() && t_i >= 4)
+    {
+      if(blurb.g_viz != 1)
+        blurb.enq(["Simulation Complete! Click \"Next Level\""]);
+    }
+    else if(modules[0].plot[1] == targets[0][1] && blurb.g_viz == 1)
+    {
+      blurb.dismiss();
+    }
   }
   l.click = function(evt)
   {
@@ -686,8 +733,26 @@ var GamePlayScene = function(game, stage)
   {
     selected_module = undefined;
   }
+  l.should_dismiss_blurb = function()
+  {
+    return false;
+  }
   l.draw = function()
   {
+    var targets = levels[cur_level_i].primary_module_target_vals;
+    if(modules[0].plot[1] != targets[0][1] && blurb.g_viz != 1)
+    {
+      blurb.enq(["Create the Relationship required to model our collected data."]);
+    }
+    if(levelComplete() && t_i >= 4)
+    {
+      if(blurb.g_viz != 1)
+        blurb.enq(["Simulation Complete! Click \"Next Level\""]);
+    }
+    else if(modules[0].plot[1] == targets[0][1] && blurb.g_viz == 1)
+    {
+      blurb.dismiss();
+    }
   }
   l.click = function(evt)
   {
@@ -696,7 +761,7 @@ var GamePlayScene = function(game, stage)
 
   l = new level();
   l.title = "Chain Reaction";
-  l.primary_module_template = "{\"modules\":[{\"title\":\"Plants\",\"type\":0,\"v\":1,\"min\":0,\"max\":10,\"pool\":1,\"graph\":1,\"wx\":0,\"wy\":-0.125,\"ww\":0.15625,\"wh\":0.15625,\"input\":-1,\"output\":-1,\"lock_move\":false,\"lock_input\":true,\"lock_output\":true,\"lock_value\":true,\"lock_min\":true,\"lock_max\":true,\"lock_pool\":true,\"lock_graph\":true},{\"title\":\"Bugs\",\"type\":0,\"v\":1,\"min\":0,\"max\":10,\"pool\":1,\"graph\":1,\"wx\":0.5,\"wy\":-0.125,\"ww\":0.15625,\"wh\":0.15625,\"input\":-1,\"output\":-1,\"lock_move\":false,\"lock_input\":true,\"lock_output\":false,\"lock_value\":true,\"lock_min\":true,\"lock_max\":true,\"lock_pool\":true,\"lock_graph\":true},{\"title\":\"Sunlight\",\"type\":0,\"v\":10,\"min\":0,\"max\":50,\"pool\":1,\"graph\":1,\"wx\":-0.5,\"wy\":-0.125,\"ww\":0.15625,\"wh\":0.15625,\"input\":-1,\"output\":-1,\"lock_move\":false,\"lock_input\":true,\"lock_output\":false,\"lock_value\":true,\"lock_min\":true,\"lock_max\":true,\"lock_pool\":true,\"lock_graph\":true},{\"title\":\"feed\",\"type\":2,\"v\":0.1,\"min\":0,\"max\":10,\"pool\":1,\"graph\":0,\"wx\":0.25,\"wy\":0,\"ww\":0.15625,\"wh\":0.15625,\"input\":0,\"output\":1,\"lock_move\":false,\"lock_input\":false,\"lock_output\":false,\"lock_value\":false,\"lock_min\":false,\"lock_max\":false,\"lock_pool\":false,\"lock_graph\":false}]}";
+  l.primary_module_template = "{\"modules\":[{\"title\":\"Plants\",\"type\":0,\"v\":1,\"min\":0,\"max\":10,\"pool\":1,\"graph\":1,\"wx\":0,\"wy\":-0.125,\"ww\":0.15625,\"wh\":0.15625,\"input\":-1,\"output\":-1,\"lock_move\":false,\"lock_input\":true,\"lock_output\":true,\"lock_value\":true,\"lock_min\":true,\"lock_max\":true,\"lock_pool\":true,\"lock_graph\":true},{\"title\":\"Bugs\",\"type\":0,\"v\":1,\"min\":0,\"max\":10,\"pool\":1,\"graph\":1,\"wx\":0.5,\"wy\":-0.125,\"ww\":0.15625,\"wh\":0.15625,\"input\":-1,\"output\":-1,\"lock_move\":false,\"lock_input\":true,\"lock_output\":false,\"lock_value\":true,\"lock_min\":true,\"lock_max\":true,\"lock_pool\":true,\"lock_graph\":true},{\"title\":\"Sunlight\",\"type\":3,\"v\":10,\"min\":0,\"max\":50,\"pool\":1,\"graph\":1,\"wx\":-0.5,\"wy\":-0.125,\"ww\":0.15625,\"wh\":0.15625,\"input\":-1,\"output\":-1,\"lock_move\":false,\"lock_input\":true,\"lock_output\":true,\"lock_value\":true,\"lock_min\":true,\"lock_max\":true,\"lock_pool\":true,\"lock_graph\":true},{\"title\":\"feed\",\"type\":2,\"v\":0.1,\"min\":0,\"max\":10,\"pool\":1,\"graph\":0,\"wx\":0.25,\"wy\":0,\"ww\":0.15625,\"wh\":0.15625,\"input\":0,\"output\":1,\"lock_move\":false,\"lock_input\":false,\"lock_output\":false,\"lock_value\":false,\"lock_min\":false,\"lock_max\":false,\"lock_pool\":false,\"lock_graph\":false}]}";
   l.primary_module_target_titles.push("Plants");
   l.primary_module_target_vals.push([1,2,3,4,5]);
   l.primary_module_target_titles.push("Bugs");
@@ -709,16 +774,25 @@ var GamePlayScene = function(game, stage)
   {
     selected_module = undefined;
   }
+  l.should_dismiss_blurb = function()
+  {
+    return false;
+  }
   l.draw = function()
   {
     var targets = levels[cur_level_i].primary_module_target_vals;
+    if(modules[0].plot[1] != targets[0][1] && blurb.g_viz != 1)
+    {
+      blurb.enq(["Create the Relationship required to model our collected data."]);
+    }
     if(levelComplete() && t_i >= 4)
     {
-      ctx.font = "20px Roboto Mono";
-      ctx.fillStyle = black;
-      ctx.fillText("Simulation Complete!",380,140);
-      ctx.fillText("Click Next Level",380,160);
-      ctx.font = "12px Roboto Mono";
+      if(blurb.g_viz != 1)
+        blurb.enq(["Simulation Complete! Click \"Next Level\""]);
+    }
+    else if(modules[0].plot[1] == targets[0][1] && blurb.g_viz == 1)
+    {
+      blurb.dismiss();
     }
   }
   l.click = function(evt)
@@ -743,8 +817,26 @@ var GamePlayScene = function(game, stage)
   {
     selected_module = undefined;
   }
+  l.should_dismiss_blurb = function()
+  {
+    return false;
+  }
   l.draw = function()
   {
+    var targets = levels[cur_level_i].primary_module_target_vals;
+    if(modules[0].plot[1] != targets[0][1] && blurb.g_viz != 1)
+    {
+      blurb.enq(["Create the Relationship required to model our collected data."]);
+    }
+    if(levelComplete() && t_i >= 4)
+    {
+      if(blurb.g_viz != 1)
+        blurb.enq(["Simulation Complete! Click \"Next Level\""]);
+    }
+    else if(modules[0].plot[1] == targets[0][1] && blurb.g_viz == 1)
+    {
+      blurb.dismiss();
+    }
   }
   l.click = function(evt)
   {
@@ -767,8 +859,26 @@ var GamePlayScene = function(game, stage)
   {
     selected_module = undefined;
   }
+  l.should_dismiss_blurb = function()
+  {
+    return false;
+  }
   l.draw = function()
   {
+    var targets = levels[cur_level_i].primary_module_target_vals;
+    if(modules[0].plot[1] != targets[0][1] && blurb.g_viz != 1)
+    {
+      blurb.enq(["Create the Relationship required to model our collected data."]);
+    }
+    if(levelComplete() && t_i >= 4)
+    {
+      if(blurb.g_viz != 1)
+        blurb.enq(["Simulation Complete! Click \"Next Level\""]);
+    }
+    else if(modules[0].plot[1] == targets[0][1] && blurb.g_viz == 1)
+    {
+      blurb.dismiss();
+    }
   }
   l.click = function(evt)
   {
@@ -792,16 +902,25 @@ var GamePlayScene = function(game, stage)
   {
     selected_module = undefined;
   }
+  l.should_dismiss_blurb = function()
+  {
+    return false;
+  }
   l.draw = function()
   {
     var targets = levels[cur_level_i].primary_module_target_vals;
+    if(modules[0].plot[1] != targets[0][1] && blurb.g_viz != 1)
+    {
+      blurb.enq(["Create the Relationship required to model our collected data."]);
+    }
     if(levelComplete() && t_i >= 4)
     {
-      ctx.font = "20px Roboto Mono";
-      ctx.fillStyle = black;
-      ctx.fillText("Simulation Complete!",380,140);
-      ctx.fillText("Click Next Level",380,160);
-      ctx.font = "12px Roboto Mono";
+      if(blurb.g_viz != 1)
+        blurb.enq(["Simulation Complete! Click \"Next Level\""]);
+    }
+    else if(modules[0].plot[1] == targets[0][1] && blurb.g_viz == 1)
+    {
+      blurb.dismiss();
     }
   }
   l.click = function(evt)
@@ -810,10 +929,14 @@ var GamePlayScene = function(game, stage)
   }
   levels.push(l);
 
-  var x = 10;
-  var y = 80;
   var w = 150;
-  var h = 40;
+  var h = 70;
+  var x = 20;
+  var y = 80-h-20;
+  var fill_colors = [bg_color,"#4487A3","#92375D","#3D8787","#933D2A","#5F9532"];
+  var stroke_colors = ["#FFFFFF","#82D6F4","#E16D9F","#60C5C5","#E96A4E","#A8F665"];
+  var color_i = 0;
+  var imgs = [];
   for(var i = 0; i < levels.length; i++)
   {
     var btn =
@@ -823,17 +946,31 @@ var GamePlayScene = function(game, stage)
       w:w,
       h:h,
       i:i,
+      fill_color:fill_colors[color_i],
+      stroke_color:stroke_colors[color_i],
       level:levels[i],
       click:function(evt)
       {
         game_state = GAME_STATE_PLAY;
         cur_level_i = evt.clickable.i;
         beginLevel();
+      },
+      draw:function(level,self)
+      {
+        ctx.fillStyle = self.fill_color;
+        fillRBox(self,20,ctx);
+        ctx.strokeStyle = self.stroke_color;
+        strokeRBox(self,20,ctx);
+        ctx.fillStyle = white;
+        ctx.fillText(level.title.substr(0,18),self.x+10,self.y+25);
+        //ctx.strokeRect(self.x,self.y,self.w,self.h);
+        //if(level.complete)
+          //ctx.strokeRect(self.x+2,self.y+2,self.w-4,self.h-4);
       }
     };
     level_btns.push(btn);
 
-    x += w*1.1;
+    x += w+20;
     switch(i)
     {
       case 0:
@@ -841,11 +978,13 @@ var GamePlayScene = function(game, stage)
       case 9:
       case 11:
       case 14:
-        { x = 10; y += h*1.1; }
+        { x = 20; y += h+40; color_i++; }
         break;
     }
-    if(x+w > canv.width) { x = 10; y += h*1.1; }
+    if(x+w > canv.width) { x = 20; y += h+40; }
   }
+  level_btns[0].x = canv.width-w-20;
+  level_btns[0].y = canv.height-h-20;
 
   var blurb_box = function()
   {
@@ -2770,6 +2909,7 @@ var GamePlayScene = function(game, stage)
 
     game_state = GAME_STATE_MENU;
     beginLevel();
+    blurb.g_viz = 0;
   };
 
   var resetGraph = function()
@@ -2921,12 +3061,13 @@ var GamePlayScene = function(game, stage)
   self.draw = function()
   {
     ctx.lineWidth = 1;
+    //ctx.fillStyle = bg_color;
+    //ctx.fillRect(0,0,canv.width,canv.height);
+    ctx.drawImage(bg_img,0,0,canv.width,canv.height);
+
     if(game_state == GAME_STATE_PLAY)
     {
       calc_caches();
-      ctx.fillStyle = bg_color;
-      ctx.fillRect(0,0,canv.width,canv.height);
-      ctx.drawImage(bg_img,0,0,canv.width,canv.height);
 
       ctx.lineWidth = 1;
       ctx.textAlign = "left";
@@ -3002,17 +3143,20 @@ var GamePlayScene = function(game, stage)
     }
     else if(game_state == GAME_STATE_MENU)
     {
-      ctx.fillStyle = black;
+      ctx.fillStyle = white;
       ctx.font = "20px Roboto Mono";
       ctx.fillText("Computational Modelling",20,50);
       ctx.font = "12px Roboto Mono";
       for(var i = 0; i < level_btns.length; i++)
-      {
-        ctx.fillText(levels[i].title.substr(0,18),level_btns[i].x+10,level_btns[i].y+25);
-        ctx.strokeRect(level_btns[i].x,level_btns[i].y,level_btns[i].w,level_btns[i].h);
-        if(levels[i].complete)
-          ctx.strokeRect(level_btns[i].x+2,level_btns[i].y+2,level_btns[i].w-4,level_btns[i].h-4);
-      }
+        level_btns[i].draw(levels[i],level_btns[i]);
+      var x = 30;
+      var y = 90;
+      var h = 70;
+      ctx.fillText("Grow a Tree",x,y); y += h+40;
+      ctx.fillText("Natural Relationships",x,y); y += h+40;
+      ctx.fillText("Complexity",x,y); y += h+40;
+      ctx.fillText("Chain Reactions",x,y); y += h+40;
+      ctx.fillText("Big Systems",x,y); y += h+40;
     }
     blurb.draw();
   };
