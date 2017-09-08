@@ -797,7 +797,7 @@ var GamePlayScene = function(game, stage)
 
   l = new level();
   l.title = "Polynomial Growth";
-  l.primary_module_template = "{\"modules\":[{\"title\":\"Minnow Population\",\"type\":3,\"v\":1,\"min\":0,\"max\":20,\"pool\":1,\"graph\":1,\"wx\":-0.3,\"wy\":-0.08,\"ww\":0.15625,\"wh\":0.15625,\"input\":-1,\"output\":-1,\"lock_move\":false,\"lock_input\":true,\"lock_output\":false,\"lock_value\":true,\"lock_min\":true,\"lock_max\":true,\"lock_pool\":true,\"lock_graph\":false},{\"title\":\"Walleye Population\",\"type\":0,\"v\":1,\"min\":0,\"max\":20,\"pool\":1,\"graph\":1,\"wx\":0.2,\"wy\":-0.08,\"ww\":0.15625,\"wh\":0.15625,\"input\":-1,\"output\":-1,\"lock_move\":false,\"lock_input\":true,\"lock_output\":true,\"lock_value\":true,\"lock_min\":true,\"lock_max\":true,\"lock_pool\":true,\"lock_graph\":false},{\"title\":\"DNR Minnow Dump\",\"type\":1,\"v\":1,\"min\":0,\"max\":20,\"pool\":1,\"graph\":0,\"wx\":-0.7,\"wy\":-0.08,\"ww\":0.15625,\"wh\":0.15625,\"input\":-1,\"output\":0,\"lock_move\":false,\"lock_input\":true,\"lock_output\":true,\"lock_value\":true,\"lock_min\":true,\"lock_max\":true,\"lock_pool\":true,\"lock_graph\":false}]}";
+  l.primary_module_template = "{\"modules\":[{\"title\":\"Minnow Population\",\"type\":3,\"v\":1,\"min\":0,\"max\":20,\"pool\":1,\"graph\":1,\"wx\":-0.3,\"wy\":-0.08,\"ww\":0.15625,\"wh\":0.15625,\"input\":-1,\"output\":-1,\"lock_move\":false,\"lock_input\":true,\"lock_output\":false,\"lock_value\":true,\"lock_min\":true,\"lock_max\":true,\"lock_pool\":true,\"lock_graph\":false},{\"title\":\"Walleye Population\",\"type\":0,\"v\":1,\"min\":0,\"max\":20,\"pool\":1,\"graph\":1,\"wx\":0.2,\"wy\":-0.08,\"ww\":0.15625,\"wh\":0.15625,\"input\":-1,\"output\":-1,\"lock_move\":false,\"lock_input\":true,\"lock_output\":true,\"lock_value\":true,\"lock_min\":true,\"lock_max\":true,\"lock_pool\":true,\"lock_graph\":false},{\"title\":\"DNR Minnow Dump\",\"type\":3,\"v\":1,\"min\":0,\"max\":10,\"pool\":1,\"graph\":0,\"wx\":-0.75,\"wy\":-0.08,\"ww\":0.11363636363636363,\"wh\":0.11363636363636365,\"input\":-1,\"output\":-1,\"lock_move\":false,\"lock_input\":true,\"lock_output\":true,\"lock_value\":false,\"lock_min\":false,\"lock_max\":false,\"lock_pool\":false,\"lock_graph\":false},{\"title\":\"\",\"type\":2,\"v\":1,\"min\":0,\"max\":10,\"pool\":1,\"graph\":false,\"wx\":-0.5,\"wy\":-0.08,\"ww\":0.11363636363636363,\"wh\":0.11363636363636365,\"input\":2,\"output\":0,\"lock_move\":false,\"lock_input\":true,\"lock_output\":true,\"lock_value\":false,\"lock_min\":false,\"lock_max\":false,\"lock_pool\":false,\"lock_graph\":false}]}"
   l.primary_module_target_titles.push("Minnow");
   l.primary_module_target_titles.push("Walleye");
   l.primary_module_target_vals.push([1,2,3,4,5]);
@@ -831,7 +831,7 @@ var GamePlayScene = function(game, stage)
 
   l = new level();
   l.title = "Understanding Polynomial Growth";
-  l.primary_module_template = "{\"modules\":[{\"title\":\"Minnow Population\",\"type\":3,\"v\":1,\"min\":0,\"max\":20,\"pool\":1,\"graph\":1,\"wx\":-0.3,\"wy\":-0.08,\"ww\":0.15625,\"wh\":0.15625,\"input\":-1,\"output\":-1,\"lock_move\":false,\"lock_input\":true,\"lock_output\":false,\"lock_value\":false,\"lock_min\":true,\"lock_max\":true,\"lock_pool\":false,\"lock_graph\":false},{\"title\":\"Walleye Population\",\"type\":0,\"v\":1,\"min\":0,\"max\":30,\"pool\":1,\"graph\":1,\"wx\":0.2,\"wy\":-0.08,\"ww\":0.15625,\"wh\":0.15625,\"input\":-1,\"output\":-1,\"lock_move\":false,\"lock_input\":true,\"lock_output\":true,\"lock_value\":false,\"lock_min\":true,\"lock_max\":true,\"lock_pool\":true,\"lock_graph\":false},{\"title\":\"DNR Minnow Dump\",\"type\":1,\"v\":1,\"min\":0,\"max\":20,\"pool\":1,\"graph\":0,\"wx\":-0.7,\"wy\":-0.08,\"ww\":0.15625,\"wh\":0.15625,\"input\":-1,\"output\":0,\"lock_move\":false,\"lock_input\":true,\"lock_output\":true,\"lock_value\":false,\"lock_min\":true,\"lock_max\":true,\"lock_pool\":true,\"lock_graph\":false}]}";
+  l.primary_module_template = "{\"modules\":[{\"title\":\"Minnow Population\",\"type\":3,\"v\":1,\"min\":0,\"max\":20,\"pool\":1,\"graph\":1,\"wx\":-0.3,\"wy\":-0.08,\"ww\":0.15625,\"wh\":0.15625,\"input\":-1,\"output\":-1,\"lock_move\":false,\"lock_input\":true,\"lock_output\":false,\"lock_value\":true,\"lock_min\":true,\"lock_max\":true,\"lock_pool\":true,\"lock_graph\":false},{\"title\":\"Walleye Population\",\"type\":0,\"v\":1,\"min\":0,\"max\":20,\"pool\":1,\"graph\":1,\"wx\":0.2,\"wy\":-0.08,\"ww\":0.15625,\"wh\":0.15625,\"input\":-1,\"output\":-1,\"lock_move\":false,\"lock_input\":true,\"lock_output\":true,\"lock_value\":true,\"lock_min\":true,\"lock_max\":true,\"lock_pool\":true,\"lock_graph\":false},{\"title\":\"DNR Minnow Dump\",\"type\":3,\"v\":1,\"min\":0,\"max\":10,\"pool\":1,\"graph\":0,\"wx\":-0.75,\"wy\":-0.08,\"ww\":0.11363636363636363,\"wh\":0.11363636363636365,\"input\":-1,\"output\":-1,\"lock_move\":false,\"lock_input\":true,\"lock_output\":true,\"lock_value\":false,\"lock_min\":false,\"lock_max\":false,\"lock_pool\":false,\"lock_graph\":false},{\"title\":\"\",\"type\":2,\"v\":1,\"min\":0,\"max\":10,\"pool\":1,\"graph\":false,\"wx\":-0.5,\"wy\":-0.08,\"ww\":0.11363636363636363,\"wh\":0.11363636363636365,\"input\":2,\"output\":0,\"lock_move\":false,\"lock_input\":true,\"lock_output\":true,\"lock_value\":false,\"lock_min\":false,\"lock_max\":false,\"lock_pool\":false,\"lock_graph\":false}]}"
   l.primary_module_target_titles.push("Minnow");
   l.primary_module_target_titles.push("Walleye");
   l.primary_module_target_vals.push([1,2,3,4,5]);
@@ -922,11 +922,10 @@ var GamePlayScene = function(game, stage)
       level:levels[i],
       click:function(evt)
       {
-        if(evt.clickable.prev_level && !evt.clickable.prev_level.complete) return;
+        if(!ALLOW_NEXT && (evt.clickable.prev_level && !evt.clickable.prev_level.complete)) return;
         game_state = GAME_STATE_PLAY;
         cur_level_i = evt.clickable.i;
         beginLevel();
-        //load_template("{\"modules\":[{\"title\":\"Tree Height (M)\",\"type\":0,\"v\":1,\"min\":0,\"max\":10,\"pool\":1,\"graph\":1,\"wx\":0.2,\"wy\":-0.08,\"ww\":0.15625,\"wh\":0.15625,\"input\":-1,\"output\":-1,\"lock_move\":false,\"lock_input\":true,\"lock_output\":true,\"lock_value\":true,\"lock_min\":true,\"lock_max\":true,\"lock_pool\":true,\"lock_graph\":true},{\"title\":\"Growth Rate (M/T)\",\"type\":1,\"v\":1,\"min\":0,\"max\":10,\"pool\":1,\"graph\":0,\"wx\":-0.2,\"wy\":-0.08,\"ww\":0.15625,\"wh\":0.15625,\"input\":-1,\"output\":0,\"lock_move\":false,\"lock_input\":true,\"lock_output\":true,\"lock_value\":true,\"lock_min\":true,\"lock_max\":true,\"lock_pool\":true,\"lock_graph\":false}]}");
       },
       draw:function(level,self)
       {
@@ -3035,7 +3034,6 @@ var GamePlayScene = function(game, stage)
     blurer.flush();
 
     n_ticks++;
-    //if(n_ticks % 1000 == 0) print_template();
   };
 
   self.draw = function()
