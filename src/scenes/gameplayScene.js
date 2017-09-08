@@ -225,6 +225,7 @@ var GamePlayScene = function(game, stage)
   lock_img.context.closePath();
   lock_img.context.stroke();
 
+  var audio = new Audio("assets/blip.mp3");
 
   var level = function()
   {
@@ -1826,6 +1827,12 @@ var GamePlayScene = function(game, stage)
       }
       if(!self.attachment)
         deleteModule(self.src);
+      if(self.src.input_dongle.attachment == self.src.output_dongle.attachment)
+      {
+        self.src.x -= 50;
+        self.src.y -= 50;
+        worldSpaceCoords(work_cam,canv,self.src);
+      }
       resetGraph();
       s_editor.center();
     }
