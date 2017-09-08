@@ -2010,7 +2010,9 @@ var GamePlayScene = function(game, stage)
       if(selected_module == self) selected_module = clone;
     }
 
-    self.hover   = function(){}
+    self.known_hover_x = 0;
+    self.known_hover_y = 0;
+    self.hover   = function(evt){ self.known_hover_x = evt.doX; self.known_hover_y = evt.doY; }
     self.unhover = function(){}
 
     var glob_0 = {x:0,y:0};
@@ -2569,8 +2571,15 @@ var GamePlayScene = function(game, stage)
         }
         else
         {
-          self.output_dongle.off.x = 20;
-          self.output_dongle.off.y = 0;
+          if(
+            self.shouldShowOutputDongle()
+          )
+          {
+            self.output_dongle.off.x = self.known_hover_x-(self.x+self.w/2);
+            self.output_dongle.off.y = self.known_hover_y-(self.y+self.h/2);
+            safenormvec(self.output_dongle.off,1,self.output_dongle.off);
+            mulvec(self.output_dongle.off,20,self.output_dongle.off);
+          }
         }
       }
 
@@ -2752,7 +2761,7 @@ var GamePlayScene = function(game, stage)
   {
     clicker = new Clicker({source:stage.dispCanv.canvas});
     dragger = new Dragger({source:stage.dispCanv.canvas});
-    hoverer = new Hoverer({source:stage.dispCanv.canvas});
+    hoverer = new PersistentHoverer({source:stage.dispCanv.canvas});
     keyer   = new Keyer(  {source:stage.dispCanv.canvas});
     blurer  = new Blurer( {source:stage.dispCanv.canvas});
 
