@@ -1326,6 +1326,24 @@ var GamePlayScene = function(game, stage)
       }
       ctx.textAlign = "center";
     }
+
+    self.drag_start_off_x = 0;
+    self.drag_start_x = 0;
+    self.dragStart = function(evt)
+    {
+      self.drag_start_off_x = self.off_x;
+      self.drag_start_x = evt.doX;
+    }
+    self.drag = function(evt)
+    {
+      self.off_x = self.drag_start_off_x+(evt.doX-self.drag_start_x);
+      if(self.off_x < (canv.width-((self.graph_w+10)*modules.length+10))) self.off_x = canv.width-((self.graph_w+10)*modules.length+10);
+      if(self.off_x > 0) self.off_x = 0;
+    }
+    self.dragFinish = function(evt)
+    {
+
+    }
   }
 
   var module_editor = function()
@@ -2977,6 +2995,7 @@ var GamePlayScene = function(game, stage)
       if(clicker.filter(menu_btn))               clicked = true;
       if(clicker.filter(print_btn))              clicked = true;
       if(clicker.filter(load_btn))               clicked = true;
+      if(dragger.filter(s_graph))                clicked = true;
       if(dragger.filter(add_module_btn))         clicked = true;
       clicker.filter(levels[cur_level_i]);
       if(!clicked)
