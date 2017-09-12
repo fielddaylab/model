@@ -1567,6 +1567,16 @@ var GamePlayScene = function(game, stage)
       obj.draw(canv);
       ctx.textAlign = "left";
     }
+    var prevy = 0;
+    var drawPrevLine = function(new_prevy)
+    {
+      ctx.strokeStyle = "#DDDDDD";
+      ctx.beginPath();
+      ctx.moveTo(self.x,prevy);
+      ctx.lineTo(self.x+self.w,prevy);
+      ctx.stroke();
+      prevy = new_prevy;
+    }
     self.draw = function()
     {
       ctx.font = "10px Roboto Mono";
@@ -1578,37 +1588,40 @@ var GamePlayScene = function(game, stage)
 
       if(selected_module)
       {
-        { self.title_box.draw(canv); if(!self.title_box.txt.length) { ctx.fillText("(title)",self.title_box.x+4,self.title_box.y+self.title_box.h*3/4); } }
+        { self.title_box.draw(canv); if(!self.title_box.txt.length) { ctx.fillText("(title)",self.title_box.x+4,self.title_box.y+self.title_box.h*3/4); } prevy = self.title_box.y+self.title_box.h+5; }
         if(!selected_module.lock_value)
         {
           self.drawRightAlign(self.v_box);
           ctx.fillStyle = black;
           if(selected_module.output_dongle.attachment && selected_module.input_dongle.attachment)
-            ctx.fillText("multiplier",   self.x + 10, self.v_box.y+label_yoff);
+          {  ctx.fillText("multiplier",   self.x + 10, self.v_box.y+label_yoff); drawPrevLine(self.v_box.y+self.v_box.h+5); }
           else if(selected_module.output_dongle.attachment)
-            ctx.fillText("contribution",   self.x + 10, self.v_box.y+label_yoff);
+          { ctx.fillText("contribution",   self.x + 10, self.v_box.y+label_yoff); drawPrevLine(self.v_box.y+self.v_box.h+5); }
           else if(!selected_module.output_dongle.attachment)
           {
             if(!selected_module.cache_const)
               ctx.fillText("starting val",   self.x + 10, self.v_box.y+label_yoff);
             else
               ctx.fillText("val",   self.x + 10, self.v_box.y+label_yoff);
+            drawPrevLine(self.v_box.y+self.v_box.h+5);
           }
         }
         if(!selected_module.cache_const)
         {
-          if(!selected_module.lock_min) { self.drawRightAlign(self.min_box); ctx.fillStyle = black; ctx.fillText("min", self.x + 10, self.min_box.y+label_yoff); }
-          if(!selected_module.lock_max) { self.drawRightAlign(self.max_box); ctx.fillStyle = black; ctx.fillText("max", self.x + 10, self.max_box.y+label_yoff); }
+          if(!selected_module.lock_min) { self.drawRightAlign(self.min_box); ctx.fillStyle = black; ctx.fillText("min", self.x + 10, self.min_box.y+label_yoff); drawPrevLine(self.min_box.y+self.min_box.h+5); }
+          if(!selected_module.lock_max) { self.drawRightAlign(self.max_box); ctx.fillStyle = black; ctx.fillText("max", self.x + 10, self.max_box.y+label_yoff); drawPrevLine(self.max_box.y+self.max_box.h+5); }
         }
-        if(!selected_module.cache_const && !selected_module.lock_pool) { self.drawRightAlign(self.pool_box);  ctx.fillStyle = black; ctx.fillText("pool",  self.x + 10, self.pool_box.y+label_yoff); }
-        if(!selected_module.lock_graph)                                { self.drawRightAlign(self.graph_box); ctx.fillStyle = black; ctx.fillText("graph", self.x + 10, self.graph_box.y+label_yoff); }
+        if(!selected_module.cache_const && !selected_module.lock_pool) { self.drawRightAlign(self.pool_box);  ctx.fillStyle = black; ctx.fillText("pool",  self.x + 10, self.pool_box.y+label_yoff);  drawPrevLine(self.pool_box.y+self.pool_box.h+5); }
+        if(!selected_module.lock_graph)                                { self.drawRightAlign(self.graph_box); ctx.fillStyle = black; ctx.fillText("graph", self.x + 10, self.graph_box.y+label_yoff); drawPrevLine(self.graph_box.y+self.graph_box.h+5); }
 
         if(selected_module.input_dongle.attachment && !selected_module.cache_const)
         {
           self.drawRightAlign(self.operator_box_mul);
           self.drawRightAlign(self.operator_box_div); ctx.fillStyle = black; ctx.fillText("mul/div",  self.x + 10, self.operator_box_div.y+label_yoff);
+          drawPrevLine(self.operator_box_mul.y+self.operator_box_mul.h+5);
           self.drawRightAlign(self.sign_box_pos);
           self.drawRightAlign(self.sign_box_neg);     ctx.fillStyle = black; ctx.fillText("pos/neg",  self.x + 10, self.sign_box_neg.y+label_yoff);
+          drawPrevLine(self.sign_box_pos.y+self.sign_box_pos.h+5);
         }
       }
     }
