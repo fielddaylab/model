@@ -2,7 +2,7 @@ var GamePlayScene = function(game, stage)
 {
   var self = this;
 
-  var ALLOW_NEXT = false;
+  var ALLOW_NEXT = true;
   var ALLOW_SAVE = false;
 
   var precision = 2;
@@ -202,6 +202,12 @@ var GamePlayScene = function(game, stage)
   speed_fast_btn_img.src = "assets/speed_fast_btn.png";
   var speed_fast_btn_down_img = new Image();
   speed_fast_btn_down_img.src = "assets/speed_fast_btn_down.png";
+  var hex_bg_img = new Image();
+  hex_bg_img.src = "assets/hex_bg.png";
+  var hex_fill_img = new Image();
+  hex_fill_img.src = "assets/hex_fill.png";
+  var hex_neg_fill_img = new Image();
+  hex_neg_fill_img.src = "assets/hex_fill.png";
   var wrong_img = new Image();
   wrong_img.src = "assets/wrong.png";
   var right_img = new Image();
@@ -1602,7 +1608,7 @@ var GamePlayScene = function(game, stage)
           self.drawRightAlign(self.operator_box_mul);
           self.drawRightAlign(self.operator_box_div); ctx.fillStyle = black; ctx.fillText("mul/div",  self.x + 10, self.operator_box_div.y+label_yoff);
           self.drawRightAlign(self.sign_box_pos);
-          self.drawRightAlign(self.sign_box_neg);     ctx.fillStyle = black; ctx.fillText("pos/nev",  self.x + 10, self.sign_box_neg.y+label_yoff);
+          self.drawRightAlign(self.sign_box_neg);     ctx.fillStyle = black; ctx.fillText("pos/neg",  self.x + 10, self.sign_box_neg.y+label_yoff);
         }
       }
     }
@@ -2192,8 +2198,8 @@ var GamePlayScene = function(game, stage)
             {
               self.body_cache.rel_const = GenIcon(self.w+self.body_cache.buffer*2,self.h+self.body_cache.buffer*2);
               self.body_cache.rel_const.context.fillStyle = bg_color;
-              fillR(self.body_cache.buffer+self.w/4,self.body_cache.buffer+self.h/3,self.w/2,self.h/3,5,self.body_cache.rel_const.context);
               self.body_cache.rel_const.context.strokeStyle = line_color;
+              fillR(self.body_cache.buffer+self.w/4,self.body_cache.buffer+self.h/3,self.w/2,self.h/3,5,self.body_cache.rel_const.context);
               strokeR(self.body_cache.buffer+self.w/4,self.body_cache.buffer+self.h/3,self.w/2,self.h/3,5,self.body_cache.rel_const.context);
             }
             ctx.drawImage(self.body_cache.rel_const,self.x-self.body_cache.buffer,self.y-self.body_cache.buffer,self.w+self.body_cache.buffer*2,self.h+self.body_cache.buffer*2);
@@ -2201,17 +2207,60 @@ var GamePlayScene = function(game, stage)
         }
         else
         {
+          var b = 10;
           if(!self.body_cache.rel_nconst)
           {
             self.body_cache.rel_nconst = GenIcon(self.w+self.body_cache.buffer*2,self.h+self.body_cache.buffer*2);
             self.body_cache.rel_nconst.context.fillStyle = bg_color;
             self.body_cache.rel_nconst.context.strokeStyle = line_color;
-            self.body_cache.rel_nconst.context.beginPath();
-            self.body_cache.rel_nconst.context.arc(self.body_cache.buffer+self.w/2,self.body_cache.buffer+self.h/2,self.w/4,0,twopi);
-            self.body_cache.rel_nconst.context.fill();
-            self.body_cache.rel_nconst.context.stroke();
+
+            self.body_cache.rel_nconst.context.drawImage(hex_bg_img,self.body_cache.buffer+b,self.body_cache.buffer+b,self.w-b*2,self.h-b*2);
           }
           ctx.drawImage(self.body_cache.rel_nconst,self.x-self.body_cache.buffer,self.y-self.body_cache.buffer,self.w+self.body_cache.buffer*2,self.h+self.body_cache.buffer*2);
+
+          //body
+          var s = self.w-b*2;
+          //ctx.drawImage(module_img(self.color),self.x+self.w/2-s/2,self.y+self.h/2-s/2,s,s);
+          var p  = 1;
+          var zp = 0;
+          if(self.min != self.max)
+          {
+            p  = clamp(0,1,mapVal(self.min,self.max,0,1,self.v_lag));
+            zp = mapVal(self.min,self.max,0,1,clamp(self.min,self.max,0));
+          }
+
+          var ymin;
+          var ymax;
+          var img = 0;
+          if(p > zp)
+          {
+            var s = self.w-b*2-3;
+            ymin = self.y+self.h/2-s/2+(s*(1-p));
+            ymax = self.y+self.h/2-s/2+(s*(1-zp));
+            img = hex_fill_img;
+          }
+          else if(zp > p)
+          {
+            var s = self.w-b*2-3;
+            ymin = self.y+self.h/2-s/2+(s*(1-zp));
+            ymax = self.y+self.h/2-s/2+(s*(1-p));
+            img = hex_neg_fill_img;
+          }
+
+          if(img)
+          {
+            ctx.save();
+            ctx.beginPath();
+            ctx.moveTo(self.x,       ymin);
+            ctx.lineTo(self.x+self.w,ymin);
+            ctx.lineTo(self.x+self.w,ymax);
+            ctx.lineTo(self.x,       ymax);
+            ctx.closePath();
+            ctx.clip();
+            ctx.drawImage(img,self.x+self.w/2-s/2,self.y+self.h/2-s/2,s,s);
+            ctx.restore();
+          }
+
         }
       }
 
