@@ -1004,7 +1004,7 @@ var GamePlayScene = function(game, stage)
     self.q = [];
     self.q_i = 0;
 
-    var font_size = 20;
+    var font_size = 14;
     var font = font_size+"px Roboto Mono";
     self.dom = new CanvDom(canv);
 
@@ -1013,7 +1013,7 @@ var GamePlayScene = function(game, stage)
       self.q = txt;
       self.q_i = 0;
       self.g_viz = 1;
-      self.dom.popDismissableMessage(textToLines(canv, font, self.w-120, self.q[self.q_i]),self.x+20,self.y+15,self.w-80,self.h,function(){});
+      self.dom.popDismissableMessage(textToLines(canv, font, self.w-160, self.q[self.q_i]),self.x+20,self.y+15,self.w-80,self.h,function(){});
     }
 
     self.dismiss = function()
@@ -1021,7 +1021,7 @@ var GamePlayScene = function(game, stage)
       if(self.q_i < self.q.length-1)
       {
         self.q_i++;
-        self.dom.popDismissableMessage(textToLines(canv, font, self.w-120, self.q[self.q_i]),self.x+20,self.y+15,self.w-80,self.h,function(){});
+        self.dom.popDismissableMessage(textToLines(canv, font, self.w-160, self.q[self.q_i]),self.x+20,self.y+15,self.w-80,self.h,function(){});
       }
       else
       {
@@ -1054,9 +1054,9 @@ var GamePlayScene = function(game, stage)
       self.w += 10;
       ctx.font = font;
       ctx.fillStyle = white;
-      self.dom.draw(font_size,canv);
-      var w = 100;
-      ctx.drawImage(girl_img,self.x+self.w-w-20,self.y+50,w,girl_img.height*(w/girl_img.width));
+      self.dom.draw(font_size+4,canv);
+      var w = 160;
+      ctx.drawImage(girl_img,self.x+self.w-w-20,self.y+20,w,girl_img.height*(w/girl_img.width));
     }
   }
 
@@ -2955,8 +2955,9 @@ var GamePlayScene = function(game, stage)
       ctx.fillStyle = bg_color;
       fillR(modal.x,modal.y,modal.w,modal.h,10,ctx);
       ctx.fillStyle = white;
-      ctx.fillText("This model is a good match",modal.x+20,modal.y+150);
-      ctx.fillText("for our data!",modal.x+20,modal.y+190);
+      ctx.font = "18px Roboto Mono";
+      ctx.fillText("This model is a good match",modal.x+30,modal.y+150);
+      ctx.fillText("for our data!",modal.x+30,modal.y+190);
       ctx.fillText("Continue",modal.x+modal.w/2-40,modal.y+270);
       ctx.drawImage(win_img,modal.x+modal.w/2-80,modal.y-80,160,180);
     }
