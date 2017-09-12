@@ -1345,6 +1345,25 @@ var GamePlayScene = function(game, stage)
             }
           }
         }
+        else
+        {
+          for(var j = 0; !isNaN(modules[i].plot[j]); j++)
+          {
+            x = self.graph_x+self.off_x+(graph_i*(self.graph_w+10))+10 + (j/(t_max-1)) * self.subgraph_w;
+            if(j <= t_i && !isNaN(modules[i].plot[j]))
+            {
+              ctx.font = "10px Roboto Mono";
+              ctx.textAlign = "center";
+              ctx.fillStyle = white;
+              y = self.subgraph_y + self.subgraph_h - (clamp(0,1,mapVal(modules[i].min,modules[i].max,0,1,modules[i].plot[j]))*self.subgraph_h);
+              var off = -8;
+              ctx.fillText(modules[i].plot[j],x,y+off);
+              ctx.font = "20px Roboto Mono";
+              ctx.textAlign = "left";
+              ctx.fillStyle = modules[i].color;
+            }
+          }
+        }
 
         graph_i++;
       }
@@ -3079,7 +3098,6 @@ var GamePlayScene = function(game, stage)
 
   self.tick = function()
   {
-    
     if(game_state == GAME_STATE_PLAY)
     {
       var clicked = false;
@@ -3097,20 +3115,20 @@ var GamePlayScene = function(game, stage)
       if(clicker.filter(print_btn))              clicked = true;
       if(clicker.filter(load_btn))               clicked = true;
       if(dragger.filter(s_graph))                clicked = true;
-      if(dragger.filter(add_module_btn))         clicked = true;
       clicker.filter(levels[cur_level_i]);
       if(!clicked)
       {
         for(var i = 0; i < modules.length; i++)
-          if(!modules[i].lock_input) dragger.filter(modules[i].input_dongle);
+          if(!modules[i].lock_input) if(dragger.filter(modules[i].input_dongle)) clicked = true;
         for(var i = 0; i < modules.length; i++)
-          if(!modules[i].lock_output) dragger.filter(modules[i].output_dongle);
+          if(!modules[i].lock_output) if(dragger.filter(modules[i].output_dongle)) clicked = true;
         for(var i = 0; i < modules.length; i++)
         {
           hoverer.filter(modules[i]);
-          if(!modules[i].lock_move) dragger.filter(modules[i]);
+          if(!modules[i].lock_move) if(dragger.filter(modules[i])) clicked = true;
         }
       }
+      if(!clicked && dragger.filter(add_module_btn)) clicked = true;
       if(!clicked) dragger.filter(s_dragger);
 
       for(var i = 0; i < modules.length; i++)
