@@ -9,8 +9,9 @@ var GamePlayScene = function(game, stage)
   var predict = false;
 
   ENUM = 0;
-  var GAME_STATE_MENU = ENUM; ENUM++;
-  var GAME_STATE_PLAY = ENUM; ENUM++;
+  var GAME_STATE_MENU  = ENUM; ENUM++;
+  var GAME_STATE_PLAY  = ENUM; ENUM++;
+  var GAME_STATE_MODAL = ENUM; ENUM++;
   var game_state;
 
   var line_color = "#0A182E";
@@ -64,6 +65,7 @@ var GamePlayScene = function(game, stage)
   var s_editor;
 
   var blurb;
+  var modal;
 
   var w;
   var h;
@@ -217,6 +219,8 @@ var GamePlayScene = function(game, stage)
   close_img.src = "assets/close.png";
   var girl_img = new Image();
   girl_img.src = "assets/girl.png";
+  var win_img = new Image();
+  win_img.src = "assets/win.png";
 
   var on_img = GenIcon(40,40);
   on_img.context.lineWidth = 4;
@@ -272,7 +276,8 @@ var GamePlayScene = function(game, stage)
     self.play_enabled = true;
     self.speed_enabled = true;
     self.dismissed = 0;
-    self.complete = false;
+    self.complete = false; //once level is complete, never gets set to false again
+    self.finished = false; //finished is set to false every time you start level
     self.click = function(){ self.dismissed++; };
     self.should_allow_creation = function(type){ return true; }
     self.should_dismiss_blurb = function(){ return true; }
@@ -315,6 +320,7 @@ var GamePlayScene = function(game, stage)
     if(levels[cur_level_i]) levels[cur_level_i].complete = true;
     cur_level_i++;
     if(cur_level_i >= levels.length) cur_level_i = 0;
+    levels[cur_level_i].finished = false;
     beginLevel();
   }
 
@@ -349,7 +355,7 @@ var GamePlayScene = function(game, stage)
 
   l = new level();
   l.title = "Watch";
-  l.primary_module_template = "{\"modules\":[{\"title\":\"Tree Height (M)\",\"type\":0,\"v\":1,\"min\":0,\"max\":10,\"pool\":1,\"graph\":1,\"wx\":0.2,\"wy\":-0.08,\"ww\":0.15625,\"wh\":0.15625,\"input\":-1,\"output\":-1,\"lock_move\":false,\"lock_input\":true,\"lock_output\":true,\"lock_value\":true,\"lock_min\":true,\"lock_max\":true,\"lock_pool\":true,\"lock_graph\":true},{\"title\":\"Growth Rate (M/T)\",\"type\":3,\"v\":1,\"min\":0,\"max\":10,\"pool\":1,\"graph\":0,\"wx\":-0.4,\"wy\":-0.08,\"ww\":0.11363636363636363,\"wh\":0.11363636363636365,\"input\":-1,\"output\":-1,\"lock_move\":false,\"lock_input\":true,\"lock_output\":true,\"lock_value\":true,\"lock_min\":false,\"lock_max\":false,\"lock_pool\":false,\"lock_graph\":false},{\"title\":\"\",\"type\":2,\"v\":1,\"min\":0,\"max\":10,\"pool\":1,\"graph\":false,\"wx\":-0.1,\"wy\":-0.08,\"ww\":0.11363636363636363,\"wh\":0.11363636363636365,\"input\":1,\"output\":0,\"lock_move\":false,\"lock_input\":true,\"lock_output\":true,\"lock_value\":true,\"lock_min\":true,\"lock_max\":true,\"lock_pool\":true,\"lock_graph\":true}]}"
+  l.primary_module_template = "{\"modules\":[{\"title\":\"Tree Height (M)\",\"type\":0,\"v\":1,\"min\":0,\"max\":20,\"pool\":1,\"graph\":1,\"wx\":0.2,\"wy\":-0.08,\"ww\":0.15625,\"wh\":0.15625,\"input\":-1,\"output\":-1,\"lock_move\":false,\"lock_input\":true,\"lock_output\":true,\"lock_value\":true,\"lock_min\":true,\"lock_max\":true,\"lock_pool\":true,\"lock_graph\":true},{\"title\":\"Growth Rate (M/T)\",\"type\":3,\"v\":1,\"min\":0,\"max\":10,\"pool\":1,\"graph\":0,\"wx\":-0.4,\"wy\":-0.08,\"ww\":0.11363636363636363,\"wh\":0.11363636363636365,\"input\":-1,\"output\":-1,\"lock_move\":false,\"lock_input\":true,\"lock_output\":true,\"lock_value\":true,\"lock_min\":false,\"lock_max\":false,\"lock_pool\":false,\"lock_graph\":false},{\"title\":\"\",\"type\":2,\"v\":1,\"min\":0,\"max\":10,\"pool\":1,\"graph\":false,\"wx\":-0.1,\"wy\":-0.08,\"ww\":0.11363636363636363,\"wh\":0.11363636363636365,\"input\":1,\"output\":0,\"lock_move\":false,\"lock_input\":true,\"lock_output\":true,\"lock_value\":true,\"lock_min\":true,\"lock_max\":true,\"lock_pool\":true,\"lock_graph\":true}]}"
   l.primary_module_target_titles.push("Height(M)");
   l.primary_module_target_vals.push([1,2,3,4,5]);
   l.add_module_enabled = false;
@@ -386,7 +392,7 @@ var GamePlayScene = function(game, stage)
 
   l = new level();
   l.title = "Rate";
-  l.primary_module_template = "{\"modules\":[{\"title\":\"Tree Height (M)\",\"type\":0,\"v\":1,\"min\":0,\"max\":10,\"pool\":1,\"graph\":1,\"wx\":0.2,\"wy\":-0.08,\"ww\":0.15625,\"wh\":0.15625,\"input\":-1,\"output\":-1,\"lock_move\":false,\"lock_input\":true,\"lock_output\":true,\"lock_value\":true,\"lock_min\":true,\"lock_max\":true,\"lock_pool\":true,\"lock_graph\":true},{\"title\":\"Growth Rate (M/T)\",\"type\":3,\"v\":1,\"min\":0,\"max\":10,\"pool\":1,\"graph\":0,\"wx\":-0.4,\"wy\":-0.08,\"ww\":0.11363636363636363,\"wh\":0.11363636363636365,\"input\":-1,\"output\":-1,\"lock_move\":false,\"lock_input\":true,\"lock_output\":true,\"lock_value\":false,\"lock_min\":false,\"lock_max\":false,\"lock_pool\":false,\"lock_graph\":false},{\"title\":\"\",\"type\":2,\"v\":1,\"min\":0,\"max\":10,\"pool\":1,\"graph\":false,\"wx\":-0.1,\"wy\":-0.08,\"ww\":0.11363636363636363,\"wh\":0.11363636363636365,\"input\":1,\"output\":0,\"lock_move\":false,\"lock_input\":true,\"lock_output\":true,\"lock_value\":true,\"lock_min\":true,\"lock_max\":true,\"lock_pool\":true,\"lock_graph\":true}]}"
+  l.primary_module_template = "{\"modules\":[{\"title\":\"Tree Height (M)\",\"type\":0,\"v\":1,\"min\":0,\"max\":20,\"pool\":1,\"graph\":1,\"wx\":0.2,\"wy\":-0.08,\"ww\":0.15625,\"wh\":0.15625,\"input\":-1,\"output\":-1,\"lock_move\":false,\"lock_input\":true,\"lock_output\":true,\"lock_value\":true,\"lock_min\":true,\"lock_max\":true,\"lock_pool\":true,\"lock_graph\":true},{\"title\":\"Growth Rate (M/T)\",\"type\":3,\"v\":1,\"min\":0,\"max\":10,\"pool\":1,\"graph\":0,\"wx\":-0.4,\"wy\":-0.08,\"ww\":0.11363636363636363,\"wh\":0.11363636363636365,\"input\":-1,\"output\":-1,\"lock_move\":false,\"lock_input\":true,\"lock_output\":true,\"lock_value\":false,\"lock_min\":false,\"lock_max\":false,\"lock_pool\":false,\"lock_graph\":false},{\"title\":\"\",\"type\":2,\"v\":1,\"min\":0,\"max\":10,\"pool\":1,\"graph\":false,\"wx\":-0.1,\"wy\":-0.08,\"ww\":0.11363636363636363,\"wh\":0.11363636363636365,\"input\":1,\"output\":0,\"lock_move\":false,\"lock_input\":true,\"lock_output\":true,\"lock_value\":true,\"lock_min\":true,\"lock_max\":true,\"lock_pool\":true,\"lock_graph\":true}]}"
   l.primary_module_target_titles.push("Height(M)");
   l.primary_module_target_vals.push([1,3,5,7,9]);
   l.add_module_enabled = false;
@@ -426,7 +432,7 @@ var GamePlayScene = function(game, stage)
 
   l = new level();
   l.title = "Start";
-  l.primary_module_template = "{\"modules\":[{\"title\":\"Tree Height (M)\",\"type\":0,\"v\":1,\"min\":0,\"max\":10,\"pool\":1,\"graph\":1,\"wx\":0.2,\"wy\":-0.08,\"ww\":0.15625,\"wh\":0.15625,\"input\":-1,\"output\":-1,\"lock_move\":false,\"lock_input\":true,\"lock_output\":true,\"lock_value\":false,\"lock_min\":true,\"lock_max\":true,\"lock_pool\":true,\"lock_graph\":true},{\"title\":\"Growth Rate (M/T)\",\"type\":3,\"v\":2,\"min\":0,\"max\":10,\"pool\":1,\"graph\":0,\"wx\":-0.4,\"wy\":-0.08,\"ww\":0.11363636363636363,\"wh\":0.11363636363636365,\"input\":-1,\"output\":-1,\"lock_move\":false,\"lock_input\":true,\"lock_output\":true,\"lock_value\":false,\"lock_min\":false,\"lock_max\":false,\"lock_pool\":false,\"lock_graph\":false},{\"title\":\"\",\"type\":2,\"v\":1,\"min\":0,\"max\":10,\"pool\":1,\"graph\":false,\"wx\":-0.1,\"wy\":-0.08,\"ww\":0.11363636363636363,\"wh\":0.11363636363636365,\"input\":1,\"output\":0,\"lock_move\":false,\"lock_input\":true,\"lock_output\":true,\"lock_value\":true,\"lock_min\":true,\"lock_max\":true,\"lock_pool\":true,\"lock_graph\":true}]}"
+  l.primary_module_template = "{\"modules\":[{\"title\":\"Tree Height (M)\",\"type\":0,\"v\":1,\"min\":0,\"max\":20,\"pool\":1,\"graph\":1,\"wx\":0.2,\"wy\":-0.08,\"ww\":0.15625,\"wh\":0.15625,\"input\":-1,\"output\":-1,\"lock_move\":false,\"lock_input\":true,\"lock_output\":true,\"lock_value\":false,\"lock_min\":true,\"lock_max\":true,\"lock_pool\":true,\"lock_graph\":true},{\"title\":\"Growth Rate (M/T)\",\"type\":3,\"v\":2,\"min\":0,\"max\":10,\"pool\":1,\"graph\":0,\"wx\":-0.4,\"wy\":-0.08,\"ww\":0.11363636363636363,\"wh\":0.11363636363636365,\"input\":-1,\"output\":-1,\"lock_move\":false,\"lock_input\":true,\"lock_output\":true,\"lock_value\":false,\"lock_min\":false,\"lock_max\":false,\"lock_pool\":false,\"lock_graph\":false},{\"title\":\"\",\"type\":2,\"v\":1,\"min\":0,\"max\":10,\"pool\":1,\"graph\":false,\"wx\":-0.1,\"wy\":-0.08,\"ww\":0.11363636363636363,\"wh\":0.11363636363636365,\"input\":1,\"output\":0,\"lock_move\":false,\"lock_input\":true,\"lock_output\":true,\"lock_value\":true,\"lock_min\":true,\"lock_max\":true,\"lock_pool\":true,\"lock_graph\":true}]}"
   l.primary_module_target_titles.push("Height(M)");
   l.primary_module_target_vals.push([2,4,6,8,10]);
   l.add_module_enabled = false;
@@ -2930,6 +2936,31 @@ var GamePlayScene = function(game, stage)
     blurb.inviz_y = canv.height;
     blurb.viz_y = canv.height-blurb.h;
 
+    modal = {};
+    modal.w = 400;
+    modal.h = 300;
+    modal.x = canv.width/2-modal.w/2;
+    modal.y = canv.height/2-modal.h/2;
+    modal.click = function(evt)
+    {
+      game_state = GAME_STATE_PLAY;
+    }
+    modal.draw = function()
+    {
+      ctx.fillStyle = "rgba(0,0,0,0.2)";
+      ctx.fillRect(0,0,canv.width,canv.height);
+      ctx.strokeStyle = line_color;
+      ctx.lineWidth = 4;
+      strokeR(modal.x,modal.y,modal.w,modal.h,10,ctx);
+      ctx.fillStyle = bg_color;
+      fillR(modal.x,modal.y,modal.w,modal.h,10,ctx);
+      ctx.fillStyle = white;
+      ctx.fillText("This model is a good match",modal.x+20,modal.y+150);
+      ctx.fillText("for our data!",modal.x+20,modal.y+190);
+      ctx.fillText("Continue",modal.x+modal.w/2-40,modal.y+270);
+      ctx.drawImage(win_img,modal.x+modal.w/2-80,modal.y-80,160,180);
+    }
+
     var dragOutModule = function(type,btn,evt)
     {
       if(dragging_obj) return false;
@@ -3098,38 +3129,45 @@ var GamePlayScene = function(game, stage)
 
   self.tick = function()
   {
-    if(game_state == GAME_STATE_PLAY)
+    if(game_state == GAME_STATE_PLAY || game_state == GAME_STATE_MODAL)
     {
       var clicked = false;
       if(clicker.filter(blurb))                  clicked = true;
-      if(selected_module) if(s_editor.filter())  clicked = true;
-      if(dragger.filter(s_ctrls.speed_slider))   clicked = true;
-      if(clicker.filter(s_ctrls.pause_btn))      clicked = true;
-      if(clicker.filter(s_ctrls.advance_btn))    clicked = true;
-      if(clicker.filter(s_ctrls.reset_btn))      clicked = true;
-      if(clicker.filter(s_ctrls.speed_slow_btn)) clicked = true;
-      if(clicker.filter(s_ctrls.speed_med_btn))  clicked = true;
-      if(clicker.filter(s_ctrls.speed_fast_btn)) clicked = true;
-      if(clicker.filter(next_level_btn))         clicked = true;
-      if(clicker.filter(menu_btn))               clicked = true;
-      if(clicker.filter(print_btn))              clicked = true;
-      if(clicker.filter(load_btn))               clicked = true;
-      if(dragger.filter(s_graph))                clicked = true;
-      clicker.filter(levels[cur_level_i]);
-      if(!clicked)
+      if(game_state == GAME_STATE_PLAY)
       {
-        for(var i = 0; i < modules.length; i++)
-          if(!modules[i].lock_input) if(dragger.filter(modules[i].input_dongle)) clicked = true;
-        for(var i = 0; i < modules.length; i++)
-          if(!modules[i].lock_output) if(dragger.filter(modules[i].output_dongle)) clicked = true;
-        for(var i = 0; i < modules.length; i++)
+        if(selected_module) if(s_editor.filter())  clicked = true;
+        if(dragger.filter(s_ctrls.speed_slider))   clicked = true;
+        if(clicker.filter(s_ctrls.pause_btn))      clicked = true;
+        if(clicker.filter(s_ctrls.advance_btn))    clicked = true;
+        if(clicker.filter(s_ctrls.reset_btn))      clicked = true;
+        if(clicker.filter(s_ctrls.speed_slow_btn)) clicked = true;
+        if(clicker.filter(s_ctrls.speed_med_btn))  clicked = true;
+        if(clicker.filter(s_ctrls.speed_fast_btn)) clicked = true;
+        if(clicker.filter(next_level_btn))         clicked = true;
+        if(clicker.filter(menu_btn))               clicked = true;
+        if(clicker.filter(print_btn))              clicked = true;
+        if(clicker.filter(load_btn))               clicked = true;
+        if(dragger.filter(s_graph))                clicked = true;
+        clicker.filter(levels[cur_level_i]);
+        if(!clicked)
         {
-          hoverer.filter(modules[i]);
-          if(!modules[i].lock_move) if(dragger.filter(modules[i])) clicked = true;
+          for(var i = 0; i < modules.length; i++)
+            if(!modules[i].lock_input) if(dragger.filter(modules[i].input_dongle)) clicked = true;
+          for(var i = 0; i < modules.length; i++)
+            if(!modules[i].lock_output) if(dragger.filter(modules[i].output_dongle)) clicked = true;
+          for(var i = 0; i < modules.length; i++)
+          {
+            hoverer.filter(modules[i]);
+            if(!modules[i].lock_move) if(dragger.filter(modules[i])) clicked = true;
+          }
         }
+        if(!clicked && dragger.filter(add_module_btn)) clicked = true;
+        if(!clicked) dragger.filter(s_dragger);
       }
-      if(!clicked && dragger.filter(add_module_btn)) clicked = true;
-      if(!clicked) dragger.filter(s_dragger);
+      else if(game_state == GAME_STATE_MODAL)
+      {
+        clicker.filter(modal);
+      }
 
       for(var i = 0; i < modules.length; i++)
         modules[i].cache_const = 1;
@@ -3150,7 +3188,15 @@ var GamePlayScene = function(game, stage)
       {
         advance_timer--;
         if(advance_timer <= 0)
+        {
           flow();
+          if(!levels[cur_level_i].finished && levels[cur_level_i].primary_module_target_vals[0] && t_i >= levels[cur_level_i].primary_module_target_vals[0].length-1 && levelComplete())
+          {
+            levels[cur_level_i].complete = true;
+            levels[cur_level_i].finished = true;
+            game_state = GAME_STATE_MODAL;
+          }
+        }
       }
 
       for(var i = 0; i < modules.length; i++)
@@ -3181,7 +3227,7 @@ var GamePlayScene = function(game, stage)
     //ctx.fillRect(0,0,canv.width,canv.height);
     ctx.drawImage(bg_img,0,0,canv.width,canv.height);
 
-    if(game_state == GAME_STATE_PLAY)
+    if(game_state == GAME_STATE_PLAY || game_state == GAME_STATE_MODAL)
     {
       calc_caches();
 
@@ -3257,7 +3303,7 @@ var GamePlayScene = function(game, stage)
         s_ctrls.speed_slider.draw(canv);
       }
     }
-    else if(game_state == GAME_STATE_MENU)
+    if(game_state == GAME_STATE_MENU)
     {
       ctx.fillStyle = white;
       ctx.font = "20px Roboto Mono";
@@ -3275,6 +3321,10 @@ var GamePlayScene = function(game, stage)
       ctx.fillText("Big Systems",x,y); y += h+40;
     }
     blurb.draw();
+    if(game_state == GAME_STATE_MODAL)
+    {
+      modal.draw();
+    }
   };
 
   self.cleanup = function()
