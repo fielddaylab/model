@@ -23,6 +23,7 @@ var GamePlayScene = function(game, stage)
   var white = "#FFFFFF";
   var black = "#000000";
   var brown = "#755232";
+  var gray = "#DDDDDD";
   var n_ticks;
 
   var canv = stage.drawCanv;
@@ -216,6 +217,23 @@ var GamePlayScene = function(game, stage)
   close_img.src = "assets/close.png";
   var girl_img = new Image();
   girl_img.src = "assets/girl.png";
+
+  var on_img = GenIcon(40,40);
+  on_img.context.lineWidth = 4;
+  on_img.context.fillStyle = green;
+  on_img.context.strokeStyle = gray;
+  on_img.context.beginPath();
+  on_img.context.arc(on_img.width/2,on_img.height/2,on_img.width/2-3,0,twopi);
+  on_img.context.fill();
+  on_img.context.stroke();
+  var off_img = GenIcon(40,40);
+  off_img.context.lineWidth = 4;
+  off_img.context.fillStyle = green;
+  off_img.context.strokeStyle = gray;
+  off_img.context.beginPath();
+  off_img.context.arc(off_img.width/2,off_img.height/2,off_img.width/2-3,0,twopi);
+  //off_img.context.fill();
+  off_img.context.stroke();
 
   var lock_img = GenIcon(40,40);
   lock_img.context.strokeStyle = white;
@@ -1378,12 +1396,24 @@ var GamePlayScene = function(game, stage)
     self.min_box   = new NumberBox(0,0,0,0,0,0,function(v){ if(selected_module.lock_min)   return; var new_v = fdisp(min(selected_module.max,v),2);                       var old_v = selected_module.min;       selected_module.min       = new_v; if(new_v != old_v) resetGraph(); if(new_v != v) { self.min_box.set(new_v); self.v_box.set(max(selected_module.v,new_v)); } else { var delta = max((selected_module.max-selected_module.min),1)/100; self.v_box.delta = delta; self.min_box.delta = delta; self.max_box.delta = delta; } });
     self.max_box   = new NumberBox(0,0,0,0,0,0,function(v){ if(selected_module.lock_max)   return; var new_v = fdisp(max(selected_module.min,v),2);                       var old_v = selected_module.max;       selected_module.max       = new_v; if(new_v != old_v) resetGraph(); if(new_v != v) { self.max_box.set(new_v); self.v_box.set(min(selected_module.v,new_v)); } else { var delta = max((selected_module.max-selected_module.min),1)/100; self.v_box.delta = delta; self.min_box.delta = delta; self.max_box.delta = delta; } });
     self.pool_box  = new ToggleBox(0,0,0,0,0,  function(v){ if(selected_module.lock_pool)  return; var new_v = v;                                                         var old_v = selected_module.pool;      selected_module.pool      = new_v; if(new_v != old_v) resetGraph(); });
+    self.pool_box.on_img = on_img;
+    self.pool_box.off_img = off_img;
     self.graph_box = new ToggleBox(0,0,0,0,0,  function(v){ if(selected_module.lock_graph) return; var new_v = v;                                                         var old_v = selected_module.graph;     selected_module.graph     = new_v; });
+    self.graph_box.on_img = on_img;
+    self.graph_box.off_img = off_img;
 
     self.operator_box_mul = new ToggleBox(0,0,0,0,0,function(v){ var new_v; if(v) new_v = OPERATOR_MUL; else new_v = OPERATOR_DIV; var old_v = selected_module.operator; selected_module.operator = new_v; if(new_v != old_v) resetGraph(); if(self.operator_box_div.on == v) self.operator_box_div.set(!v); });
+    self.operator_box_mul.on_img = on_img;
+    self.operator_box_mul.off_img = off_img;
     self.sign_box_pos     = new ToggleBox(0,0,0,0,0,function(v){ var new_v; if(v) new_v = 1.;           else new_v = -1.;          var old_v = selected_module.sign;     selected_module.sign     = new_v; if(new_v != old_v) resetGraph(); if(self.sign_box_neg.on     == v) self.sign_box_neg.set(!v);     });
+    self.sign_box_pos.on_img = on_img;
+    self.sign_box_pos.off_img = off_img;
     self.operator_box_div = new ToggleBox(0,0,0,0,0,function(v){ if(self.operator_box_div.on == v) self.operator_box_mul.set(!v); });
+    self.operator_box_div.on_img = on_img;
+    self.operator_box_div.off_img = off_img;
     self.sign_box_neg     = new ToggleBox(0,0,0,0,0,function(v){ if(self.sign_box_pos.on     == v) self.sign_box_pos.set(!v);     });
+    self.sign_box_neg.on_img = on_img;
+    self.sign_box_neg.off_img = off_img;
 
     self.calc_sub_params = function()
     {
@@ -1570,7 +1600,7 @@ var GamePlayScene = function(game, stage)
     var prevy = 0;
     var drawPrevLine = function(new_prevy)
     {
-      ctx.strokeStyle = "#DDDDDD";
+      ctx.strokeStyle = gray;
       ctx.beginPath();
       ctx.moveTo(self.x,prevy);
       ctx.lineTo(self.x+self.w,prevy);

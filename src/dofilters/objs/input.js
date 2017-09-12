@@ -355,6 +355,9 @@ function ToggleBox(x,y,w,h,val,callback)
 
   self.draw = function(canv)
   {
+    if(self.on) canv.context.drawImage(self.on_img, self.x,self.y,self.w,self.h);
+    else        canv.context.drawImage(self.off_img,self.x,self.y,self.w,self.h);
+  /*
     if(self.down) canv.context.strokeStyle = "#00F400";
     else          canv.context.strokeStyle = "#000000";
 
@@ -363,6 +366,7 @@ function ToggleBox(x,y,w,h,val,callback)
 
     canv.context.fillRect(self.x,self.y,self.w,self.h);
     canv.context.strokeRect(self.x+0.5,self.y+0.5,self.w,self.h);
+  */
   }
 
   self.print = function()
