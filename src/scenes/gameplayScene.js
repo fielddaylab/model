@@ -1901,14 +1901,14 @@ var GamePlayScene = function(game, stage)
         self.attachment = 0;
         resetGraph();
       }
-      self.src.whippet_dragged(self);
+      self.src.whippet_dragged(evt,self);
       s_editor.center();
     }
     self.drag = function(evt)
     {
       self.drag_x = evt.doX;
       self.drag_y = evt.doY;
-      self.src.whippet_dragged(self);
+      self.src.whippet_dragged(evt,self);
     }
     self.dragFinish = function(evt)
     {
@@ -1922,12 +1922,6 @@ var GamePlayScene = function(game, stage)
       }
       if(!self.attachment)
         deleteModule(self.src);
-      if(self.src.input_dongle.attachment == self.src.output_dongle.attachment)
-      {
-        self.src.x -= 50;
-        self.src.y -= 50;
-        worldSpaceCoords(work_cam,canv,self.src);
-      }
       resetGraph();
       s_editor.center();
     }
@@ -2001,14 +1995,28 @@ var GamePlayScene = function(game, stage)
       );
       return should;
     }
-    self.whippet_dragged = function(whippet)
+    self.whippet_dragged = function(evt,whippet)
     {
       if(whippet == self.output_dongle)
       {
         if(self.input_dongle.attachment)
         {
-          self.x = lerp(self.output_dongle.drag_x,self.input_dongle.attachment.x+self.input_dongle.attachment.w/2,0.5)-self.w/2;
-          self.y = lerp(self.output_dongle.drag_y,self.input_dongle.attachment.y+self.input_dongle.attachment.h/2,0.5)-self.h/2;
+          var ix = self.input_dongle.attachment.x+self.input_dongle.attachment.w/2;
+          var iy = self.input_dongle.attachment.y+self.input_dongle.attachment.h/2;
+          var ox = evt.doX;
+          var oy = evt.doY;
+          if(distsqr(ix,iy,ox,oy) < 1000)
+          {
+            var v = {x:ox-ix,y:oy-iy};
+            safenormvec(v,1,v);
+            self.x = lerp(self.x,ix+v.x*80-self.w/2,0.8);
+            self.y = lerp(self.y,iy+v.y*80-self.h/2,0.8);
+          }
+          else
+          {
+            self.x = lerp(self.x,lerp(self.output_dongle.drag_x,self.input_dongle.attachment.x+self.input_dongle.attachment.w/2,0.5)-self.w/2,0.9);
+            self.y = lerp(self.y,lerp(self.output_dongle.drag_y,self.input_dongle.attachment.y+self.input_dongle.attachment.h/2,0.5)-self.h/2,0.9);
+          }
           worldSpaceCoords(work_cam,canv,self);
         }
       }
@@ -2016,8 +2024,22 @@ var GamePlayScene = function(game, stage)
       {
         if(self.output_dongle.attachment)
         {
-          self.x = lerp(self.input_dongle.drag_x,self.output_dongle.attachment.x+self.output_dongle.attachment.w/2,0.5)-self.w/2;
-          self.y = lerp(self.input_dongle.drag_y,self.output_dongle.attachment.y+self.output_dongle.attachment.h/2,0.5)-self.h/2;
+          var ix = self.output_dongle.attachment.x+self.output_dongle.attachment.w/2;
+          var iy = self.output_dongle.attachment.y+self.output_dongle.attachment.h/2;
+          var ox = evt.doX;
+          var oy = evt.doY;
+          if(distsqr(ix,iy,ox,oy) < 1000)
+          {
+            var v = {x:ox-ix,y:oy-iy};
+            safenormvec(v,1,v);
+            self.x = lerp(self.x,ix+v.x*80-self.w/2,0.8);
+            self.y = lerp(self.y,iy+v.y*80-self.h/2,0.8);
+          }
+          else
+          {
+            self.x = lerp(self.x,lerp(self.input_dongle.drag_x,self.output_dongle.attachment.x+self.output_dongle.attachment.w/2,0.5)-self.w/2,0.9);
+            self.y = lerp(self.y,lerp(self.input_dongle.drag_y,self.output_dongle.attachment.y+self.output_dongle.attachment.h/2,0.5)-self.h/2,0.9);
+          }
           worldSpaceCoords(work_cam,canv,self);
         }
       }
