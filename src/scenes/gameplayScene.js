@@ -53,6 +53,7 @@ var GamePlayScene = function(game, stage)
   var add_module_btn;
   var remove_module_btn;
   var next_level_btn;
+  var clear_btn;
   var menu_btn
   var print_btn;
   var load_btn;
@@ -185,6 +186,8 @@ var GamePlayScene = function(game, stage)
   remove_btn_img.src = "assets/remove_btn.png";
   var menu_btn_img = new Image();
   menu_btn_img.src = "assets/menu_btn.png";
+  var clear_btn_img = new Image();
+  clear_btn_img.src = "assets/clear_btn.png";
   var gotit_btn_img = new Image();
   gotit_btn_img.src = "assets/gotit_btn.png";
   var next_level_btn_img = new Image();
@@ -2260,7 +2263,7 @@ var GamePlayScene = function(game, stage)
       {
         if(self.cache_const)
         {
-          if(self.v != 1)
+          if(true || self.v != 1)
           {
             if(!self.body_cache.rel_const)
             {
@@ -2540,7 +2543,7 @@ var GamePlayScene = function(game, stage)
       else
       {
         ctx.fillText(self.title,self.x+self.w/2,self.y+10);
-        if(self.v != 1 || !self.cache_const)
+        if(true || self.v != 1 || !self.cache_const)
         {
           ctx.font = "10px Roboto Mono";
           ctx.fillText("x"+fdisp(self.v,2),self.x+self.w/2,self.y+self.h/2+5);
@@ -3025,6 +3028,16 @@ var GamePlayScene = function(game, stage)
       }
     }
 
+    clear_btn = new btn();
+    clear_btn.h = 30;
+    clear_btn.w = clear_btn_img.width*(clear_btn.h/clear_btn_img.height);
+    clear_btn.x = 10;
+    clear_btn.y = s_graph.y+s_graph.h+10;
+    clear_btn.click = function(evt)
+    {
+      beginLevel();
+    }
+
     print_btn = new btn();
     print_btn.w = 60;
     print_btn.h = 20;
@@ -3145,6 +3158,7 @@ var GamePlayScene = function(game, stage)
         if(clicker.filter(s_ctrls.speed_med_btn))  clicked = true;
         if(clicker.filter(s_ctrls.speed_fast_btn)) clicked = true;
         if(clicker.filter(next_level_btn))         clicked = true;
+        if(clicker.filter(clear_btn))              clicked = true;
         if(clicker.filter(menu_btn))               clicked = true;
         if(clicker.filter(print_btn))              clicked = true;
         if(clicker.filter(load_btn))               clicked = true;
@@ -3191,7 +3205,12 @@ var GamePlayScene = function(game, stage)
         if(advance_timer <= 0)
         {
           flow();
-          if(!levels[cur_level_i].finished && levels[cur_level_i].primary_module_target_vals[0] && t_i >= levels[cur_level_i].primary_module_target_vals[0].length-1 && levelComplete())
+          if(
+            !levels[cur_level_i].finished &&
+            levels[cur_level_i].primary_module_target_vals[0] &&
+            t_i >= levels[cur_level_i].primary_module_target_vals[0].length-1 &&
+            levelComplete()
+          )
           {
             levels[cur_level_i].complete = true;
             levels[cur_level_i].finished = true;
@@ -3281,6 +3300,7 @@ var GamePlayScene = function(game, stage)
       ctx.textAlign = "left";
       ctx.fillStyle = "#AAAAAA";
       if(levelComplete()) imageBox(next_level_btn_img,next_level_btn,ctx);
+      imageBox(clear_btn_img,clear_btn,ctx);
       imageBox(menu_btn_img,menu_btn,ctx);
       if(ALLOW_SAVE || !levels[cur_level_i] || levels[cur_level_i].save_enabled)
       {

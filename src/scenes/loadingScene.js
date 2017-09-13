@@ -84,6 +84,7 @@ var LoadingScene = function(game, stage)
     img_srcs.push("assets/add_btn.png");
     img_srcs.push("assets/remove_btn.png");
     img_srcs.push("assets/menu_btn.png");
+    img_srcs.push("assets/clear_btn.png");
     img_srcs.push("assets/gotit_btn.png");
     img_srcs.push("assets/next_level_btn.png");
     img_srcs.push("assets/reset_btn.png");
