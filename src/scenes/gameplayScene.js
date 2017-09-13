@@ -18,6 +18,7 @@ var GamePlayScene = function(game, stage)
   var graph_bg_color = "#2A3544";
   var graph_fg_color = "#1F2D3F";
   var bg_color = "#485973";
+  var bgbg_color = "#3E4D62";
 
   var green = "#92CF48";
   var red = "#AA0000";
@@ -3027,8 +3028,8 @@ var GamePlayScene = function(game, stage)
     menu_btn = new btn();
     menu_btn.h = 30;
     menu_btn.w = menu_btn_img.width*(menu_btn.h/menu_btn_img.height);
-    menu_btn.x = canv.width-menu_btn.w-10;
-    menu_btn.y = 10;
+    menu_btn.x = 10;
+    menu_btn.y = s_graph.y+s_graph.h+10;
     menu_btn.click = function(evt)
     {
       game_state = GAME_STATE_MENU;
@@ -3039,7 +3040,7 @@ var GamePlayScene = function(game, stage)
     next_level_btn.h = 30;
     next_level_btn.w = next_level_btn_img.width*(next_level_btn.h/next_level_btn_img.height);
     next_level_btn.x = canv.width-next_level_btn.w-10;
-    next_level_btn.y = 10+menu_btn.h+10;
+    next_level_btn.y = s_graph.y+s_graph.h+10;
     next_level_btn.click = function(evt)
     {
       if(levelComplete()) //nextLevel();
@@ -3053,7 +3054,7 @@ var GamePlayScene = function(game, stage)
     clear_btn = new btn();
     clear_btn.h = 30;
     clear_btn.w = clear_btn_img.width*(clear_btn.h/clear_btn_img.height);
-    clear_btn.x = 10;
+    clear_btn.x = menu_btn.x+menu_btn.w+10;
     clear_btn.y = s_graph.y+s_graph.h+10;
     clear_btn.click = function(evt)
     {
@@ -3312,6 +3313,9 @@ var GamePlayScene = function(game, stage)
       }
       levels[cur_level_i].draw();
       ctx.lineWidth = 1;
+
+      ctx.fillStyle = bgbg_color;
+      ctx.fillRect(0,0,canv.width,menu_btn.y+menu_btn.h+10);
 
       s_graph.draw();
       s_ctrls.draw();
