@@ -94,10 +94,13 @@ var LoadingScene = function(game, stage)
     img_srcs.push("assets/speed_med_btn_down.png");
     img_srcs.push("assets/speed_fast_btn.png");
     img_srcs.push("assets/speed_fast_btn_down.png");
+    img_srcs.push("assets/hex_bg.png");
+    img_srcs.push("assets/hex_fill.png");
     img_srcs.push("assets/wrong.png");
     img_srcs.push("assets/right.png");
     img_srcs.push("assets/close.png");
     img_srcs.push("assets/girl.png");
+    img_srcs.push("assets/win.png");
     for(var i = 0; i < 3; i++)
       img_srcs.push("assets/comic/comic_"+i+".png");
     for(var i = 0; i < img_srcs.length; i++)

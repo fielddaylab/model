@@ -2,15 +2,16 @@ var GamePlayScene = function(game, stage)
 {
   var self = this;
 
-  var ALLOW_NEXT = false;
+  var ALLOW_NEXT = true;
   var ALLOW_SAVE = false;
 
   var precision = 2;
   var predict = false;
 
   ENUM = 0;
-  var GAME_STATE_MENU = ENUM; ENUM++;
-  var GAME_STATE_PLAY = ENUM; ENUM++;
+  var GAME_STATE_MENU  = ENUM; ENUM++;
+  var GAME_STATE_PLAY  = ENUM; ENUM++;
+  var GAME_STATE_MODAL = ENUM; ENUM++;
   var game_state;
 
   var line_color = "#0A182E";
@@ -23,6 +24,7 @@ var GamePlayScene = function(game, stage)
   var white = "#FFFFFF";
   var black = "#000000";
   var brown = "#755232";
+  var gray = "#DDDDDD";
   var n_ticks;
 
   var canv = stage.drawCanv;
@@ -63,6 +65,7 @@ var GamePlayScene = function(game, stage)
   var s_editor;
 
   var blurb;
+  var modal;
 
   var w;
   var h;
@@ -202,6 +205,12 @@ var GamePlayScene = function(game, stage)
   speed_fast_btn_img.src = "assets/speed_fast_btn.png";
   var speed_fast_btn_down_img = new Image();
   speed_fast_btn_down_img.src = "assets/speed_fast_btn_down.png";
+  var hex_bg_img = new Image();
+  hex_bg_img.src = "assets/hex_bg.png";
+  var hex_fill_img = new Image();
+  hex_fill_img.src = "assets/hex_fill.png";
+  var hex_neg_fill_img = new Image();
+  hex_neg_fill_img.src = "assets/hex_fill.png";
   var wrong_img = new Image();
   wrong_img.src = "assets/wrong.png";
   var right_img = new Image();
@@ -210,6 +219,25 @@ var GamePlayScene = function(game, stage)
   close_img.src = "assets/close.png";
   var girl_img = new Image();
   girl_img.src = "assets/girl.png";
+  var win_img = new Image();
+  win_img.src = "assets/win.png";
+
+  var on_img = GenIcon(40,40);
+  on_img.context.lineWidth = 4;
+  on_img.context.fillStyle = green;
+  on_img.context.strokeStyle = gray;
+  on_img.context.beginPath();
+  on_img.context.arc(on_img.width/2,on_img.height/2,on_img.width/2-3,0,twopi);
+  on_img.context.fill();
+  on_img.context.stroke();
+  var off_img = GenIcon(40,40);
+  off_img.context.lineWidth = 4;
+  off_img.context.fillStyle = green;
+  off_img.context.strokeStyle = gray;
+  off_img.context.beginPath();
+  off_img.context.arc(off_img.width/2,off_img.height/2,off_img.width/2-3,0,twopi);
+  //off_img.context.fill();
+  off_img.context.stroke();
 
   var lock_img = GenIcon(40,40);
   lock_img.context.strokeStyle = white;
@@ -225,6 +253,7 @@ var GamePlayScene = function(game, stage)
   lock_img.context.closePath();
   lock_img.context.stroke();
 
+  var audio = new Audio("assets/blip.mp3");
 
   var level = function()
   {
@@ -247,7 +276,8 @@ var GamePlayScene = function(game, stage)
     self.play_enabled = true;
     self.speed_enabled = true;
     self.dismissed = 0;
-    self.complete = false;
+    self.complete = false; //once level is complete, never gets set to false again
+    self.finished = false; //finished is set to false every time you start level
     self.click = function(){ self.dismissed++; };
     self.should_allow_creation = function(type){ return true; }
     self.should_dismiss_blurb = function(){ return true; }
@@ -290,6 +320,7 @@ var GamePlayScene = function(game, stage)
     if(levels[cur_level_i]) levels[cur_level_i].complete = true;
     cur_level_i++;
     if(cur_level_i >= levels.length) cur_level_i = 0;
+    levels[cur_level_i].finished = false;
     beginLevel();
   }
 
@@ -324,7 +355,7 @@ var GamePlayScene = function(game, stage)
 
   l = new level();
   l.title = "Watch";
-  l.primary_module_template = "{\"modules\":[{\"title\":\"Tree Height (M)\",\"type\":0,\"v\":1,\"min\":0,\"max\":10,\"pool\":1,\"graph\":1,\"wx\":0.2,\"wy\":-0.08,\"ww\":0.15625,\"wh\":0.15625,\"input\":-1,\"output\":-1,\"lock_move\":false,\"lock_input\":true,\"lock_output\":true,\"lock_value\":true,\"lock_min\":true,\"lock_max\":true,\"lock_pool\":true,\"lock_graph\":true},{\"title\":\"Growth Rate (M/T)\",\"type\":1,\"v\":1,\"min\":0,\"max\":10,\"pool\":1,\"graph\":0,\"wx\":-0.2,\"wy\":-0.08,\"ww\":0.15625,\"wh\":0.15625,\"input\":-1,\"output\":0,\"lock_move\":false,\"lock_input\":true,\"lock_output\":true,\"lock_value\":true,\"lock_min\":true,\"lock_max\":true,\"lock_pool\":true,\"lock_graph\":false}]}";
+  l.primary_module_template = "{\"modules\":[{\"title\":\"Tree Height (M)\",\"type\":0,\"v\":1,\"min\":0,\"max\":20,\"pool\":1,\"graph\":1,\"wx\":0.2,\"wy\":-0.08,\"ww\":0.15625,\"wh\":0.15625,\"input\":-1,\"output\":-1,\"lock_move\":false,\"lock_input\":true,\"lock_output\":true,\"lock_value\":true,\"lock_min\":true,\"lock_max\":true,\"lock_pool\":true,\"lock_graph\":true},{\"title\":\"Growth Rate (M/T)\",\"type\":3,\"v\":1,\"min\":0,\"max\":10,\"pool\":1,\"graph\":0,\"wx\":-0.4,\"wy\":-0.08,\"ww\":0.11363636363636363,\"wh\":0.11363636363636365,\"input\":-1,\"output\":-1,\"lock_move\":false,\"lock_input\":true,\"lock_output\":true,\"lock_value\":true,\"lock_min\":false,\"lock_max\":false,\"lock_pool\":false,\"lock_graph\":false},{\"title\":\"\",\"type\":2,\"v\":1,\"min\":0,\"max\":10,\"pool\":1,\"graph\":false,\"wx\":-0.1,\"wy\":-0.08,\"ww\":0.11363636363636363,\"wh\":0.11363636363636365,\"input\":1,\"output\":0,\"lock_move\":false,\"lock_input\":true,\"lock_output\":true,\"lock_value\":true,\"lock_min\":true,\"lock_max\":true,\"lock_pool\":true,\"lock_graph\":true}]}"
   l.primary_module_target_titles.push("Height(M)");
   l.primary_module_target_vals.push([1,2,3,4,5]);
   l.add_module_enabled = false;
@@ -361,7 +392,7 @@ var GamePlayScene = function(game, stage)
 
   l = new level();
   l.title = "Rate";
-  l.primary_module_template = "{\"modules\":[{\"title\":\"Tree Height (M)\",\"type\":0,\"v\":1,\"min\":0,\"max\":20,\"pool\":1,\"graph\":1,\"wx\":0.2,\"wy\":-0.08,\"ww\":0.15625,\"wh\":0.15625,\"input\":-1,\"output\":-1,\"lock_move\":false,\"lock_input\":true,\"lock_output\":true,\"lock_value\":true,\"lock_min\":true,\"lock_max\":true,\"lock_pool\":true,\"lock_graph\":true},{\"title\":\"Growth Rate (M/T)\",\"type\":1,\"v\":1,\"min\":0,\"max\":10,\"pool\":1,\"graph\":0,\"wx\":-0.2,\"wy\":-0.08,\"ww\":0.15625,\"wh\":0.15625,\"input\":-1,\"output\":0,\"lock_move\":false,\"lock_input\":true,\"lock_output\":true,\"lock_value\":false,\"lock_min\":true,\"lock_max\":true,\"lock_pool\":true,\"lock_graph\":false}]}";
+  l.primary_module_template = "{\"modules\":[{\"title\":\"Tree Height (M)\",\"type\":0,\"v\":1,\"min\":0,\"max\":20,\"pool\":1,\"graph\":1,\"wx\":0.2,\"wy\":-0.08,\"ww\":0.15625,\"wh\":0.15625,\"input\":-1,\"output\":-1,\"lock_move\":false,\"lock_input\":true,\"lock_output\":true,\"lock_value\":true,\"lock_min\":true,\"lock_max\":true,\"lock_pool\":true,\"lock_graph\":true},{\"title\":\"Growth Rate (M/T)\",\"type\":3,\"v\":1,\"min\":0,\"max\":10,\"pool\":1,\"graph\":0,\"wx\":-0.4,\"wy\":-0.08,\"ww\":0.11363636363636363,\"wh\":0.11363636363636365,\"input\":-1,\"output\":-1,\"lock_move\":false,\"lock_input\":true,\"lock_output\":true,\"lock_value\":false,\"lock_min\":false,\"lock_max\":false,\"lock_pool\":false,\"lock_graph\":false},{\"title\":\"\",\"type\":2,\"v\":1,\"min\":0,\"max\":10,\"pool\":1,\"graph\":false,\"wx\":-0.1,\"wy\":-0.08,\"ww\":0.11363636363636363,\"wh\":0.11363636363636365,\"input\":1,\"output\":0,\"lock_move\":false,\"lock_input\":true,\"lock_output\":true,\"lock_value\":true,\"lock_min\":true,\"lock_max\":true,\"lock_pool\":true,\"lock_graph\":true}]}"
   l.primary_module_target_titles.push("Height(M)");
   l.primary_module_target_vals.push([1,3,5,7,9]);
   l.add_module_enabled = false;
@@ -401,7 +432,7 @@ var GamePlayScene = function(game, stage)
 
   l = new level();
   l.title = "Start";
-  l.primary_module_template = "{\"modules\":[{\"title\":\"Tree Height (M)\",\"type\":0,\"v\":1,\"min\":0,\"max\":20,\"pool\":1,\"graph\":1,\"wx\":0.2,\"wy\":-0.08,\"ww\":0.15625,\"wh\":0.15625,\"input\":-1,\"output\":-1,\"lock_move\":false,\"lock_input\":true,\"lock_output\":true,\"lock_value\":false,\"lock_min\":true,\"lock_max\":true,\"lock_pool\":true,\"lock_graph\":true},{\"title\":\"Growth Rate (M/T)\",\"type\":1,\"v\":2,\"min\":0,\"max\":10,\"pool\":1,\"graph\":0,\"wx\":-0.2,\"wy\":-0.08,\"ww\":0.15625,\"wh\":0.15625,\"input\":-1,\"output\":0,\"lock_move\":false,\"lock_input\":true,\"lock_output\":true,\"lock_value\":true,\"lock_min\":true,\"lock_max\":true,\"lock_pool\":true,\"lock_graph\":false}]}";
+  l.primary_module_template = "{\"modules\":[{\"title\":\"Tree Height (M)\",\"type\":0,\"v\":1,\"min\":0,\"max\":20,\"pool\":1,\"graph\":1,\"wx\":0.2,\"wy\":-0.08,\"ww\":0.15625,\"wh\":0.15625,\"input\":-1,\"output\":-1,\"lock_move\":false,\"lock_input\":true,\"lock_output\":true,\"lock_value\":false,\"lock_min\":true,\"lock_max\":true,\"lock_pool\":true,\"lock_graph\":true},{\"title\":\"Growth Rate (M/T)\",\"type\":3,\"v\":2,\"min\":0,\"max\":10,\"pool\":1,\"graph\":0,\"wx\":-0.4,\"wy\":-0.08,\"ww\":0.11363636363636363,\"wh\":0.11363636363636365,\"input\":-1,\"output\":-1,\"lock_move\":false,\"lock_input\":true,\"lock_output\":true,\"lock_value\":false,\"lock_min\":false,\"lock_max\":false,\"lock_pool\":false,\"lock_graph\":false},{\"title\":\"\",\"type\":2,\"v\":1,\"min\":0,\"max\":10,\"pool\":1,\"graph\":false,\"wx\":-0.1,\"wy\":-0.08,\"ww\":0.11363636363636363,\"wh\":0.11363636363636365,\"input\":1,\"output\":0,\"lock_move\":false,\"lock_input\":true,\"lock_output\":true,\"lock_value\":true,\"lock_min\":true,\"lock_max\":true,\"lock_pool\":true,\"lock_graph\":true}]}"
   l.primary_module_target_titles.push("Height(M)");
   l.primary_module_target_vals.push([2,4,6,8,10]);
   l.add_module_enabled = false;
@@ -796,7 +827,7 @@ var GamePlayScene = function(game, stage)
 
   l = new level();
   l.title = "Polynomial Growth";
-  l.primary_module_template = "{\"modules\":[{\"title\":\"Minnow Population\",\"type\":3,\"v\":1,\"min\":0,\"max\":20,\"pool\":1,\"graph\":1,\"wx\":-0.3,\"wy\":-0.08,\"ww\":0.15625,\"wh\":0.15625,\"input\":-1,\"output\":-1,\"lock_move\":false,\"lock_input\":true,\"lock_output\":false,\"lock_value\":true,\"lock_min\":true,\"lock_max\":true,\"lock_pool\":true,\"lock_graph\":false},{\"title\":\"Walleye Population\",\"type\":0,\"v\":1,\"min\":0,\"max\":20,\"pool\":1,\"graph\":1,\"wx\":0.2,\"wy\":-0.08,\"ww\":0.15625,\"wh\":0.15625,\"input\":-1,\"output\":-1,\"lock_move\":false,\"lock_input\":true,\"lock_output\":true,\"lock_value\":true,\"lock_min\":true,\"lock_max\":true,\"lock_pool\":true,\"lock_graph\":false},{\"title\":\"DNR Minnow Dump\",\"type\":1,\"v\":1,\"min\":0,\"max\":20,\"pool\":1,\"graph\":0,\"wx\":-0.7,\"wy\":-0.08,\"ww\":0.15625,\"wh\":0.15625,\"input\":-1,\"output\":0,\"lock_move\":false,\"lock_input\":true,\"lock_output\":true,\"lock_value\":true,\"lock_min\":true,\"lock_max\":true,\"lock_pool\":true,\"lock_graph\":false}]}";
+  l.primary_module_template = "{\"modules\":[{\"title\":\"Minnow Population\",\"type\":3,\"v\":1,\"min\":0,\"max\":20,\"pool\":1,\"graph\":1,\"wx\":-0.3,\"wy\":-0.08,\"ww\":0.15625,\"wh\":0.15625,\"input\":-1,\"output\":-1,\"lock_move\":false,\"lock_input\":true,\"lock_output\":false,\"lock_value\":true,\"lock_min\":true,\"lock_max\":true,\"lock_pool\":true,\"lock_graph\":false},{\"title\":\"Walleye Population\",\"type\":0,\"v\":1,\"min\":0,\"max\":20,\"pool\":1,\"graph\":1,\"wx\":0.2,\"wy\":-0.08,\"ww\":0.15625,\"wh\":0.15625,\"input\":-1,\"output\":-1,\"lock_move\":false,\"lock_input\":true,\"lock_output\":true,\"lock_value\":true,\"lock_min\":true,\"lock_max\":true,\"lock_pool\":true,\"lock_graph\":false},{\"title\":\"DNR Minnow Dump\",\"type\":3,\"v\":1,\"min\":0,\"max\":10,\"pool\":1,\"graph\":0,\"wx\":-0.75,\"wy\":-0.08,\"ww\":0.11363636363636363,\"wh\":0.11363636363636365,\"input\":-1,\"output\":-1,\"lock_move\":false,\"lock_input\":true,\"lock_output\":true,\"lock_value\":false,\"lock_min\":false,\"lock_max\":false,\"lock_pool\":false,\"lock_graph\":false},{\"title\":\"\",\"type\":2,\"v\":1,\"min\":0,\"max\":10,\"pool\":1,\"graph\":false,\"wx\":-0.5,\"wy\":-0.08,\"ww\":0.11363636363636363,\"wh\":0.11363636363636365,\"input\":2,\"output\":0,\"lock_move\":false,\"lock_input\":true,\"lock_output\":true,\"lock_value\":false,\"lock_min\":false,\"lock_max\":false,\"lock_pool\":false,\"lock_graph\":false}]}"
   l.primary_module_target_titles.push("Minnow");
   l.primary_module_target_titles.push("Walleye");
   l.primary_module_target_vals.push([1,2,3,4,5]);
@@ -830,7 +861,7 @@ var GamePlayScene = function(game, stage)
 
   l = new level();
   l.title = "Understanding Polynomial Growth";
-  l.primary_module_template = "{\"modules\":[{\"title\":\"Minnow Population\",\"type\":3,\"v\":1,\"min\":0,\"max\":20,\"pool\":1,\"graph\":1,\"wx\":-0.3,\"wy\":-0.08,\"ww\":0.15625,\"wh\":0.15625,\"input\":-1,\"output\":-1,\"lock_move\":false,\"lock_input\":true,\"lock_output\":false,\"lock_value\":false,\"lock_min\":true,\"lock_max\":true,\"lock_pool\":false,\"lock_graph\":false},{\"title\":\"Walleye Population\",\"type\":0,\"v\":1,\"min\":0,\"max\":30,\"pool\":1,\"graph\":1,\"wx\":0.2,\"wy\":-0.08,\"ww\":0.15625,\"wh\":0.15625,\"input\":-1,\"output\":-1,\"lock_move\":false,\"lock_input\":true,\"lock_output\":true,\"lock_value\":false,\"lock_min\":true,\"lock_max\":true,\"lock_pool\":true,\"lock_graph\":false},{\"title\":\"DNR Minnow Dump\",\"type\":1,\"v\":1,\"min\":0,\"max\":20,\"pool\":1,\"graph\":0,\"wx\":-0.7,\"wy\":-0.08,\"ww\":0.15625,\"wh\":0.15625,\"input\":-1,\"output\":0,\"lock_move\":false,\"lock_input\":true,\"lock_output\":true,\"lock_value\":false,\"lock_min\":true,\"lock_max\":true,\"lock_pool\":true,\"lock_graph\":false}]}";
+  l.primary_module_template = "{\"modules\":[{\"title\":\"Minnow Population\",\"type\":3,\"v\":1,\"min\":0,\"max\":20,\"pool\":1,\"graph\":1,\"wx\":-0.3,\"wy\":-0.08,\"ww\":0.15625,\"wh\":0.15625,\"input\":-1,\"output\":-1,\"lock_move\":false,\"lock_input\":true,\"lock_output\":false,\"lock_value\":true,\"lock_min\":true,\"lock_max\":true,\"lock_pool\":true,\"lock_graph\":false},{\"title\":\"Walleye Population\",\"type\":0,\"v\":1,\"min\":0,\"max\":20,\"pool\":1,\"graph\":1,\"wx\":0.2,\"wy\":-0.08,\"ww\":0.15625,\"wh\":0.15625,\"input\":-1,\"output\":-1,\"lock_move\":false,\"lock_input\":true,\"lock_output\":true,\"lock_value\":true,\"lock_min\":true,\"lock_max\":true,\"lock_pool\":true,\"lock_graph\":false},{\"title\":\"DNR Minnow Dump\",\"type\":3,\"v\":1,\"min\":0,\"max\":10,\"pool\":1,\"graph\":0,\"wx\":-0.75,\"wy\":-0.08,\"ww\":0.11363636363636363,\"wh\":0.11363636363636365,\"input\":-1,\"output\":-1,\"lock_move\":false,\"lock_input\":true,\"lock_output\":true,\"lock_value\":false,\"lock_min\":false,\"lock_max\":false,\"lock_pool\":false,\"lock_graph\":false},{\"title\":\"\",\"type\":2,\"v\":1,\"min\":0,\"max\":10,\"pool\":1,\"graph\":false,\"wx\":-0.5,\"wy\":-0.08,\"ww\":0.11363636363636363,\"wh\":0.11363636363636365,\"input\":2,\"output\":0,\"lock_move\":false,\"lock_input\":true,\"lock_output\":true,\"lock_value\":false,\"lock_min\":false,\"lock_max\":false,\"lock_pool\":false,\"lock_graph\":false}]}"
   l.primary_module_target_titles.push("Minnow");
   l.primary_module_target_titles.push("Walleye");
   l.primary_module_target_vals.push([1,2,3,4,5]);
@@ -921,7 +952,7 @@ var GamePlayScene = function(game, stage)
       level:levels[i],
       click:function(evt)
       {
-        if(evt.clickable.prev_level && !evt.clickable.prev_level.complete) return;
+        if(!ALLOW_NEXT && (evt.clickable.prev_level && !evt.clickable.prev_level.complete)) return;
         game_state = GAME_STATE_PLAY;
         cur_level_i = evt.clickable.i;
         beginLevel();
@@ -973,7 +1004,7 @@ var GamePlayScene = function(game, stage)
     self.q = [];
     self.q_i = 0;
 
-    var font_size = 20;
+    var font_size = 14;
     var font = font_size+"px Roboto Mono";
     self.dom = new CanvDom(canv);
 
@@ -982,7 +1013,7 @@ var GamePlayScene = function(game, stage)
       self.q = txt;
       self.q_i = 0;
       self.g_viz = 1;
-      self.dom.popDismissableMessage(textToLines(canv, font, self.w-120, self.q[self.q_i]),self.x+20,self.y+15,self.w-80,self.h,function(){});
+      self.dom.popDismissableMessage(textToLines(canv, font, self.w-160, self.q[self.q_i]),self.x+20,self.y+15,self.w-80,self.h,function(){});
     }
 
     self.dismiss = function()
@@ -990,7 +1021,7 @@ var GamePlayScene = function(game, stage)
       if(self.q_i < self.q.length-1)
       {
         self.q_i++;
-        self.dom.popDismissableMessage(textToLines(canv, font, self.w-120, self.q[self.q_i]),self.x+20,self.y+15,self.w-80,self.h,function(){});
+        self.dom.popDismissableMessage(textToLines(canv, font, self.w-160, self.q[self.q_i]),self.x+20,self.y+15,self.w-80,self.h,function(){});
       }
       else
       {
@@ -1023,9 +1054,9 @@ var GamePlayScene = function(game, stage)
       self.w += 10;
       ctx.font = font;
       ctx.fillStyle = white;
-      self.dom.draw(font_size,canv);
-      var w = 100;
-      ctx.drawImage(girl_img,self.x+self.w-w-20,self.y+50,w,girl_img.height*(w/girl_img.width));
+      self.dom.draw(font_size+4,canv);
+      var w = 160;
+      ctx.drawImage(girl_img,self.x+self.w-w-20,self.y+20,w,girl_img.height*(w/girl_img.width));
     }
   }
 
@@ -1320,10 +1351,47 @@ var GamePlayScene = function(game, stage)
             }
           }
         }
+        else
+        {
+          for(var j = 0; !isNaN(modules[i].plot[j]); j++)
+          {
+            x = self.graph_x+self.off_x+(graph_i*(self.graph_w+10))+10 + (j/(t_max-1)) * self.subgraph_w;
+            if(j <= t_i && !isNaN(modules[i].plot[j]))
+            {
+              ctx.font = "10px Roboto Mono";
+              ctx.textAlign = "center";
+              ctx.fillStyle = white;
+              y = self.subgraph_y + self.subgraph_h - (clamp(0,1,mapVal(modules[i].min,modules[i].max,0,1,modules[i].plot[j]))*self.subgraph_h);
+              var off = -8;
+              ctx.fillText(modules[i].plot[j],x,y+off);
+              ctx.font = "20px Roboto Mono";
+              ctx.textAlign = "left";
+              ctx.fillStyle = modules[i].color;
+            }
+          }
+        }
 
         graph_i++;
       }
       ctx.textAlign = "center";
+    }
+
+    self.drag_start_off_x = 0;
+    self.drag_start_x = 0;
+    self.dragStart = function(evt)
+    {
+      self.drag_start_off_x = self.off_x;
+      self.drag_start_x = evt.doX;
+    }
+    self.drag = function(evt)
+    {
+      self.off_x = self.drag_start_off_x+(evt.doX-self.drag_start_x);
+      if(self.off_x < (canv.width-((self.graph_w+10)*modules.length+10))) self.off_x = canv.width-((self.graph_w+10)*modules.length+10);
+      if(self.off_x > 0) self.off_x = 0;
+    }
+    self.dragFinish = function(evt)
+    {
+
     }
   }
 
@@ -1353,12 +1421,24 @@ var GamePlayScene = function(game, stage)
     self.min_box   = new NumberBox(0,0,0,0,0,0,function(v){ if(selected_module.lock_min)   return; var new_v = fdisp(min(selected_module.max,v),2);                       var old_v = selected_module.min;       selected_module.min       = new_v; if(new_v != old_v) resetGraph(); if(new_v != v) { self.min_box.set(new_v); self.v_box.set(max(selected_module.v,new_v)); } else { var delta = max((selected_module.max-selected_module.min),1)/100; self.v_box.delta = delta; self.min_box.delta = delta; self.max_box.delta = delta; } });
     self.max_box   = new NumberBox(0,0,0,0,0,0,function(v){ if(selected_module.lock_max)   return; var new_v = fdisp(max(selected_module.min,v),2);                       var old_v = selected_module.max;       selected_module.max       = new_v; if(new_v != old_v) resetGraph(); if(new_v != v) { self.max_box.set(new_v); self.v_box.set(min(selected_module.v,new_v)); } else { var delta = max((selected_module.max-selected_module.min),1)/100; self.v_box.delta = delta; self.min_box.delta = delta; self.max_box.delta = delta; } });
     self.pool_box  = new ToggleBox(0,0,0,0,0,  function(v){ if(selected_module.lock_pool)  return; var new_v = v;                                                         var old_v = selected_module.pool;      selected_module.pool      = new_v; if(new_v != old_v) resetGraph(); });
+    self.pool_box.on_img = on_img;
+    self.pool_box.off_img = off_img;
     self.graph_box = new ToggleBox(0,0,0,0,0,  function(v){ if(selected_module.lock_graph) return; var new_v = v;                                                         var old_v = selected_module.graph;     selected_module.graph     = new_v; });
+    self.graph_box.on_img = on_img;
+    self.graph_box.off_img = off_img;
 
     self.operator_box_mul = new ToggleBox(0,0,0,0,0,function(v){ var new_v; if(v) new_v = OPERATOR_MUL; else new_v = OPERATOR_DIV; var old_v = selected_module.operator; selected_module.operator = new_v; if(new_v != old_v) resetGraph(); if(self.operator_box_div.on == v) self.operator_box_div.set(!v); });
+    self.operator_box_mul.on_img = on_img;
+    self.operator_box_mul.off_img = off_img;
     self.sign_box_pos     = new ToggleBox(0,0,0,0,0,function(v){ var new_v; if(v) new_v = 1.;           else new_v = -1.;          var old_v = selected_module.sign;     selected_module.sign     = new_v; if(new_v != old_v) resetGraph(); if(self.sign_box_neg.on     == v) self.sign_box_neg.set(!v);     });
+    self.sign_box_pos.on_img = on_img;
+    self.sign_box_pos.off_img = off_img;
     self.operator_box_div = new ToggleBox(0,0,0,0,0,function(v){ if(self.operator_box_div.on == v) self.operator_box_mul.set(!v); });
+    self.operator_box_div.on_img = on_img;
+    self.operator_box_div.off_img = off_img;
     self.sign_box_neg     = new ToggleBox(0,0,0,0,0,function(v){ if(self.sign_box_pos.on     == v) self.sign_box_pos.set(!v);     });
+    self.sign_box_neg.on_img = on_img;
+    self.sign_box_neg.off_img = off_img;
 
     self.calc_sub_params = function()
     {
@@ -1542,6 +1622,16 @@ var GamePlayScene = function(game, stage)
       obj.draw(canv);
       ctx.textAlign = "left";
     }
+    var prevy = 0;
+    var drawPrevLine = function(new_prevy)
+    {
+      ctx.strokeStyle = gray;
+      ctx.beginPath();
+      ctx.moveTo(self.x,prevy);
+      ctx.lineTo(self.x+self.w,prevy);
+      ctx.stroke();
+      prevy = new_prevy;
+    }
     self.draw = function()
     {
       ctx.font = "10px Roboto Mono";
@@ -1553,37 +1643,40 @@ var GamePlayScene = function(game, stage)
 
       if(selected_module)
       {
-        { self.title_box.draw(canv); if(!self.title_box.txt.length) { ctx.fillText("(title)",self.title_box.x+4,self.title_box.y+self.title_box.h*3/4); } }
+        { self.title_box.draw(canv); if(!self.title_box.txt.length) { ctx.fillText("(title)",self.title_box.x+4,self.title_box.y+self.title_box.h*3/4); } prevy = self.title_box.y+self.title_box.h+5; }
         if(!selected_module.lock_value)
         {
           self.drawRightAlign(self.v_box);
           ctx.fillStyle = black;
           if(selected_module.output_dongle.attachment && selected_module.input_dongle.attachment)
-            ctx.fillText("multiplier",   self.x + 10, self.v_box.y+label_yoff);
+          {  ctx.fillText("multiplier",   self.x + 10, self.v_box.y+label_yoff); drawPrevLine(self.v_box.y+self.v_box.h+5); }
           else if(selected_module.output_dongle.attachment)
-            ctx.fillText("contribution",   self.x + 10, self.v_box.y+label_yoff);
+          { ctx.fillText("contribution",   self.x + 10, self.v_box.y+label_yoff); drawPrevLine(self.v_box.y+self.v_box.h+5); }
           else if(!selected_module.output_dongle.attachment)
           {
             if(!selected_module.cache_const)
               ctx.fillText("starting val",   self.x + 10, self.v_box.y+label_yoff);
             else
               ctx.fillText("val",   self.x + 10, self.v_box.y+label_yoff);
+            drawPrevLine(self.v_box.y+self.v_box.h+5);
           }
         }
         if(!selected_module.cache_const)
         {
-          if(!selected_module.lock_min) { self.drawRightAlign(self.min_box); ctx.fillStyle = black; ctx.fillText("min", self.x + 10, self.min_box.y+label_yoff); }
-          if(!selected_module.lock_max) { self.drawRightAlign(self.max_box); ctx.fillStyle = black; ctx.fillText("max", self.x + 10, self.max_box.y+label_yoff); }
+          if(!selected_module.lock_min) { self.drawRightAlign(self.min_box); ctx.fillStyle = black; ctx.fillText("min", self.x + 10, self.min_box.y+label_yoff); drawPrevLine(self.min_box.y+self.min_box.h+5); }
+          if(!selected_module.lock_max) { self.drawRightAlign(self.max_box); ctx.fillStyle = black; ctx.fillText("max", self.x + 10, self.max_box.y+label_yoff); drawPrevLine(self.max_box.y+self.max_box.h+5); }
         }
-        if(!selected_module.cache_const && !selected_module.lock_pool) { self.drawRightAlign(self.pool_box);  ctx.fillStyle = black; ctx.fillText("pool",  self.x + 10, self.pool_box.y+label_yoff); }
-        if(!selected_module.lock_graph)                                { self.drawRightAlign(self.graph_box); ctx.fillStyle = black; ctx.fillText("graph", self.x + 10, self.graph_box.y+label_yoff); }
+        if(!selected_module.cache_const && !selected_module.lock_pool) { self.drawRightAlign(self.pool_box);  ctx.fillStyle = black; ctx.fillText("pool",  self.x + 10, self.pool_box.y+label_yoff);  drawPrevLine(self.pool_box.y+self.pool_box.h+5); }
+        if(!selected_module.lock_graph)                                { self.drawRightAlign(self.graph_box); ctx.fillStyle = black; ctx.fillText("graph", self.x + 10, self.graph_box.y+label_yoff); drawPrevLine(self.graph_box.y+self.graph_box.h+5); }
 
         if(selected_module.input_dongle.attachment && !selected_module.cache_const)
         {
           self.drawRightAlign(self.operator_box_mul);
           self.drawRightAlign(self.operator_box_div); ctx.fillStyle = black; ctx.fillText("mul/div",  self.x + 10, self.operator_box_div.y+label_yoff);
+          drawPrevLine(self.operator_box_mul.y+self.operator_box_mul.h+5);
           self.drawRightAlign(self.sign_box_pos);
-          self.drawRightAlign(self.sign_box_neg);     ctx.fillStyle = black; ctx.fillText("pos/nev",  self.x + 10, self.sign_box_neg.y+label_yoff);
+          self.drawRightAlign(self.sign_box_neg);     ctx.fillStyle = black; ctx.fillText("pos/neg",  self.x + 10, self.sign_box_neg.y+label_yoff);
+          drawPrevLine(self.sign_box_pos.y+self.sign_box_pos.h+5);
         }
       }
     }
@@ -1826,6 +1919,12 @@ var GamePlayScene = function(game, stage)
       }
       if(!self.attachment)
         deleteModule(self.src);
+      if(self.src.input_dongle.attachment == self.src.output_dongle.attachment)
+      {
+        self.src.x -= 50;
+        self.src.y -= 50;
+        worldSpaceCoords(work_cam,canv,self.src);
+      }
       resetGraph();
       s_editor.center();
     }
@@ -1985,7 +2084,9 @@ var GamePlayScene = function(game, stage)
       if(selected_module == self) selected_module = clone;
     }
 
-    self.hover   = function(){}
+    self.known_hover_x = 0;
+    self.known_hover_y = 0;
+    self.hover   = function(evt){ self.known_hover_x = evt.doX; self.known_hover_y = evt.doY; }
     self.unhover = function(){}
 
     var glob_0 = {x:0,y:0};
@@ -2165,8 +2266,8 @@ var GamePlayScene = function(game, stage)
             {
               self.body_cache.rel_const = GenIcon(self.w+self.body_cache.buffer*2,self.h+self.body_cache.buffer*2);
               self.body_cache.rel_const.context.fillStyle = bg_color;
-              fillR(self.body_cache.buffer+self.w/4,self.body_cache.buffer+self.h/3,self.w/2,self.h/3,5,self.body_cache.rel_const.context);
               self.body_cache.rel_const.context.strokeStyle = line_color;
+              fillR(self.body_cache.buffer+self.w/4,self.body_cache.buffer+self.h/3,self.w/2,self.h/3,5,self.body_cache.rel_const.context);
               strokeR(self.body_cache.buffer+self.w/4,self.body_cache.buffer+self.h/3,self.w/2,self.h/3,5,self.body_cache.rel_const.context);
             }
             ctx.drawImage(self.body_cache.rel_const,self.x-self.body_cache.buffer,self.y-self.body_cache.buffer,self.w+self.body_cache.buffer*2,self.h+self.body_cache.buffer*2);
@@ -2174,17 +2275,60 @@ var GamePlayScene = function(game, stage)
         }
         else
         {
+          var b = 10;
           if(!self.body_cache.rel_nconst)
           {
             self.body_cache.rel_nconst = GenIcon(self.w+self.body_cache.buffer*2,self.h+self.body_cache.buffer*2);
             self.body_cache.rel_nconst.context.fillStyle = bg_color;
             self.body_cache.rel_nconst.context.strokeStyle = line_color;
-            self.body_cache.rel_nconst.context.beginPath();
-            self.body_cache.rel_nconst.context.arc(self.body_cache.buffer+self.w/2,self.body_cache.buffer+self.h/2,self.w/4,0,twopi);
-            self.body_cache.rel_nconst.context.fill();
-            self.body_cache.rel_nconst.context.stroke();
+
+            self.body_cache.rel_nconst.context.drawImage(hex_bg_img,self.body_cache.buffer+b,self.body_cache.buffer+b,self.w-b*2,self.h-b*2);
           }
           ctx.drawImage(self.body_cache.rel_nconst,self.x-self.body_cache.buffer,self.y-self.body_cache.buffer,self.w+self.body_cache.buffer*2,self.h+self.body_cache.buffer*2);
+
+          //body
+          var s = self.w-b*2;
+          //ctx.drawImage(module_img(self.color),self.x+self.w/2-s/2,self.y+self.h/2-s/2,s,s);
+          var p  = 1;
+          var zp = 0;
+          if(self.min != self.max)
+          {
+            p  = clamp(0,1,mapVal(self.min,self.max,0,1,self.v_lag));
+            zp = mapVal(self.min,self.max,0,1,clamp(self.min,self.max,0));
+          }
+
+          var ymin;
+          var ymax;
+          var img = 0;
+          if(p > zp)
+          {
+            var s = self.w-b*2-3;
+            ymin = self.y+self.h/2-s/2+(s*(1-p));
+            ymax = self.y+self.h/2-s/2+(s*(1-zp));
+            img = hex_fill_img;
+          }
+          else if(zp > p)
+          {
+            var s = self.w-b*2-3;
+            ymin = self.y+self.h/2-s/2+(s*(1-zp));
+            ymax = self.y+self.h/2-s/2+(s*(1-p));
+            img = hex_neg_fill_img;
+          }
+
+          if(img)
+          {
+            ctx.save();
+            ctx.beginPath();
+            ctx.moveTo(self.x,       ymin);
+            ctx.lineTo(self.x+self.w,ymin);
+            ctx.lineTo(self.x+self.w,ymax);
+            ctx.lineTo(self.x,       ymax);
+            ctx.closePath();
+            ctx.clip();
+            ctx.drawImage(img,self.x+self.w/2-s/2,self.y+self.h/2-s/2,s,s);
+            ctx.restore();
+          }
+
         }
       }
 
@@ -2544,8 +2688,15 @@ var GamePlayScene = function(game, stage)
         }
         else
         {
-          self.output_dongle.off.x = 20;
-          self.output_dongle.off.y = 0;
+          if(
+            self.shouldShowOutputDongle()
+          )
+          {
+            self.output_dongle.off.x = self.known_hover_x-(self.x+self.w/2);
+            self.output_dongle.off.y = self.known_hover_y-(self.y+self.h/2);
+            safenormvec(self.output_dongle.off,1,self.output_dongle.off);
+            mulvec(self.output_dongle.off,20,self.output_dongle.off);
+          }
         }
       }
 
@@ -2727,7 +2878,7 @@ var GamePlayScene = function(game, stage)
   {
     clicker = new Clicker({source:stage.dispCanv.canvas});
     dragger = new Dragger({source:stage.dispCanv.canvas});
-    hoverer = new Hoverer({source:stage.dispCanv.canvas});
+    hoverer = new PersistentHoverer({source:stage.dispCanv.canvas});
     keyer   = new Keyer(  {source:stage.dispCanv.canvas});
     blurer  = new Blurer( {source:stage.dispCanv.canvas});
 
@@ -2784,6 +2935,32 @@ var GamePlayScene = function(game, stage)
     blurb.y = canv.height;
     blurb.inviz_y = canv.height;
     blurb.viz_y = canv.height-blurb.h;
+
+    modal = {};
+    modal.w = 400;
+    modal.h = 300;
+    modal.x = canv.width/2-modal.w/2;
+    modal.y = canv.height/2-modal.h/2;
+    modal.click = function(evt)
+    {
+      game_state = GAME_STATE_PLAY;
+    }
+    modal.draw = function()
+    {
+      ctx.fillStyle = "rgba(0,0,0,0.2)";
+      ctx.fillRect(0,0,canv.width,canv.height);
+      ctx.strokeStyle = line_color;
+      ctx.lineWidth = 4;
+      strokeR(modal.x,modal.y,modal.w,modal.h,10,ctx);
+      ctx.fillStyle = bg_color;
+      fillR(modal.x,modal.y,modal.w,modal.h,10,ctx);
+      ctx.fillStyle = white;
+      ctx.font = "18px Roboto Mono";
+      ctx.fillText("This model is a good match",modal.x+30,modal.y+150);
+      ctx.fillText("for our data!",modal.x+30,modal.y+190);
+      ctx.fillText("Continue",modal.x+modal.w/2-40,modal.y+270);
+      ctx.drawImage(win_img,modal.x+modal.w/2-80,modal.y-80,160,180);
+    }
 
     var dragOutModule = function(type,btn,evt)
     {
@@ -2953,37 +3130,45 @@ var GamePlayScene = function(game, stage)
 
   self.tick = function()
   {
-    if(game_state == GAME_STATE_PLAY)
+    if(game_state == GAME_STATE_PLAY || game_state == GAME_STATE_MODAL)
     {
       var clicked = false;
       if(clicker.filter(blurb))                  clicked = true;
-      if(selected_module) if(s_editor.filter())  clicked = true;
-      if(dragger.filter(s_ctrls.speed_slider))   clicked = true;
-      if(clicker.filter(s_ctrls.pause_btn))      clicked = true;
-      if(clicker.filter(s_ctrls.advance_btn))    clicked = true;
-      if(clicker.filter(s_ctrls.reset_btn))      clicked = true;
-      if(clicker.filter(s_ctrls.speed_slow_btn)) clicked = true;
-      if(clicker.filter(s_ctrls.speed_med_btn))  clicked = true;
-      if(clicker.filter(s_ctrls.speed_fast_btn)) clicked = true;
-      if(clicker.filter(next_level_btn))         clicked = true;
-      if(clicker.filter(menu_btn))               clicked = true;
-      if(clicker.filter(print_btn))              clicked = true;
-      if(clicker.filter(load_btn))               clicked = true;
-      if(dragger.filter(add_module_btn))         clicked = true;
-      clicker.filter(levels[cur_level_i]);
-      if(!clicked)
+      if(game_state == GAME_STATE_PLAY)
       {
-        for(var i = 0; i < modules.length; i++)
-          if(!modules[i].lock_input) dragger.filter(modules[i].input_dongle);
-        for(var i = 0; i < modules.length; i++)
-          if(!modules[i].lock_output) dragger.filter(modules[i].output_dongle);
-        for(var i = 0; i < modules.length; i++)
+        if(selected_module) if(s_editor.filter())  clicked = true;
+        if(dragger.filter(s_ctrls.speed_slider))   clicked = true;
+        if(clicker.filter(s_ctrls.pause_btn))      clicked = true;
+        if(clicker.filter(s_ctrls.advance_btn))    clicked = true;
+        if(clicker.filter(s_ctrls.reset_btn))      clicked = true;
+        if(clicker.filter(s_ctrls.speed_slow_btn)) clicked = true;
+        if(clicker.filter(s_ctrls.speed_med_btn))  clicked = true;
+        if(clicker.filter(s_ctrls.speed_fast_btn)) clicked = true;
+        if(clicker.filter(next_level_btn))         clicked = true;
+        if(clicker.filter(menu_btn))               clicked = true;
+        if(clicker.filter(print_btn))              clicked = true;
+        if(clicker.filter(load_btn))               clicked = true;
+        if(dragger.filter(s_graph))                clicked = true;
+        clicker.filter(levels[cur_level_i]);
+        if(!clicked)
         {
-          hoverer.filter(modules[i]);
-          if(!modules[i].lock_move) dragger.filter(modules[i]);
+          for(var i = 0; i < modules.length; i++)
+            if(!modules[i].lock_input) if(dragger.filter(modules[i].input_dongle)) clicked = true;
+          for(var i = 0; i < modules.length; i++)
+            if(!modules[i].lock_output) if(dragger.filter(modules[i].output_dongle)) clicked = true;
+          for(var i = 0; i < modules.length; i++)
+          {
+            hoverer.filter(modules[i]);
+            if(!modules[i].lock_move) if(dragger.filter(modules[i])) clicked = true;
+          }
         }
+        if(!clicked && dragger.filter(add_module_btn)) clicked = true;
+        if(!clicked) dragger.filter(s_dragger);
       }
-      if(!clicked) dragger.filter(s_dragger);
+      else if(game_state == GAME_STATE_MODAL)
+      {
+        clicker.filter(modal);
+      }
 
       for(var i = 0; i < modules.length; i++)
         modules[i].cache_const = 1;
@@ -3004,7 +3189,15 @@ var GamePlayScene = function(game, stage)
       {
         advance_timer--;
         if(advance_timer <= 0)
+        {
           flow();
+          if(!levels[cur_level_i].finished && levels[cur_level_i].primary_module_target_vals[0] && t_i >= levels[cur_level_i].primary_module_target_vals[0].length-1 && levelComplete())
+          {
+            levels[cur_level_i].complete = true;
+            levels[cur_level_i].finished = true;
+            game_state = GAME_STATE_MODAL;
+          }
+        }
       }
 
       for(var i = 0; i < modules.length; i++)
@@ -3035,7 +3228,7 @@ var GamePlayScene = function(game, stage)
     //ctx.fillRect(0,0,canv.width,canv.height);
     ctx.drawImage(bg_img,0,0,canv.width,canv.height);
 
-    if(game_state == GAME_STATE_PLAY)
+    if(game_state == GAME_STATE_PLAY || game_state == GAME_STATE_MODAL)
     {
       calc_caches();
 
@@ -3111,7 +3304,7 @@ var GamePlayScene = function(game, stage)
         s_ctrls.speed_slider.draw(canv);
       }
     }
-    else if(game_state == GAME_STATE_MENU)
+    if(game_state == GAME_STATE_MENU)
     {
       ctx.fillStyle = white;
       ctx.font = "20px Roboto Mono";
@@ -3129,6 +3322,10 @@ var GamePlayScene = function(game, stage)
       ctx.fillText("Big Systems",x,y); y += h+40;
     }
     blurb.draw();
+    if(game_state == GAME_STATE_MODAL)
+    {
+      modal.draw();
+    }
   };
 
   self.cleanup = function()
