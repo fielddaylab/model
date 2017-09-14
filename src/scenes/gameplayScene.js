@@ -370,6 +370,7 @@ var GamePlayScene = function(game, stage)
     levels[cur_level_i].gen_modules();
     levels[cur_level_i].ready();
     resetGraph();
+    if(s_ctrls.speed_med_btn) s_ctrls.speed_med_btn.click({});
     full_pause = true;
   }
   var nextLevel = function()
@@ -1725,9 +1726,9 @@ var GamePlayScene = function(game, stage)
           else if(!selected_module.output_dongle.attachment)
           {
             if(!selected_module.cache_const)
-              ctx.fillText("starting val",   self.x + 10, self.v_box.y+label_yoff);
+              ctx.fillText("starting",   self.x + 10, self.v_box.y+label_yoff);
             else
-              ctx.fillText("val",   self.x + 10, self.v_box.y+label_yoff);
+              ctx.fillText("value", self.x + 10, self.v_box.y+label_yoff);
             drawPrevLine(self.v_box.y+self.v_box.h+5);
           }
         }
