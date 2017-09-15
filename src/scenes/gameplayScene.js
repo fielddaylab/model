@@ -3421,7 +3421,7 @@ var GamePlayScene = function(game, stage)
     {
       ctx.fillStyle = white;
       ctx.font = "20px Roboto Mono";
-      ctx.fillText("Computational Modelling",20,50);
+      ctx.fillText("Computational Modeling",20,50);
       ctx.font = "12px Roboto Mono";
       for(var i = 0; i < level_btns.length; i++)
         level_btns[i].draw(levels[i],level_btns[i]);
