@@ -257,6 +257,59 @@ var GamePlayScene = function(game, stage)
   lock_img.context.closePath();
   lock_img.context.stroke();
 
+  function fillLeftR(x,y,w,h,r,ctx)
+  {
+    ctx.beginPath();
+    ctx.moveTo(x+r,y);
+    ctx.lineTo(x+w,y);
+    ctx.lineTo(x+w,y+h);
+    ctx.lineTo(x+r,y+h);
+    ctx.quadraticCurveTo(x,y+h,x,y+h-r);
+    ctx.lineTo(x,y+r);
+    ctx.quadraticCurveTo(x,y,x+r,y);
+    ctx.closePath();
+    ctx.fill();
+  }
+  function strokeLeftR(x,y,w,h,r,ctx)
+  {
+    ctx.beginPath();
+    ctx.moveTo(x+r,y);
+    ctx.lineTo(x+w,y);
+    ctx.lineTo(x+w,y+h);
+    ctx.lineTo(x+r,y+h);
+    ctx.quadraticCurveTo(x,y+h,x,y+h-r);
+    ctx.lineTo(x,y+r);
+    ctx.quadraticCurveTo(x,y,x+r,y);
+    ctx.closePath();
+    ctx.stroke();
+  }
+  function fillRightR(x,y,w,h,r,ctx)
+  {
+    ctx.beginPath();
+    ctx.moveTo(x,y);
+    ctx.lineTo(x+w-r,y);
+    ctx.quadraticCurveTo(x+w,y,x+w,y+r);
+    ctx.lineTo(x+w,y+h-r);
+    ctx.quadraticCurveTo(x+w,y+h,x+w-r,y+h);
+    ctx.lineTo(x,y+h);
+    ctx.lineTo(x,y);
+    ctx.closePath();
+    ctx.fill();
+  }
+  function strokeRightR(x,y,w,h,r,ctx)
+  {
+    ctx.beginPath();
+    ctx.moveTo(x,y);
+    ctx.lineTo(x+w-r,y);
+    ctx.quadraticCurveTo(x+w,y,x+w,y+r);
+    ctx.lineTo(x+w,y+h-r);
+    ctx.quadraticCurveTo(x+w,y+h,x+w-r,y+h);
+    ctx.lineTo(x,y+h);
+    ctx.lineTo(x,y);
+    ctx.closePath();
+    ctx.stroke();
+  }
+
   var audio = new Audio("assets/blip.mp3");
 
   var level = function()
@@ -317,6 +370,7 @@ var GamePlayScene = function(game, stage)
     levels[cur_level_i].gen_modules();
     levels[cur_level_i].ready();
     resetGraph();
+    if(s_ctrls.speed_med_btn) s_ctrls.speed_med_btn.click({});
     full_pause = true;
   }
   var nextLevel = function()
@@ -517,7 +571,7 @@ var GamePlayScene = function(game, stage)
   levels.push(l);
 
   l = new level();
-  l.title = "Build-a-Tree";
+  l.title = "Build a Tree";
   l.primary_module_template = "{\"modules\":[]}";
   l.primary_module_target_titles.push("Height(M)");
   l.primary_module_target_vals.push([0.5,1,1.5,2,2.5]);
@@ -964,12 +1018,25 @@ var GamePlayScene = function(game, stage)
       draw:function(level,self)
       {
         ctx.fillStyle = self.fill_color;
-        fillRBox(self,20,ctx);
+        fillRightR(self.x+self.w/5*2,self.y,self.w/5*3,self.h,20,ctx);
         ctx.strokeStyle = self.stroke_color;
+        strokeLeftR(self.x,self.y,self.w/5*2,self.h,20,ctx);
+        strokeRightR(self.x+self.w/5*2,self.y,self.w/5*3,self.h,20,ctx);
         strokeRBox(self,20,ctx);
+        ctx.font = "10px Roboto Mono";
         ctx.fillStyle = white;
-        ctx.fillText(level.title.substr(0,18),self.x+10,self.y+25);
-        if(self.prev_level && !self.prev_level.complete) ctx.drawImage(lock_img,self.x+self.w-50,self.y+self.h-30,40,40);
+        var i = level.title.indexOf(" ");
+        if(i > 0)
+        {
+          ctx.fillText(level.title.substr(0,i),self.x+self.w/5*2+10,self.y+25);
+          ctx.fillText(level.title.substr(i+1),self.x+self.w/5*2+10,self.y+45);
+        }
+        else
+          ctx.fillText(level.title,self.x+self.w/5*2+10,self.y+25);
+        if(self.prev_level && !self.prev_level.complete)
+          ctx.drawImage(lock_img,self.x+10,self.y+10,40,40);
+        if(level.complete)
+          ctx.drawImage(right_img,self.x+self.w-30,self.y-10,30,30);
       }
     };
     level_btns.push(btn);
@@ -1659,9 +1726,9 @@ var GamePlayScene = function(game, stage)
           else if(!selected_module.output_dongle.attachment)
           {
             if(!selected_module.cache_const)
-              ctx.fillText("starting val",   self.x + 10, self.v_box.y+label_yoff);
+              ctx.fillText("starting",   self.x + 10, self.v_box.y+label_yoff);
             else
-              ctx.fillText("val",   self.x + 10, self.v_box.y+label_yoff);
+              ctx.fillText("value", self.x + 10, self.v_box.y+label_yoff);
             drawPrevLine(self.v_box.y+self.v_box.h+5);
           }
         }
@@ -3354,7 +3421,7 @@ var GamePlayScene = function(game, stage)
     {
       ctx.fillStyle = white;
       ctx.font = "20px Roboto Mono";
-      ctx.fillText("Computational Modelling",20,50);
+      ctx.fillText("Computational Modeling",20,50);
       ctx.font = "12px Roboto Mono";
       for(var i = 0; i < level_btns.length; i++)
         level_btns[i].draw(levels[i],level_btns[i]);
