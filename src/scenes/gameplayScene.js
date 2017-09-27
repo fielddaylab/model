@@ -336,6 +336,7 @@ var GamePlayScene = function(game, stage)
     self.complete = false; //once level is complete, never gets set to false again
     self.finished = false; //finished is set to false every time you start level
     self.click = function(){ self.dismissed++; };
+    self.comic = false;
     self.should_allow_creation = function(type){ return true; }
     self.should_dismiss_blurb = function(){ return true; }
     self.gen_modules = function()
@@ -409,6 +410,7 @@ var GamePlayScene = function(game, stage)
   l.click = function(evt)
   {
   }
+  l.comic = function() { game.setScene(2,{start:1,length:1}); };
   levels.push(l);
 
   l = new level();
@@ -446,6 +448,7 @@ var GamePlayScene = function(game, stage)
   {
     if(doEvtWithinBB(evt, s_ctrls.advance_btn)) levels[cur_level_i].dismissed++;
   }
+  l.comic = false;
   levels.push(l);
 
   l = new level();
@@ -486,6 +489,7 @@ var GamePlayScene = function(game, stage)
   {
     if(doEvtWithinBB(evt, modules[1])) levels[cur_level_i].dismissed++;
   }
+  l.comic = false;
   levels.push(l);
 
   l = new level();
@@ -526,6 +530,7 @@ var GamePlayScene = function(game, stage)
   {
     if(doEvtWithinBB(evt, modules[1])) levels[cur_level_i].dismissed++;
   }
+  l.comic = false;
   levels.push(l);
 
   l = new level();
@@ -568,6 +573,7 @@ var GamePlayScene = function(game, stage)
     else if(modules.length == 3 && blurb.g_viz == 1)
       blurb.dismiss();
   }
+  l.comic = false;
   levels.push(l);
 
   l = new level();
@@ -622,6 +628,7 @@ var GamePlayScene = function(game, stage)
   l.click = function(evt)
   {
   }
+  l.comic = false;
   levels.push(l);
 
   l = new level();
@@ -663,6 +670,7 @@ var GamePlayScene = function(game, stage)
   l.click = function(evt)
   {
   }
+  l.comic = false;
   levels.push(l);
 
   l = new level();
@@ -702,6 +710,7 @@ var GamePlayScene = function(game, stage)
   l.click = function(evt)
   {
   }
+  l.comic = false;
   levels.push(l);
 
   l = new level();
@@ -741,6 +750,7 @@ var GamePlayScene = function(game, stage)
   l.click = function(evt)
   {
   }
+  l.comic = false;
   levels.push(l);
 
   l = new level();
@@ -781,6 +791,7 @@ var GamePlayScene = function(game, stage)
   l.click = function(evt)
   {
   }
+  l.comic = false;
   levels.push(l);
 
   l = new level();
@@ -814,6 +825,7 @@ var GamePlayScene = function(game, stage)
   l.click = function(evt)
   {
   }
+  l.comic = false;
   levels.push(l);
 
   l = new level();
@@ -847,6 +859,7 @@ var GamePlayScene = function(game, stage)
   l.click = function(evt)
   {
   }
+  l.comic = false;
   levels.push(l);
 
   l = new level();
@@ -881,6 +894,7 @@ var GamePlayScene = function(game, stage)
   {
     if(doEvtWithinBB(evt, s_ctrls.advance_btn)) levels[cur_level_i].dismissed++;
   }
+  l.comic = false;
   levels.push(l);
 
   l = new level();
@@ -915,6 +929,7 @@ var GamePlayScene = function(game, stage)
   l.click = function(evt)
   {
   }
+  l.comic = false;
   levels.push(l);
 
   l = new level();
@@ -949,6 +964,7 @@ var GamePlayScene = function(game, stage)
   l.click = function(evt)
   {
   }
+  l.comic = false;
   levels.push(l);
 
   l = new level();
@@ -985,6 +1001,7 @@ var GamePlayScene = function(game, stage)
   {
     if(doEvtWithinBB(evt, s_ctrls.advance_btn)) levels[cur_level_i].dismissed++;
   }
+  l.comic = false;
   levels.push(l);
 
   var w = 150;
@@ -1014,6 +1031,7 @@ var GamePlayScene = function(game, stage)
         game_state = GAME_STATE_PLAY;
         cur_level_i = evt.clickable.i;
         beginLevel();
+        if(levels[cur_level_i].comic) levels[cur_level_i].comic();
       },
       draw:function(level,self)
       {
@@ -3018,8 +3036,19 @@ var GamePlayScene = function(game, stage)
     mod.body_cache = {buffer:10};
   }
 
+  var readied = false;
   self.ready = function()
   {
+    if(readied)
+    {
+      clicker.flush();
+      dragger.flush();
+      hoverer.flush();
+      keyer.flush();
+      blurer.flush();
+      return;
+    }
+    readied = true;
     clicker = new Clicker({source:stage.dispCanv.canvas});
     dragger = new Dragger({source:stage.dispCanv.canvas});
     hoverer = new PersistentHoverer({source:stage.dispCanv.canvas});
