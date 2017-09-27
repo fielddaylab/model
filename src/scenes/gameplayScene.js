@@ -2447,6 +2447,17 @@ var GamePlayScene = function(game, stage)
         base.y = self.y+self.h/2+self.input_dongle.off.y;
         from.x = self.input_dongle.off.x;
         from.y = self.input_dongle.off.y;
+        if(self.input_dongle.attachment)
+        {
+          tvecs[0].x = self.input_dongle.attachment.x+self.input_dongle.attachment.w/2;
+          tvecs[0].y = self.input_dongle.attachment.y+self.input_dongle.attachment.h/2;
+          subvec(base,tvecs[0],tvecs[1]);
+          safenormvec(tvecs[1],1,tvecs[1]);
+          mulvec(tvecs[1],self.input_dongle.attachment.w/2,tvecs[1]);
+          addvec(tvecs[0],tvecs[1],base);
+          from.x = -tvecs[1].x;
+          from.y = -tvecs[1].y;
+        }
         safenormvec(from,1,from);
         from.x = -from.x;
         from.y = -from.y;
@@ -2470,6 +2481,17 @@ var GamePlayScene = function(game, stage)
         base.y = self.y+self.h/2+self.output_dongle.off.y;
         from.x = self.output_dongle.off.x;
         from.y = self.output_dongle.off.y;
+        if(self.input_dongle.attachment)
+        {
+          tvecs[0].x = self.output_dongle.attachment.x+self.output_dongle.attachment.w/2;
+          tvecs[0].y = self.output_dongle.attachment.y+self.output_dongle.attachment.h/2;
+          subvec(base,tvecs[0],tvecs[1]);
+          safenormvec(tvecs[1],1,tvecs[1]);
+          mulvec(tvecs[1],self.output_dongle.attachment.w/2,tvecs[1]);
+          addvec(tvecs[0],tvecs[1],base);
+          from.x = -tvecs[1].x;
+          from.y = -tvecs[1].y;
+        }
         safenormvec(from,1,from);
         target.x = -from.y;
         target.y = from.x;
@@ -2686,6 +2708,9 @@ var GamePlayScene = function(game, stage)
       */
     }
 
+    var tvecs = [];
+    for(var i = 0; i < 10; i++)
+      tvecs[i] = {x:0,y:0};
     var base = {x:0,y:0};
     var from = {x:0,y:0};
     var target = {x:0,y:0};
