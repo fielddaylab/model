@@ -1945,13 +1945,36 @@ var GamePlayScene = function(game, stage)
     self.r = r;
     self.attachment = 0;
 
+    var tvecs = [];
+    for(var i = 0; i < 10; i++)
+      tvecs[i] = {x:0,y:0};
+    var base = {x:0,y:0};
     self.shouldDrag = function(evt)
     {
       if((dragging_obj && dragging_obj != self) || !self.srcShouldDrag()) return false;
-      if(distsqr(self.src.x+self.src.w/2+self.off.x,self.src.y+self.src.h/2+self.off.y,evt.doX,evt.doY) < self.r*self.r)
+      if(self.attachment)
       {
-        if(src.type == MODULE_TYPE_MODULE || src.type == MODULE_TYPE_OBJECT) src.swapIntoRelationship();
-        return true;
+        base.x = self.src.x+self.src.w/2+self.off.x;
+        base.y = self.src.y+self.src.h/2+self.off.y;
+        tvecs[0].x = self.attachment.x+self.attachment.w/2;
+        tvecs[0].y = self.attachment.y+self.attachment.h/2;
+        subvec(base,tvecs[0],tvecs[1]);
+        safenormvec(tvecs[1],1,tvecs[1]);
+        mulvec(tvecs[1],self.attachment.w/2,tvecs[1]);
+        addvec(tvecs[0],tvecs[1],base);
+        if(distsqr(base.x,base.y,evt.doX,evt.doY) < self.r*self.r)
+        {
+          if(src.type == MODULE_TYPE_MODULE || src.type == MODULE_TYPE_OBJECT) src.swapIntoRelationship();
+          return true;
+        }
+      }
+      else
+      {
+        if(distsqr(self.src.x+self.src.w/2+self.off.x,self.src.y+self.src.h/2+self.off.y,evt.doX,evt.doY) < self.r*self.r)
+        {
+          if(src.type == MODULE_TYPE_MODULE || src.type == MODULE_TYPE_OBJECT) src.swapIntoRelationship();
+          return true;
+        }
       }
       return false;
     }
@@ -3284,10 +3307,9 @@ var GamePlayScene = function(game, stage)
         clicker.filter(levels[cur_level_i]);
         if(!clicked)
         {
-          for(var i = 0; i < modules.length; i++)
-            if(!modules[i].lock_input) if(dragger.filter(modules[i].input_dongle)) clicked = true;
-          for(var i = 0; i < modules.length; i++)
-            if(!modules[i].lock_output) if(dragger.filter(modules[i].output_dongle)) clicked = true;
+          for(var i = 0; i < modules.length; i++) if(!modules[i].lock_input)                                                 if(dragger.filter(modules[i].input_dongle)) clicked = true;
+          for(var i = 0; i < modules.length; i++) if(!modules[i].lock_output && modules[i].type == MODULE_TYPE_RELATIONSHIP) if(dragger.filter(modules[i].output_dongle)) clicked = true;
+          for(var i = 0; i < modules.length; i++) if(!modules[i].lock_output && modules[i].type != MODULE_TYPE_RELATIONSHIP) if(dragger.filter(modules[i].output_dongle)) clicked = true;
           for(var i = 0; i < modules.length; i++)
           {
             hoverer.filter(modules[i]);
