@@ -179,6 +179,13 @@ var GamePlayScene = function(game, stage)
   glob_neg_img.context.arc(w/2,h/2,(w-5)/2,0,2*Math.PI);
   glob_neg_img.context.fill();
 
+  var lvl_imgs = [];
+  for(var i = 0; i < 5; i++)
+  {
+    lvl_imgs[i] = new Image();
+    lvl_imgs[i].src = "assets/level_"+i+".png";
+  }
+
   var bg_img = new Image();
   bg_img.src = "assets/bg.jpg";
   var add_btn_img = new Image();
@@ -1008,6 +1015,7 @@ var GamePlayScene = function(game, stage)
   var h = 70;
   var x = 20;
   var y = 80-h-20;
+  var row = 0;
   var fill_colors = [bg_color,"#4487A3","#92375D","#3D8787","#933D2A","#5F9532"];
   var stroke_colors = ["#FFFFFF","#82D6F4","#E16D9F","#60C5C5","#E96A4E","#A8F665"];
   var color_i = 0;
@@ -1021,6 +1029,7 @@ var GamePlayScene = function(game, stage)
       w:w,
       h:h,
       i:i,
+      img:lvl_imgs[(row+4)%5],
       fill_color:fill_colors[color_i],
       stroke_color:stroke_colors[color_i],
       prev_level:levels[i-1],
@@ -1053,6 +1062,14 @@ var GamePlayScene = function(game, stage)
           ctx.fillText(level.title,self.x+self.w/5*2+10,self.y+25);
         if(self.prev_level && !self.prev_level.complete)
           ctx.drawImage(lock_img,self.x+10,self.y+10,40,40);
+        else if(self.img)
+        {
+          var w = 40;
+          var h = self.img.height*(w/self.img.width);
+          var cx = self.x+30;
+          var cy = self.y+35;
+          ctx.drawImage(self.img,cx-w/2,cy-h/2,w,h);
+        }
         if(level.complete)
           ctx.drawImage(right_img,self.x+self.w-30,self.y-10,30,30);
       }
@@ -1067,7 +1084,7 @@ var GamePlayScene = function(game, stage)
       case 9:
       case 11:
       case 14:
-        { x = 20; y += h+40; color_i++; }
+        { x = 20; y += h+40; row++; color_i++; }
         break;
     }
     if(x+w > canv.width) { x = 20; y += h+40; }
