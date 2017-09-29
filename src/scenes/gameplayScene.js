@@ -3398,6 +3398,7 @@ var GamePlayScene = function(game, stage)
             levelComplete()
           )
           {
+            if(!levels[cur_level_i].complete) ga('send', 'event', 'model_level', 'complete', cur_level_i, 1);
             levels[cur_level_i].complete = true;
             levels[cur_level_i].finished = true;
             game_state = GAME_STATE_MODAL;
