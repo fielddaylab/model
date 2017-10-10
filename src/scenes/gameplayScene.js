@@ -242,6 +242,10 @@ var GamePlayScene = function(game, stage)
   on_img.context.arc(on_img.width/2,on_img.height/2,on_img.width/2-3,0,twopi);
   on_img.context.fill();
   on_img.context.stroke();
+  //overwrite
+  on_img = new Image();
+  on_img.src = "assets/toggle_on.png";
+
   var off_img = GenIcon(40,40);
   off_img.context.lineWidth = 4;
   off_img.context.fillStyle = green;
@@ -250,6 +254,9 @@ var GamePlayScene = function(game, stage)
   off_img.context.arc(off_img.width/2,off_img.height/2,off_img.width/2-3,0,twopi);
   //off_img.context.fill();
   off_img.context.stroke();
+  //overwrite
+  off_img = new Image();
+  off_img.src = "assets/toggle_off.png";
 
   var lock_img = GenIcon(40,40);
   lock_img.context.strokeStyle = white;
@@ -1410,6 +1417,7 @@ var GamePlayScene = function(game, stage)
         ctx.lineWidth = 2;
 
         fillR(gx+self.graph_w/2-20,self.graph_y+self.graph_h-6,40,12,5,ctx);
+        if(modules[i].title && modules[i].title != "")
         fillR(gx-6,self.graph_y+self.graph_h/2-50,12,100,5,ctx);
 
         ctx.strokeStyle = modules[i].color;
@@ -1624,7 +1632,7 @@ var GamePlayScene = function(game, stage)
         }
         if(!selected_module.cache_const && !selected_module.lock_pool)
         {
-          self.pool_box.w = w;
+          self.pool_box.w = w*1.4;
           self.pool_box.h = h;
           self.pool_box.x = self.x + self.w - self.pool_box.w - s;
           self.pool_box.y = self.y + s + (h+s)*i;
@@ -1633,7 +1641,7 @@ var GamePlayScene = function(game, stage)
 
         if(!selected_module.lock_graph)
         {
-          self.graph_box.w = w;
+          self.graph_box.w = w*1.4;
           self.graph_box.h = h;
           self.graph_box.x = self.x + self.w - self.graph_box.w - s;
           self.graph_box.y = self.y + s + (h+s)*i;
@@ -1642,25 +1650,25 @@ var GamePlayScene = function(game, stage)
 
         if(selected_module.input_dongle.attachment && !selected_module.cache_const)
         {
-          self.operator_box_mul.w = w;
+          self.operator_box_mul.w = self.w/2-s;
           self.operator_box_mul.h = h;
-          self.operator_box_mul.x = self.x + self.w - self.operator_box_mul.w - s;
+          self.operator_box_mul.x = self.x + s;
           self.operator_box_mul.y = self.y + s + (h+s)*i;
 
-          self.operator_box_div.w = w;
+          self.operator_box_div.w = self.w/2-s;
           self.operator_box_div.h = h;
-          self.operator_box_div.x = self.x + self.w - self.operator_box_div.w - s - (w+s);
+          self.operator_box_div.x = self.x + self.w/2;
           self.operator_box_div.y = self.y + s + (h+s)*i;
           i++;
 
-          self.sign_box_pos.w = w;
+          self.sign_box_pos.w = self.w/2-s;
           self.sign_box_pos.h = h;
-          self.sign_box_pos.x = self.x + self.w - self.sign_box_pos.w - s;
+          self.sign_box_pos.x = self.x + s;
           self.sign_box_pos.y = self.y + s + (h+s)*i;
 
-          self.sign_box_neg.w = w;
+          self.sign_box_neg.w = self.w/2-s;
           self.sign_box_neg.h = h;
-          self.sign_box_neg.x = self.x + self.w - self.sign_box_neg.w - s - (w+s);
+          self.sign_box_neg.x = self.x + self.w/2;
           self.sign_box_neg.y = self.y + s + (h+s)*i;
           i++;
         }
@@ -1762,6 +1770,10 @@ var GamePlayScene = function(game, stage)
       obj.draw(canv);
       ctx.textAlign = "left";
     }
+    self.drawLeftAlign = function(obj)
+    {
+      obj.draw(canv);
+    }
     var prevy = 0;
     var drawPrevLine = function(new_prevy)
     {
@@ -1803,19 +1815,46 @@ var GamePlayScene = function(game, stage)
         }
         if(!selected_module.cache_const)
         {
-          if(!selected_module.lock_min) { self.drawRightAlign(self.min_box); ctx.fillStyle = black; ctx.fillText("min", self.x + 10, self.min_box.y+label_yoff); drawPrevLine(self.min_box.y+self.min_box.h+5); }
-          if(!selected_module.lock_max) { self.drawRightAlign(self.max_box); ctx.fillStyle = black; ctx.fillText("max", self.x + 10, self.max_box.y+label_yoff); drawPrevLine(self.max_box.y+self.max_box.h+5); }
+          if(!selected_module.lock_min) { self.drawRightAlign(self.min_box); ctx.fillStyle = black; ctx.fillText("min value", self.x + 10, self.min_box.y+label_yoff); drawPrevLine(self.min_box.y+self.min_box.h+5); }
+          if(!selected_module.lock_max) { self.drawRightAlign(self.max_box); ctx.fillStyle = black; ctx.fillText("max value", self.x + 10, self.max_box.y+label_yoff); drawPrevLine(self.max_box.y+self.max_box.h+5); }
         }
         if(!selected_module.cache_const && !selected_module.lock_pool) { self.drawRightAlign(self.pool_box);  ctx.fillStyle = black; ctx.fillText("pool",  self.x + 10, self.pool_box.y+label_yoff);  drawPrevLine(self.pool_box.y+self.pool_box.h+5); }
         if(!selected_module.lock_graph)                                { self.drawRightAlign(self.graph_box); ctx.fillStyle = black; ctx.fillText("graph", self.x + 10, self.graph_box.y+label_yoff); drawPrevLine(self.graph_box.y+self.graph_box.h+5); }
 
         if(selected_module.input_dongle.attachment && !selected_module.cache_const)
         {
-          self.drawRightAlign(self.operator_box_mul);
-          self.drawRightAlign(self.operator_box_div); ctx.fillStyle = black; ctx.fillText("mul/div",  self.x + 10, self.operator_box_div.y+label_yoff);
+          ctx.strokeStyle = gray;
+          if(self.operator_box_mul.on) ctx.fillStyle = green;
+          else                         ctx.fillStyle = white;
+          fillRBox(self.operator_box_mul,5,ctx);
+          strokeRBox(self.operator_box_mul,5,ctx);
+          if(self.operator_box_div.on) ctx.fillStyle = green;
+          else                         ctx.fillStyle = white;
+          fillRBox(self.operator_box_div,5,ctx);
+          strokeRBox(self.operator_box_div,5,ctx);
+          ctx.fillStyle = black;
+          ctx.textAlign = "left";
+          ctx.fillText("multiply", self.operator_box_mul.x+5, self.operator_box_div.y+label_yoff);
+          ctx.textAlign = "right";
+          ctx.fillText("divide", self.operator_box_div.x+self.operator_box_div.w-5, self.operator_box_div.y+label_yoff);
+
           drawPrevLine(self.operator_box_mul.y+self.operator_box_mul.h+5);
-          self.drawRightAlign(self.sign_box_pos);
-          self.drawRightAlign(self.sign_box_neg);     ctx.fillStyle = black; ctx.fillText("pos/neg",  self.x + 10, self.sign_box_neg.y+label_yoff);
+
+          ctx.strokeStyle = gray;
+          if(self.sign_box_pos.on) ctx.fillStyle = green;
+          else                     ctx.fillStyle = white;
+          fillRBox(self.sign_box_pos,5,ctx);
+          strokeRBox(self.sign_box_pos,5,ctx);
+          if(self.sign_box_neg.on) ctx.fillStyle = green;
+          else                     ctx.fillStyle = white;
+          fillRBox(self.sign_box_neg,5,ctx);
+          strokeRBox(self.sign_box_neg,5,ctx);
+          ctx.fillStyle = black;
+          ctx.textAlign = "left";
+          ctx.fillText("positive", self.sign_box_pos.x+5, self.sign_box_neg.y+label_yoff);
+          ctx.textAlign = "right";
+          ctx.fillText("negative", self.sign_box_neg.x+self.sign_box_neg.w-5, self.sign_box_neg.y+label_yoff);
+
           drawPrevLine(self.sign_box_pos.y+self.sign_box_pos.h+5);
         }
       }

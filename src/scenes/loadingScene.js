@@ -103,6 +103,8 @@ var LoadingScene = function(game, stage)
     img_srcs.push("assets/close.png");
     img_srcs.push("assets/girl.png");
     img_srcs.push("assets/win.png");
+    img_srcs.push("assets/toggle_off.png");
+    img_srcs.push("assets/toggle_on.png");
     for(var i = 0; i < 5; i++)
       img_srcs.push("assets/level_"+i+".png");
     for(var i = 0; i < 3; i++)
