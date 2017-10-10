@@ -467,7 +467,7 @@ var GamePlayScene = function(game, stage)
   levels.push(l);
 
   l = new level();
-  l.title = "Rate";
+  l.title = "Quantities";
   l.primary_module_template = "{\"modules\":[{\"title\":\"Tree Height (M)\",\"type\":0,\"v\":1,\"min\":0,\"max\":20,\"pool\":1,\"graph\":1,\"wx\":0.2,\"wy\":-0.08,\"ww\":0.1136,\"wh\":0.1136,\"input\":-1,\"output\":-1,\"lock_move\":false,\"lock_input\":true,\"lock_output\":true,\"lock_value\":true,\"lock_min\":true,\"lock_max\":true,\"lock_pool\":true,\"lock_graph\":true},{\"title\":\"Sunlight & CO₂\",\"type\":3,\"v\":1,\"min\":0,\"max\":10,\"pool\":1,\"graph\":0,\"wx\":-0.4,\"wy\":-0.08,\"ww\":0.1136,\"wh\":0.1136,\"input\":-1,\"output\":-1,\"lock_move\":false,\"lock_input\":true,\"lock_output\":true,\"lock_value\":false,\"lock_min\":false,\"lock_max\":false,\"lock_pool\":false,\"lock_graph\":false},{\"title\":\"\",\"type\":2,\"v\":1,\"min\":0,\"max\":10,\"pool\":1,\"graph\":false,\"wx\":-0.1,\"wy\":-0.08,\"ww\":0.1136,\"wh\":0.1136,\"input\":1,\"output\":0,\"lock_move\":false,\"lock_input\":true,\"lock_output\":true,\"lock_value\":true,\"lock_min\":true,\"lock_max\":true,\"lock_pool\":true,\"lock_graph\":true}]}"
   l.primary_module_target_titles.push("Height(M)");
   l.primary_module_target_vals.push([1,3,5,7,9]);
@@ -488,7 +488,7 @@ var GamePlayScene = function(game, stage)
     var targets = levels[cur_level_i].primary_module_target_vals;
     if(t_i > 0 && modules[0].plot[1] != targets[0][1] && blurb.g_viz != 1)
     {
-      blurb.enq(["This doesn't conform to our data... Select the Sunlight & CO₂ module and set its contribution."]);
+      blurb.enq(["This model doesn't conform to our data... Select the Sunlight & CO₂ module and set its quantity to fix it!"]);
     }
     if(levelComplete() && t_i >= 4)
     {
@@ -529,7 +529,7 @@ var GamePlayScene = function(game, stage)
     var targets = levels[cur_level_i].primary_module_target_vals;
     if(modules[0].plot[0] != targets[0][0] && blurb.g_viz != 1)
     {
-      blurb.enq(["This doesn't conform to our data... Select the Tree Height module and set its starting value."]);
+      blurb.enq(["This model doesn't conform to our data... Select the Tree Height module and set its starting value."]);
     }
     if(levelComplete() && t_i >= 4)
     {
@@ -570,7 +570,7 @@ var GamePlayScene = function(game, stage)
   {
     if(modules.length == 1 && blurb.g_viz != 1)
     {
-      blurb.enq(["Create a module to reproduce our collected data. Click and drag a new module from the + icon."]);
+      blurb.enq(["Create a model to reproduce our collected data. Click and drag a new module from the + icon."]);
     }
     if(modules.length == 2 && dragging_obj && blurb.g_viz == 1)
     {
@@ -670,7 +670,7 @@ var GamePlayScene = function(game, stage)
     var targets = levels[cur_level_i].primary_module_target_vals;
     if(t_i > 0 && modules[0].plot[1] != targets[0][1] && blurb.g_viz != 1)
     {
-      blurb.enq(["This doesn't conform to our data... Select the Grows relationship and modify its multiplier."]);
+      blurb.enq(["This model doesn't conform to our data... Select the Grows relationship and modify its multiplier."]);
     }
     if(levelComplete() && t_i >= 4)
     {
@@ -710,7 +710,7 @@ var GamePlayScene = function(game, stage)
     var targets = levels[cur_level_i].primary_module_target_vals;
     if(t_i > 0 && modules[0].plot[1] != targets[0][1] && blurb.g_viz != 1)
     {
-      blurb.enq(["This doesn't conform to our data... Select the Sunlight module and modify its value."]);
+      blurb.enq(["This model doesn't conform to our data... Select the Sunlight module and modify its value."]);
     }
     if(levelComplete() && t_i >= 4)
     {
@@ -750,7 +750,7 @@ var GamePlayScene = function(game, stage)
     var targets = levels[cur_level_i].primary_module_target_vals;
     if(modules[0].plot[0] != targets[0][0] && blurb.g_viz != 1)
     {
-      blurb.enq(["This doesn't conform to our data... Find a way to modify it so that it does! Hint: There's more than one solution!"]);
+      blurb.enq(["This model doesn't conform to our data... Find a way to modify it so that it does! Hint: There's more than one solution!"]);
     }
     if(levelComplete() && t_i >= 4)
     {
