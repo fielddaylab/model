@@ -217,6 +217,8 @@ var GamePlayScene = function(game, stage)
   speed_fast_btn_img.src = "assets/speed_fast_btn.png";
   var speed_fast_btn_down_img = new Image();
   speed_fast_btn_down_img.src = "assets/speed_fast_btn_down.png";
+  var reset_time_btn_img = new Image();
+  reset_time_btn_img.src = "assets/reset_time_btn.png";
   var hex_bg_img = new Image();
   hex_bg_img.src = "assets/hex_bg.png";
   var hex_fill_img = new Image();
@@ -1190,7 +1192,7 @@ var GamePlayScene = function(game, stage)
       var prev_btn;
 
       self.reset_btn.h = self.h;
-      self.reset_btn.w = reset_btn_img.width*(self.reset_btn.h/reset_btn_img.height);
+      self.reset_btn.w = reset_time_btn_img.width*(self.reset_btn.h/reset_time_btn_img.height);
       self.reset_btn.x = self.x;
       self.reset_btn.y = self.y;
       prev_btn = self.reset_btn;
@@ -1234,7 +1236,7 @@ var GamePlayScene = function(game, stage)
         ctx.strokeRect(self.pause_btn.x,self.pause_btn.y,self.pause_btn.w,self.pause_btn.h);
       }
       */
-      imageBox(reset_btn_img,self.reset_btn,ctx);
+      if(t_i != 0) imageBox(reset_time_btn_img,self.reset_btn,ctx);
       if(full_pause) imageBox(next_step_btn_img,self.advance_btn,ctx);
       if(advance_timer_max == 250) imageBox(speed_slow_btn_down_img,self.speed_slow_btn,ctx); else imageBox(speed_slow_btn_img,self.speed_slow_btn,ctx);
       if(advance_timer_max == 100) imageBox(speed_med_btn_down_img, self.speed_med_btn,ctx);  else imageBox(speed_med_btn_img, self.speed_med_btn,ctx);
