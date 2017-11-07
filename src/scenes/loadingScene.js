@@ -7,6 +7,9 @@ var LoadingScene = function(game, stage)
   var ctx = dc.context;
 
   var allow_play;
+  var allow_play_reason = 0;
+  var allow_play_reason_size = 1;
+  var allow_play_reason_interface = 2;
 
   var pad;
   var barw;
@@ -129,7 +132,15 @@ var LoadingScene = function(game, stage)
       (w > h && (w < 880+buffer || h < 660+buffer)) ||
       (h > w && (h < 880+buffer || w < 660+buffer))
     )
+    {
       allow_play = false;
+      allow_play_reason = allow_play_reason_size;
+    }
+    else if(platform == "MOBILE")
+    {
+      allow_play = false;
+      allow_play_reason = allow_play_reason_interface;
+    }
     else allow_play = true;
     if(old_allow_play && !allow_play)
     {
@@ -140,7 +151,10 @@ var LoadingScene = function(game, stage)
       sc.style.justifyContent = "center";
       sc.style.alignItems = "center";
       sc.style.backgroundColor = "#15A9CB";
-      sc.innerHTML = "<img width='300' src='assets/loading/logo.png'></img><div style='font-family:Open Sans; font-size:16px; color:#FFFFFF; padding:20px; text-align:center;'>Sorry!<br />Game requires screen size<br />of at least "+(880+buffer)+"x"+(660+buffer)+" pixels.<br />(Your screen size is "+window.screen.width+"x"+window.screen.height+")<br />Try playing on a desktop, laptop, or tablet!</div>";
+      if(allow_play_reason == allow_play_reason_size)
+        sc.innerHTML = "<img width='300' src='assets/loading/logo.png'></img><div style='font-family:Open Sans; font-size:16px; color:#FFFFFF; padding:20px; text-align:center;'>Sorry!<br />Game requires screen size<br />of at least "+(880+buffer)+"x"+(660+buffer)+" pixels.<br />(Your screen size is "+window.screen.width+"x"+window.screen.height+")<br />Try playing on a desktop, laptop, or tablet!</div>";
+      else
+        sc.innerHTML = "<img width='300' src='assets/loading/logo.png'></img><div style='font-family:Open Sans; font-size:16px; color:#FFFFFF; padding:20px; text-align:center;'>Sorry!<br />Game requires a mouse and keyboard!<br /><br />Try playing on a desktop, laptop, or chromebook!</div>";
     }
 
     //note- assets used on loading screen itself NOT included in wait
