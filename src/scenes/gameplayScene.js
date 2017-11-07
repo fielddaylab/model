@@ -1430,6 +1430,7 @@ var GamePlayScene = function(game, stage)
               ctx.fillStyle = white;
               y = self.subgraph_y + self.subgraph_h - (clamp(0,1,mapVal(modules[i].min,modules[i].max,0,1,modules[i].plot[j]))*self.subgraph_h);
               var off = -8;
+              if(j%2) off = 14;
               ctx.fillText(fdisp(modules[i].plot[j],1),x,y+off);
               ctx.font = "20px Roboto Mono";
               ctx.textAlign = "left";
