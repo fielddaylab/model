@@ -16,15 +16,15 @@ var Keyer = function(init)
   var evt_types = [];
   self.attach = function() //will get auto-called at creation
   {
-    window.top.addEventListener('keypress', press, false);
-    window.top.addEventListener('keydown', down, false);
-    window.top.addEventListener('keyup', up, false);
+    window.addEventListener('keypress', press, false);
+    window.addEventListener('keydown', down, false);
+    window.addEventListener('keyup', up, false);
   }
   self.detach = function()
   {
-    window.top.removeEventListener('keypress', press);
-    window.top.removeEventListener('keydown', down);
-    window.top.removeEventListener('keyup', up);
+    window.removeEventListener('keypress', press);
+    window.removeEventListener('keydown', down);
+    window.removeEventListener('keyup', up);
   }
 
   function press(evt)
