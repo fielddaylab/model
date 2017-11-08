@@ -2410,8 +2410,8 @@ var GamePlayScene = function(game, stage)
               self.body_cache.rel_const = GenIcon(self.w+self.body_cache.buffer*2,self.h+self.body_cache.buffer*2);
               self.body_cache.rel_const.context.fillStyle = bg_color;
               self.body_cache.rel_const.context.strokeStyle = line_color;
-              fillR(self.body_cache.buffer+self.w/4,self.body_cache.buffer+self.h/3,self.w/2,self.h/3,5,self.body_cache.rel_const.context);
-              strokeR(self.body_cache.buffer+self.w/4,self.body_cache.buffer+self.h/3,self.w/2,self.h/3,5,self.body_cache.rel_const.context);
+              fillR(  self.body_cache.buffer+self.w/7,self.body_cache.buffer+self.h/3,self.w*5/7,self.h/3,5,self.body_cache.rel_const.context);
+              strokeR(self.body_cache.buffer+self.w/7,self.body_cache.buffer+self.h/3,self.w*5/7,self.h/3,5,self.body_cache.rel_const.context);
             }
             ctx.drawImage(self.body_cache.rel_const,self.x-self.body_cache.buffer,self.y-self.body_cache.buffer,self.w+self.body_cache.buffer*2,self.h+self.body_cache.buffer*2);
           }
