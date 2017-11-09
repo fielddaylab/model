@@ -152,9 +152,9 @@ var LoadingScene = function(game, stage)
       sc.style.alignItems = "center";
       sc.style.backgroundColor = "#15A9CB";
       if(allow_play_reason == allow_play_reason_size)
-        sc.innerHTML = "<img width='300' src='assets/loading/logo.png'></img><div style='font-family:Open Sans; font-size:16px; color:#FFFFFF; padding:20px; text-align:center;'>Sorry!<br />Game requires screen size<br />of at least "+(880+buffer)+"x"+(660+buffer)+" pixels.<br />(Your screen size is "+window.screen.width+"x"+window.screen.height+")<br />Try playing on a desktop, laptop, or tablet!</div>";
+        sc.innerHTML = "<img width='300' src='assets/loading/logo.png'></img><div style='font-family:Architects Daughter; font-size:16px; color:#FFFFFF; padding:20px; text-align:center;'>Sorry!<br />Game requires screen size<br />of at least "+(880+buffer)+"x"+(660+buffer)+" pixels.<br />(Your screen size is "+window.screen.width+"x"+window.screen.height+")<br />Try playing on a desktop, laptop, or tablet!</div>";
       else
-        sc.innerHTML = "<img width='300' src='assets/loading/logo.png'></img><div style='font-family:Open Sans; font-size:16px; color:#FFFFFF; padding:20px; text-align:center;'>Sorry!<br />Game requires a mouse and keyboard!<br /><br />Try playing on a desktop, laptop, or chromebook!</div>";
+        sc.innerHTML = "<img width='300' src='assets/loading/logo.png'></img><div style='font-family:Architects Daughter; font-size:16px; color:#FFFFFF; padding:20px; text-align:center;'>Sorry!<br />Game requires a mouse and keyboard!<br /><br />Try playing on a desktop, laptop, or chromebook!</div>";
     }
 
     //note- assets used on loading screen itself NOT included in wait
@@ -246,7 +246,7 @@ var LoadingScene = function(game, stage)
     else
     {
       ctx.fillStyle = "#FFFFFF";
-      ctx.font = "30px Open Sans";
+      ctx.font = "30px Architects Daughter";
       ctx.textAlign = "center";
       //single
       var x = 440;
@@ -257,7 +257,7 @@ var LoadingScene = function(game, stage)
       ctx.fillText("Game requires larger screen!",x,y+50);
       ctx.fillText("Sorry!",x,y+50+40);
 
-      ctx.font = "12px Open Sans";
+      ctx.font = "12px Architects Daughter";
       ctx.textAlign = "left";
       x = 10;
       y = 20
