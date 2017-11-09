@@ -265,12 +265,12 @@ var GamePlayScene = function(game, stage)
   lock_img.context.lineWidth = 2;
   strokeR(8,20,26,18,4,lock_img.context);
   lock_img.context.beginPath();
-  lock_img.context.arc(20,20,10,0,pi,true);
+  lock_img.context.arc(21,20,10,0,pi,true);
   lock_img.context.stroke();
   lock_img.context.beginPath();
-  lock_img.context.arc(20,27,4,quarterpi,-(pi+quarterpi),true);
-  lock_img.context.lineTo(16,34);
-  lock_img.context.lineTo(24,34);
+  lock_img.context.arc(21,27,4,quarterpi,-(pi+quarterpi),true);
+  lock_img.context.lineTo(17,34);
+  lock_img.context.lineTo(25,34);
   lock_img.context.closePath();
   lock_img.context.stroke();
 
@@ -938,7 +938,8 @@ var GamePlayScene = function(game, stage)
   l.comic = false;
   levels.push(l);
 
-  var w = 150;
+  var w = 195;
+  var in_w = 62;
   var h = 70;
   var x = 20;
   var y = 80-h-20;
@@ -972,21 +973,21 @@ var GamePlayScene = function(game, stage)
       draw:function(level,self)
       {
         ctx.fillStyle = self.fill_color;
-        fillRightR(self.x+self.w/5*2,self.y,self.w/5*3,self.h,20,ctx);
+        fillRightR(self.x+in_w,self.y,self.w-in_w,self.h,20,ctx);
         ctx.strokeStyle = self.stroke_color;
-        strokeLeftR(self.x,self.y,self.w/5*2,self.h,20,ctx);
-        strokeRightR(self.x+self.w/5*2,self.y,self.w/5*3,self.h,20,ctx);
+        strokeLeftR(self.x,self.y,in_w,self.h,20,ctx);
+        strokeRightR(self.x+in_w,self.y,self.w-in_w,self.h,20,ctx);
         strokeRBox(self,20,ctx);
         ctx.font = "10px Roboto Mono";
         ctx.fillStyle = white;
         var i = level.title.indexOf(" ");
         if(i > 0)
         {
-          ctx.fillText(level.title.substr(0,i),self.x+self.w/5*2+10,self.y+25);
-          ctx.fillText(level.title.substr(i+1),self.x+self.w/5*2+10,self.y+45);
+          ctx.fillText(level.title.substr(0,i),self.x+in_w+10,self.y+25);
+          ctx.fillText(level.title.substr(i+1),self.x+in_w+10,self.y+45);
         }
         else
-          ctx.fillText(level.title,self.x+self.w/5*2+10,self.y+25);
+          ctx.fillText(level.title,self.x+in_w+10,self.y+25);
         if(self.prev_level && !self.prev_level.complete)
           ctx.drawImage(lock_img,self.x+10,self.y+10,40,40);
         else if(self.img)
