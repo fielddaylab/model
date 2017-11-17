@@ -427,7 +427,7 @@ var GamePlayScene = function(game, stage)
   l.click = function(evt)
   {
   }
-  l.comic = function() { game.setScene(2,{start:1,length:1}); };
+  l.comic = function() { /*game.setScene(2,{start:1,length:1});*/ };
   levels.push(l);
 
   l = new level();
