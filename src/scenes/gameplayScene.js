@@ -2,7 +2,7 @@ var GamePlayScene = function(game, stage)
 {
   var self = this;
 
-  var ALLOW_NEXT = false;
+  var ALLOW_NEXT = true;
   var ALLOW_SAVE = false;
 
   var precision = 2;
