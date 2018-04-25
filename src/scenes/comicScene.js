@@ -84,7 +84,7 @@ var ComicScene = function(game, stage)
     {
       (function(i){
         var x = (i+10)*(dc.width/(imgs.length+19));
-        nodes[i] = new ButtonBox(x-node_s/2,node_y-btn_s/2,btn_s,btn_s,function(evt){if(hit_ui) return;cur_img = i;hit_ui = true;});
+        nodes[i] = new ButtonBox(x-node_s/2,node_y-btn_s/2,btn_s,btn_s,function(evt){if(hit_ui) return; cur_img = i; hit_ui = true;});
       })(i);
     }
 
@@ -97,6 +97,7 @@ var ComicScene = function(game, stage)
   var duh = 0;
   self.tick = function()
   {
+    cur_img=imgs.length; //COMMENT ME OUT
     if(cur_img >= imgs.length) { game.nextScene(); }
     else
     {

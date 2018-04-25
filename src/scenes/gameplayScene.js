@@ -15,9 +15,12 @@ var GamePlayScene = function(game, stage)
   var game_state;
 
   var line_color = "#0A182E";
-  var graph_bg_color = "#2A3544";
-  var graph_fg_color = "#1F2D3F";
-  var graph_ffg_color = "#030D1B";
+  var graph_bg_vvlight_color = "#455C77";
+  var graph_bg_vlight_color = "#263953";
+  var graph_bg_light_color = "#2A3544";
+  var graph_bg_med_color = "#1F2D3F";
+  var graph_bg_dark_color = "#0F2742";
+  var graph_bg_vdark_color = "#030D1B";
   var bg_color = "#485973";
   var bgbg_color = "#3E4D62";
 
@@ -63,7 +66,7 @@ var GamePlayScene = function(game, stage)
   var templates;
 
   var s_dragger;
-  var s_graph;
+  var s_graphs;
   var s_ctrls;
   var s_editor;
 
@@ -383,12 +386,12 @@ var GamePlayScene = function(game, stage)
 
   var beginLevel = function()
   {
+    if(s_ctrls.speed_med_btn) s_ctrls.speed_med_btn.click({});
     selected_module = 0;
     if(blurb.g_viz == 1) blurb.dismiss();
     levels[cur_level_i].gen_modules();
     levels[cur_level_i].ready();
     resetGraph();
-    if(s_ctrls.speed_med_btn) s_ctrls.speed_med_btn.click({});
     full_pause = true;
   }
   var nextLevel = function()
@@ -442,6 +445,7 @@ var GamePlayScene = function(game, stage)
   l.ready = function()
   {
     selected_module = undefined;
+    if(s_ctrls.speed_slow_btn) s_ctrls.speed_slow_btn.click({});
   }
   l.should_dismiss_blurb = function()
   {
@@ -617,8 +621,7 @@ var GamePlayScene = function(game, stage)
   l.ready = function()
   {
     selected_module = undefined;
-    advance_timer_max = 250;
-    s_ctrls.speed_slider.val = advance_timer_max;
+    if(s_ctrls.speed_fast_btn) s_ctrls.speed_fast_btn.click({});
   }
   l.should_dismiss_blurb = function()
   {
@@ -1078,8 +1081,8 @@ var GamePlayScene = function(game, stage)
 
     self.draw = function()
     {
-      ctx.strokeStyle = graph_fg_color;
-      ctx.fillStyle = graph_bg_color;
+      ctx.strokeStyle = graph_bg_med_color;
+      ctx.fillStyle = graph_bg_light_color;
       self.h -= 10;
       self.w -= 10;
       fillRBox(self,20,ctx);
@@ -1245,7 +1248,7 @@ var GamePlayScene = function(game, stage)
     }
   }
 
-  var graph = function()
+  var graphs = function()
   {
     var self = this;
     self.x = 0;
@@ -1253,29 +1256,28 @@ var GamePlayScene = function(game, stage)
     self.w = 0;
     self.h = 0;
 
-    self.graph_x = 0;
-    self.graph_y = 0;
+    self.module_w = 0;
+    self.module_h = 0;
+    self.bg_w = 0;
+    self.bg_h = 0;
     self.graph_w = 0;
     self.graph_h = 0;
 
-    self.subgraph_x = 0;
-    self.subgraph_y = 0;
-    self.subgraph_w = 0;
-    self.subgraph_h = 0;
+    self.graph_p = 20;
+    self.graph_r = 10;
+    self.graph_b = 20;
 
     self.off_x = 0;
+    self.off_y = 0;
 
     self.calc_sub_params = function()
     {
-      self.graph_x = self.x+10;
-      self.graph_y = self.y+10;
-      //self.graph_w = self.w-20; //needs to be explicitly set!
-      self.graph_h = self.h-20;
-
-      self.subgraph_x = self.graph_x+10;
-      self.subgraph_y = self.graph_y+10;
-      self.subgraph_w = self.graph_w-20; //needs to be explicitly set!
-      self.subgraph_h = self.graph_h-20;
+      self.module_w = self.w-20;
+      self.module_h = self.module_w*0.8;
+      self.bg_w = self.module_w-self.graph_b;
+      self.bg_h = self.module_h-self.graph_b;
+      self.graph_w = self.bg_w-20;
+      self.graph_h = self.bg_h-20;
     }
 
     self.draw = function()
@@ -1289,83 +1291,70 @@ var GamePlayScene = function(game, stage)
       {
         if(!modules[i].graph) continue;
 
-        var gx = self.graph_x+self.off_x+(graph_i*(self.graph_w+10));
+        var gx = self.x + self.graph_p + self.off_x + (graph_i * (self.bg_w + self.graph_p));
+        var gy = self.y + self.graph_p + self.off_y + (graph_i * (self.bg_h + self.graph_p));
 
-        ctx.strokeStyle = graph_fg_color;
-        ctx.fillStyle = graph_bg_color;
-        fillR(gx,self.graph_y,self.graph_w,self.graph_h,10,ctx);
-        ctx.lineWidth = 2;
-        strokeR(gx,self.graph_y,self.graph_w,self.graph_h,10,ctx);
-        ctx.fillStyle = white;
-        ctx.beginPath();
-        for(var j = 0; j < t_max; j++)
+        //bg
+        ctx.fillStyle = graph_bg_dark_color;
+        fillR(gx,gy,self.bg_w,self.bg_h,self.graph_r,ctx);
+
+        //graph squares
+        ctx.fillStyle = graph_bg_vlight_color;
+        var x;
+        var y;
+        var w = self.graph_w/(t_max-1);
+        var h = self.graph_h/(t_max-1);
+        for(var j = 0; j < (t_max-1); j++)
         {
-          var x = gx+10+ (j/(t_max-1)) * self.subgraph_w;
-          ctx.moveTo(x,self.graph_y);
-          ctx.lineTo(x,self.graph_y+self.graph_h);
+          x = gx + 1 + (self.bg_w-self.graph_w) + j*w;
+          for(var k = 0; k < (t_max-1); k++)
+          {
+            y = gy - 1 + k*h;
+            ctx.fillRect(x+1,y+1,w-2,h-2);
+          }
         }
-        ctx.stroke();
 
+        //playhead
+        ctx.lineWidth = 2;
         ctx.strokeStyle = "#888888";
-        x = gx+10+ ((t_i+(1-(advance_timer/advance_timer_max)))/(t_max-1)) * self.subgraph_w;
+        x = gx + (self.bg_w-self.graph_w) + ((t_i+(1-(advance_timer/advance_timer_max)))/(t_max-1)) * self.graph_w;
         ctx.beginPath();
-        ctx.moveTo(x,self.graph_y);
-        ctx.lineTo(x,self.graph_y+self.graph_h);
-        ctx.stroke();
-
-        ctx.fillStyle = graph_ffg_color;
-        ctx.strokeStyle = graph_ffg_color;
-        ctx.beginPath();
-        ctx.arc(gx,self.graph_y+self.graph_h,5,0,twopi);
-        ctx.fill();
-
-        ctx.lineWidth = 3;
-        ctx.beginPath();
-        ctx.moveTo(gx,self.graph_y+self.graph_h);
-        ctx.lineTo(gx+self.graph_w,  self.graph_y+self.graph_h);
-        ctx.moveTo(gx+self.graph_w-5,self.graph_y+self.graph_h-5);
-        ctx.lineTo(gx+self.graph_w,  self.graph_y+self.graph_h);
-        ctx.lineTo(gx+self.graph_w-5,self.graph_y+self.graph_h+5);
-
-        ctx.moveTo(gx,self.graph_y+self.graph_h);
-        ctx.lineTo(gx,self.graph_y);
-        ctx.moveTo(gx-5,self.graph_y+5);
-        ctx.lineTo(gx,  self.graph_y);
-        ctx.lineTo(gx+5,self.graph_y+5);
+        ctx.moveTo(x,gy);
+        ctx.lineTo(x,gy+self.graph_h);
         ctx.stroke();
 
         ctx.lineWidth = 2;
 
-        fillR(gx+self.graph_w/2-20,self.graph_y+self.graph_h-6,40,12,5,ctx);
+        fillR(gx+self.graph_w/2-20,gy+self.graph_h-6,40,12,5,ctx);
         if(modules[i].title && modules[i].title != "")
-        fillR(gx-6,self.graph_y+self.graph_h/2-50,12,100,5,ctx);
+        fillR(gx-6,gy+self.graph_h/2-50,12,100,5,ctx);
 
         ctx.strokeStyle = modules[i].color;
         ctx.fillStyle = modules[i].color;
         ctx.textAlign = "center";
         ctx.font = "10px Roboto Mono";
         ctx.save();
-        ctx.translate(gx+4,self.graph_y+self.graph_h/2);
+        ctx.translate(gx+4,gy+self.graph_h/2);
         ctx.rotate(-halfpi);
         ctx.fillText(modules[i].title,0,0);
         ctx.restore();
-        ctx.fillText("time",gx+self.graph_w/2,self.graph_y+self.graph_h+4);
+        ctx.fillText("time",gx+self.graph_w/2,gy+self.graph_h+4);
 
         ctx.strokeStyle = modules[i].color;
         x = gx+10;
-        y = self.subgraph_y+self.subgraph_h;
+        y = gy+self.graph_h;
 
         ctx.beginPath();
-        if(!isNaN(modules[i].plot[0])) y = self.subgraph_y+self.subgraph_h - clamp(0,1,mapVal(modules[i].min,modules[i].max,0,1,modules[i].plot[0]))*self.subgraph_h;
+        if(!isNaN(modules[i].plot[0])) y = gy+self.graph_h - clamp(0,1,mapVal(modules[i].min,modules[i].max,0,1,modules[i].plot[0]))*self.graph_h;
         ctx.moveTo(x,y);
         for(var j = 0; j <= t_i || (predict && j < t_max); j++)
         {
-          x = gx+10 + (j/(t_max-1)) * self.subgraph_w;
-          if(!isNaN(modules[i].plot[j])) y = self.subgraph_y+self.subgraph_h - (clamp(0,1,mapVal(modules[i].min,modules[i].max,0,1,modules[i].plot[j]))*self.subgraph_h);
+          x = gx+10 + (j/(t_max-1)) * self.graph_w;
+          if(!isNaN(modules[i].plot[j])) y = gy+self.graph_h - (clamp(0,1,mapVal(modules[i].min,modules[i].max,0,1,modules[i].plot[j]))*self.graph_h);
           ctx.lineTo(x,y);
           if(j == t_i)
           {
-            if(!isNaN(modules[i].prev_plot)) y = self.subgraph_y+self.subgraph_h - (clamp(0,1,mapVal(modules[i].min,modules[i].max,0,1,modules[i].prev_plot))*self.subgraph_h);
+            if(!isNaN(modules[i].prev_plot)) y = gy+self.graph_h - (clamp(0,1,mapVal(modules[i].min,modules[i].max,0,1,modules[i].prev_plot))*self.graph_h);
             ctx.lineTo(x,y);
           }
         }
@@ -1376,10 +1365,10 @@ var GamePlayScene = function(game, stage)
           var targets = levels[cur_level_i].primary_module_target_vals[i];
           for(var j = 0; j < targets.length || !isNaN(modules[i].plot[j]); j++)
           {
-            x = gx+10 + (j/(t_max-1)) * self.subgraph_w;
+            x = gx+10 + (j/(t_max-1)) * self.graph_w;
             if(j < targets.length)
             {
-              y = self.subgraph_y + self.subgraph_h - (clamp(0,1,mapVal(modules[i].min,modules[i].max,0,1,targets[j]))*self.subgraph_h);
+              y = gy + self.graph_h - (clamp(0,1,mapVal(modules[i].min,modules[i].max,0,1,targets[j]))*self.graph_h);
               ctx.beginPath();
               ctx.arc(x,y,4,0,twopi);
               var off = -8;
@@ -1406,7 +1395,7 @@ var GamePlayScene = function(game, stage)
                 ctx.font = "10px Roboto Mono";
                 ctx.textAlign = "center";
                 ctx.fillStyle = white;
-                y = self.subgraph_y + self.subgraph_h - (clamp(0,1,mapVal(modules[i].min,modules[i].max,0,1,modules[i].plot[j]))*self.subgraph_h);
+                y = gy + self.graph_h - (clamp(0,1,mapVal(modules[i].min,modules[i].max,0,1,modules[i].plot[j]))*self.graph_h);
                 var off = 14;
                 if(j < targets.length && modules[i].plot[j] > targets[j]) off = -8;
                 ctx.fillText(fdisp(modules[i].plot[j],1),x,y+off);
@@ -1423,13 +1412,13 @@ var GamePlayScene = function(game, stage)
         {
           for(var j = 0; !isNaN(modules[i].plot[j]); j++)
           {
-            x = gx+10 + (j/(t_max-1)) * self.subgraph_w;
+            x = gx+10 + (j/(t_max-1)) * self.graph_w;
             if(j <= t_i && !isNaN(modules[i].plot[j]))
             {
               ctx.font = "10px Roboto Mono";
               ctx.textAlign = "center";
               ctx.fillStyle = white;
-              y = self.subgraph_y + self.subgraph_h - (clamp(0,1,mapVal(modules[i].min,modules[i].max,0,1,modules[i].plot[j]))*self.subgraph_h);
+              y = gy + self.graph_h - (clamp(0,1,mapVal(modules[i].min,modules[i].max,0,1,modules[i].plot[j]))*self.graph_h);
               var off = -8;
               if(j%2) off = 14;
               ctx.fillText(fdisp(modules[i].plot[j],1),x,y+off);
@@ -3073,7 +3062,7 @@ var GamePlayScene = function(game, stage)
     dragging_obj = 0;
     full_pause = false;
     drag_pause = false;
-    advance_timer_max = 100;
+    advance_timer_max = 10;
     advance_timer = advance_timer_max;
     t_i = 0;
     t_max = 10;
@@ -3089,13 +3078,12 @@ var GamePlayScene = function(game, stage)
     /*circle of life*/   templates.push("{\"modules\":[{\"title\":\"sun\",\"type\":1,\"v\":10,\"min\":0,\"max\":10,\"pool\":1,\"graph\":false,\"wx\":-1.4125,\"wy\":0.1062499999999999,\"ww\":0.1136,\"wh\":0.1136,\"input\":-1,\"output\":-1},{\"title\":\"grass\",\"type\":0,\"v\":1,\"min\":0,\"max\":100,\"pool\":1,\"graph\":1,\"wx\":-0.81875,\"wy\":0.078125,\"ww\":0.1136,\"wh\":0.1136,\"input\":-1,\"output\":-1},{\"title\":\"gives light\",\"type\":2,\"v\":1,\"min\":0,\"max\":10,\"pool\":1,\"graph\":false,\"wx\":-1.1204999999999998,\"wy\":0.09262500000000004,\"ww\":0.1136,\"wh\":0.1136,\"input\":0,\"output\":1},{\"title\":\"herbivores\",\"type\":0,\"v\":1,\"min\":0,\"max\":100,\"pool\":1,\"graph\":1,\"wx\":-0.21425000000000005,\"wy\":0.08325000000000002,\"ww\":0.1136,\"wh\":0.1136,\"input\":-1,\"output\":-1},{\"title\":\"nourishes\",\"type\":2,\"v\":1,\"min\":-1,\"max\":1,\"pool\":1,\"graph\":false,\"wx\":-0.492375,\"wy\":0.20825,\"ww\":0.1136,\"wh\":0.1136,\"input\":1,\"output\":3},{\"title\":\"eats\",\"type\":2,\"v\":-0.5,\"min\":-1,\"max\":1,\"pool\":1,\"graph\":false,\"wx\":-0.49550000000000005,\"wy\":-0.03862499999999991,\"ww\":0.1136,\"wh\":0.1136,\"input\":3,\"output\":1},{\"title\":\"carnivores\",\"type\":0,\"v\":1,\"min\":0,\"max\":100,\"pool\":1,\"graph\":1,\"wx\":0.3224999999999999,\"wy\":0.06737500000000013,\"ww\":0.1136,\"wh\":0.1136,\"input\":-1,\"output\":-1},{\"title\":\"nourishes\",\"type\":2,\"v\":1,\"min\":-1,\"max\":1,\"pool\":1,\"graph\":false,\"wx\":0.044375000000000164,\"wy\":0.2017500000000001,\"ww\":0.1136,\"wh\":0.1136,\"input\":3,\"output\":6},{\"title\":\"eats\",\"type\":2,\"v\":-0.5,\"min\":-1,\"max\":1,\"pool\":1,\"graph\":false,\"wx\":0.038125000000000075,\"wy\":-0.05762499999999995,\"ww\":0.1136,\"wh\":0.1136,\"input\":6,\"output\":3},{\"title\":\"\",\"type\":2,\"v\":-0.5,\"min\":-1,\"max\":1,\"pool\":1,\"graph\":false,\"wx\":0.6540000000000006,\"wy\":0.07125000000000006,\"ww\":0.1136,\"wh\":0.1136,\"input\":6,\"output\":6}]}");
 
     s_dragger = new screen_dragger();
-    s_graph = new graph();
-    s_graph.x = 0;
-    s_graph.y = 0;
-    s_graph.w = canv.width;
-    s_graph.h = 160;
-    s_graph.graph_w = 200;
-    s_graph.calc_sub_params();
+    s_graphs = new graphs();
+    s_graphs.x = 0;
+    s_graphs.y = 50;
+    s_graphs.w = 300;
+    s_graphs.h = canv.height-s_graphs.y;
+    s_graphs.calc_sub_params();
     s_ctrls = new controls();
     s_ctrls.w = 400;
     s_ctrls.h = 30;
@@ -3186,7 +3174,7 @@ var GamePlayScene = function(game, stage)
     menu_btn.h = 30;
     menu_btn.w = menu_btn_img.width*(menu_btn.h/menu_btn_img.height);
     menu_btn.x = 10;
-    menu_btn.y = s_graph.y+s_graph.h+10;
+    menu_btn.y = 10;
     menu_btn.click = function(evt)
     {
       game_state = GAME_STATE_MENU;
@@ -3197,7 +3185,7 @@ var GamePlayScene = function(game, stage)
     next_level_btn.h = 30;
     next_level_btn.w = next_level_btn_img.width*(next_level_btn.h/next_level_btn_img.height);
     next_level_btn.x = canv.width-next_level_btn.w-10;
-    next_level_btn.y = s_graph.y+s_graph.h+10;
+    next_level_btn.y = 10;
     next_level_btn.click = function(evt)
     {
       if(levelComplete()) //nextLevel();
@@ -3212,7 +3200,7 @@ var GamePlayScene = function(game, stage)
     clear_btn.h = 30;
     clear_btn.w = clear_btn_img.width*(clear_btn.h/clear_btn_img.height);
     clear_btn.x = menu_btn.x+menu_btn.w+10;
-    clear_btn.y = s_graph.y+s_graph.h+10;
+    clear_btn.y = 10;
     clear_btn.click = function(evt)
     {
       beginLevel();
@@ -3342,7 +3330,7 @@ var GamePlayScene = function(game, stage)
         if(clicker.filter(menu_btn))               clicked = true;
         if(clicker.filter(print_btn))              clicked = true;
         if(clicker.filter(load_btn))               clicked = true;
-        if(dragger.filter(s_graph))                clicked = true;
+        if(dragger.filter(s_graphs))               clicked = true;
         clicker.filter(levels[cur_level_i]);
         if(!clicked)
         {
@@ -3474,7 +3462,7 @@ var GamePlayScene = function(game, stage)
       ctx.fillStyle = bgbg_color;
       ctx.fillRect(0,0,canv.width,menu_btn.y+menu_btn.h+10);
 
-      s_graph.draw();
+      s_graphs.draw();
       s_ctrls.draw();
 
       ctx.fillStyle = black;
