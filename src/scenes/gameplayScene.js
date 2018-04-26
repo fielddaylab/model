@@ -2106,6 +2106,7 @@ var GamePlayScene = function(game, stage)
             self.output_dongle.attachment ||
             self.output_dongle.dragging ||
             (
+              !self.lock_output &&
               self.hovering &&
               !dragging_obj
             )
@@ -3133,7 +3134,7 @@ var GamePlayScene = function(game, stage)
     s_graphs.x = 0;
     s_graphs.y = 50;
     s_graphs.w = 300;
-    s_graphs.h = canv.height-s_graphs.y;
+    s_graphs.h = canv.height-s_graphs.y-50;
     s_graphs.calc_sub_params();
     s_ctrls = new controls();
     s_ctrls.w = 400;
