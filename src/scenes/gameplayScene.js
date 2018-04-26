@@ -435,7 +435,7 @@ var GamePlayScene = function(game, stage)
 
   l = new level();
   l.title = "Watch";
-  l.primary_module_template = "{\"modules\":[{\"title\":\"Tree Height (M)\",\"type\":0,\"v\":1,\"min\":0,\"max\":20,\"pool\":1,\"graph\":1,\"wx\":0.2,\"wy\":-0.08,\"ww\":0.1136,\"wh\":0.1136,\"input\":-1,\"output\":-1,\"lock_move\":false,\"lock_input\":true,\"lock_output\":true,\"lock_value\":true,\"lock_min\":true,\"lock_max\":true,\"lock_pool\":true,\"lock_graph\":true},{\"title\":\"Sunlight & CO₂\",\"type\":3,\"v\":1,\"min\":0,\"max\":10,\"pool\":1,\"graph\":0,\"wx\":-0.4,\"wy\":-0.08,\"ww\":0.1136,\"wh\":0.1136,\"input\":-1,\"output\":-1,\"lock_move\":false,\"lock_input\":true,\"lock_output\":true,\"lock_value\":true,\"lock_min\":false,\"lock_max\":false,\"lock_pool\":false,\"lock_graph\":false},{\"title\":\"\",\"type\":2,\"v\":1,\"min\":0,\"max\":10,\"pool\":1,\"graph\":false,\"wx\":-0.1,\"wy\":-0.08,\"ww\":0.1136,\"wh\":0.1136,\"input\":1,\"output\":0,\"lock_move\":false,\"lock_input\":true,\"lock_output\":true,\"lock_value\":true,\"lock_min\":true,\"lock_max\":true,\"lock_pool\":true,\"lock_graph\":true}]}"
+  l.primary_module_template = "{\"modules\":[{\"title\":\"Tree Height (M)\",\"img_name\":\"assets/tree.png\",\"type\":0,\"v\":1,\"min\":0,\"max\":20,\"pool\":1,\"graph\":1,\"wx\":0.2,\"wy\":-0.08,\"ww\":0.1136,\"wh\":0.1136,\"input\":-1,\"output\":-1,\"lock_move\":false,\"lock_input\":true,\"lock_output\":true,\"lock_value\":true,\"lock_min\":true,\"lock_max\":true,\"lock_pool\":true,\"lock_graph\":true},{\"title\":\"Sunlight & CO₂\",\"type\":3,\"v\":1,\"min\":0,\"max\":10,\"pool\":1,\"graph\":0,\"wx\":-0.4,\"wy\":-0.08,\"ww\":0.1136,\"wh\":0.1136,\"input\":-1,\"output\":-1,\"lock_move\":false,\"lock_input\":true,\"lock_output\":true,\"lock_value\":true,\"lock_min\":false,\"lock_max\":false,\"lock_pool\":false,\"lock_graph\":false},{\"title\":\"\",\"type\":2,\"v\":1,\"min\":0,\"max\":10,\"pool\":1,\"graph\":false,\"wx\":-0.1,\"wy\":-0.08,\"ww\":0.1136,\"wh\":0.1136,\"input\":1,\"output\":0,\"lock_move\":false,\"lock_input\":true,\"lock_output\":true,\"lock_value\":true,\"lock_min\":true,\"lock_max\":true,\"lock_pool\":true,\"lock_graph\":true}]}"
   l.primary_module_target_titles.push("Height(M)");
   l.primary_module_target_vals.push([1,2,3,4,5]);
   l.add_module_enabled = false;
@@ -1855,6 +1855,8 @@ var GamePlayScene = function(game, stage)
       var m = new module(tm.wx,tm.wy,tm.ww,tm.wh);
       screenSpace(work_cam,canv,m);
       m.title = tm.title;
+      m.img_name = tm.img_name;
+      if(m.img_name) { m.img = new Image(); m.img.onload = (function(m){return (function(){ m.body_cache = {buffer:10}; })})(m); m.img.src = m.img_name; }
       m.type = tm.type;
       m.v_default = tm.v;
       m.v = m.v_default;
@@ -2056,6 +2058,7 @@ var GamePlayScene = function(game, stage)
   var MODULE_TYPE_GENERATOR    = ENUM; ENUM++;
   var MODULE_TYPE_RELATIONSHIP = ENUM; ENUM++;
   var MODULE_TYPE_MODULE       = ENUM; ENUM++;
+
   var module = function(wx,wy,ww,wh)
   {
     var self = this;
@@ -2065,6 +2068,8 @@ var GamePlayScene = function(game, stage)
     self.wy = wy;
     self.ww = ww;
     self.wh = wh;
+    self.img_name = "";
+    self.img = 0;
     screenSpace(work_cam,canv,self);
 
     self.shouldShowInputDongle = function()
@@ -2316,6 +2321,15 @@ var GamePlayScene = function(game, stage)
             self.body_cache.module_const.context.fillStyle = bg_color;
             self.body_cache.module_const.context.strokeStyle = self.color;
             fillR(self.body_cache.buffer,self.body_cache.buffer,self.w,self.h,10,self.body_cache.module_const.context);
+            if(self.img_name && self.img && self.img.complete)
+            {
+              self.body_cache.module_const.context.globalCompositeOperation = "source-in";
+              self.body_cache.module_const.context.drawImage(self.img,0,0,self.body_cache.module_const.width,self.body_cache.module_const.height);
+              self.body_cache.module_const.context.globalCompositeOperation = "source-over";
+              self.body_cache.module_const.context.globalAlpha = 0.1;
+              fillR(self.body_cache.buffer,self.body_cache.buffer,self.w,self.h,10,self.body_cache.module_const.context);
+              self.body_cache.module_const.context.globalAlpha = 1;
+            }
             strokeR(self.body_cache.buffer,self.body_cache.buffer,self.w,self.h,10,self.body_cache.module_const.context);
           }
           ctx.drawImage(self.body_cache.module_const,self.x-self.body_cache.buffer,self.y-self.body_cache.buffer,self.w+self.body_cache.buffer*2,self.h+self.body_cache.buffer*2);
@@ -2332,6 +2346,15 @@ var GamePlayScene = function(game, stage)
               self.body_cache.module_nconst_pool.context.beginPath();
               self.body_cache.module_nconst_pool.context.arc(self.body_cache.buffer+self.w/2,self.body_cache.buffer+self.h/2,self.w/2,0,twopi);
               self.body_cache.module_nconst_pool.context.fill();
+              if(self.img_name && self.img && self.img.complete)
+              {
+                self.body_cache.module_nconst_pool.context.globalCompositeOperation = "source-in";
+                self.body_cache.module_nconst_pool.context.drawImage(self.img,0,0,self.body_cache.module_nconst_pool.width,self.body_cache.module_nconst_pool.height);
+                self.body_cache.module_nconst_pool.context.globalCompositeOperation = "source-over";
+                self.body_cache.module_nconst_pool.context.globalAlpha = 0.1;
+                self.body_cache.module_nconst_pool.context.fill();
+                self.body_cache.module_nconst_pool.context.globalAlpha = 1;
+              }
               self.body_cache.module_nconst_pool.context.stroke();
               self.body_cache.module_nconst_pool.context.globalAlpha = 0.2;
               self.body_cache.module_nconst_pool.context.fillStyle = self.color;
@@ -2396,6 +2419,15 @@ var GamePlayScene = function(game, stage)
               self.body_cache.module_nconst_npool.context.beginPath();
               self.body_cache.module_nconst_npool.context.arc(self.body_cache.buffer+self.w/2,self.body_cache.buffer+self.h/2,self.w/2,0,twopi);
               self.body_cache.module_nconst_npool.context.fill();
+              if(self.img_name && self.img && self.img.complete)
+              {
+                self.body_cache.module_nconst_npool.context.globalCompositeOperation = "source-in";
+                self.body_cache.module_nconst_npool.context.drawImage(self.img,0,0,self.body_cache.module_nconst_npool.width,self.body_cache.module_nconst_npool.height);
+                self.body_cache.module_nconst_npool.context.globalCompositeOperation = "source-over";
+                self.body_cache.module_nconst_npool.context.globalAlpha = 0.1;
+                self.body_cache.module_nconst_npool.context.fill();
+                self.body_cache.module_nconst_npool.context.globalAlpha = 1;
+              }
               self.body_cache.module_nconst_npool.context.stroke();
             }
             ctx.drawImage(self.body_cache.module_nconst_npool,self.x-self.body_cache.buffer,self.y-self.body_cache.buffer,self.w+self.body_cache.buffer*2,self.h+self.body_cache.buffer*2);
@@ -2413,7 +2445,16 @@ var GamePlayScene = function(game, stage)
               self.body_cache.rel_const = GenIcon(self.w+self.body_cache.buffer*2,self.h+self.body_cache.buffer*2);
               self.body_cache.rel_const.context.fillStyle = bg_color;
               self.body_cache.rel_const.context.strokeStyle = line_color;
-              fillR(  self.body_cache.buffer+self.w/7,self.body_cache.buffer+self.h/3,self.w*5/7,self.h/3,5,self.body_cache.rel_const.context);
+              fillR(self.body_cache.buffer+self.w/7,self.body_cache.buffer+self.h/3,self.w*5/7,self.h/3,5,self.body_cache.rel_const.context);
+              if(self.img_name && self.img && self.img.complete)
+              {
+                self.body_cache.module_rel_const.context.globalCompositeOperation = "source-in";
+                self.body_cache.module_rel_const.context.drawImage(self.img,0,0,self.body_cache.module_rel_const.width,self.body_cache.module_rel_const.height);
+                self.body_cache.module_rel_const.context.globalCompositeOperation = "source-over";
+                self.body_cache.module_rel_const.context.globalAlpha = 0.1;
+                fillR(self.body_cache.buffer+self.w/7,self.body_cache.buffer+self.h/3,self.w*5/7,self.h/3,5,self.body_cache.rel_const.context);
+                self.body_cache.module_rel_const.context.globalAlpha = 1;
+              }
               strokeR(self.body_cache.buffer+self.w/7,self.body_cache.buffer+self.h/3,self.w*5/7,self.h/3,5,self.body_cache.rel_const.context);
             }
             ctx.drawImage(self.body_cache.rel_const,self.x-self.body_cache.buffer,self.y-self.body_cache.buffer,self.w+self.body_cache.buffer*2,self.h+self.body_cache.buffer*2);
@@ -2427,8 +2468,16 @@ var GamePlayScene = function(game, stage)
             self.body_cache.rel_nconst = GenIcon(self.w+self.body_cache.buffer*2,self.h+self.body_cache.buffer*2);
             self.body_cache.rel_nconst.context.fillStyle = bg_color;
             self.body_cache.rel_nconst.context.strokeStyle = line_color;
-
             self.body_cache.rel_nconst.context.drawImage(hex_bg_img,self.body_cache.buffer+b,self.body_cache.buffer+b,self.w-b*2,self.h-b*2);
+            if(self.img_name && self.img && self.img.complete)
+            {
+              self.body_cache.module_rel_nconst.context.globalCompositeOperation = "source-in";
+              self.body_cache.module_rel_nconst.context.drawImage(self.img,0,0,self.body_cache.module_rel_nconst.width,self.body_cache.module_rel_nconst.height);
+              self.body_cache.module_rel_nconst.context.globalCompositeOperation = "source-over";
+              self.body_cache.module_rel_nconst.context.globalAlpha = 0.1;
+              self.body_cache.rel_nconst.context.drawImage(hex_bg_img,self.body_cache.buffer+b,self.body_cache.buffer+b,self.w-b*2,self.h-b*2);
+              self.body_cache.module_rel_nconst.context.globalAlpha = 1;
+            }
           }
           ctx.drawImage(self.body_cache.rel_nconst,self.x-self.body_cache.buffer,self.y-self.body_cache.buffer,self.w+self.body_cache.buffer*2,self.h+self.body_cache.buffer*2);
 
