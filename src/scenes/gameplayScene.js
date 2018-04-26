@@ -1320,7 +1320,7 @@ var GamePlayScene = function(game, stage)
         }
 
         //labels
-        ctx.fillStyle = white;
+        ctx.fillStyle = modules[i].color;
         ctx.textAlign = "center";
         ctx.font = "10px Roboto Mono";
         ctx.save();
@@ -1330,6 +1330,8 @@ var GamePlayScene = function(game, stage)
         ctx.restore();
         ctx.fillText("time",mx+self.module_w/2,my+self.module_h-4);
 
+        //axis numbers
+        ctx.fillStyle = white;
         for(var j = 1; j < (t_max-1); j++)
         {
           x = gx + j*w;
