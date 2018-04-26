@@ -1291,84 +1291,96 @@ var GamePlayScene = function(game, stage)
       {
         if(!modules[i].graph) continue;
 
-        var gx = self.x + self.graph_p + self.off_x + (graph_i * (self.bg_w + self.graph_p));
-        var gy = self.y + self.graph_p + self.off_y + (graph_i * (self.bg_h + self.graph_p));
+        var mx = self.x + self.graph_p + self.off_x;// + (graph_i * (self.bg_w + self.graph_p));
+        var my = self.y + self.graph_p + self.off_y + (graph_i * (self.bg_h + self.graph_p));
+        var bx = mx + self.graph_b;
+        var by = my;
+        var gx = bx + self.graph_b;
+        var gy = by;
 
         //bg
         ctx.fillStyle = graph_bg_dark_color;
-        fillR(gx,gy,self.bg_w,self.bg_h,self.graph_r,ctx);
+        fillR(bx,by,self.bg_w,self.bg_h,self.graph_r,ctx);
 
         //graph squares
         ctx.fillStyle = graph_bg_vlight_color;
         var x;
         var y;
         var w = self.graph_w/(t_max-1);
-        var h = self.graph_h/(t_max-1);
+        var y_max = modules[i].max-min(0,modules[i].min);
+        var h = self.graph_h/y_max;
         for(var j = 0; j < (t_max-1); j++)
         {
-          x = gx + 1 + (self.bg_w-self.graph_w) + j*w;
-          for(var k = 0; k < (t_max-1); k++)
+          x = gx + j*w;
+          for(var k = 0; k < y_max; k++)
           {
-            y = gy - 1 + k*h;
+            y = gy + k*h;
             ctx.fillRect(x+1,y+1,w-2,h-2);
           }
+        }
+
+        //labels
+        ctx.fillStyle = white;
+        ctx.textAlign = "center";
+        ctx.font = "10px Roboto Mono";
+        ctx.save();
+        ctx.translate(mx+10,my+self.module_h/2);
+        ctx.rotate(-halfpi);
+        ctx.fillText(modules[i].title,0,0);
+        ctx.restore();
+        ctx.fillText("time",mx+self.module_w/2,my+self.module_h-4);
+
+        for(var j = 1; j < (t_max-1); j++)
+        {
+          x = gx + j*w;
+          ctx.fillText(""+j, x, gy+self.graph_h+10);
+        }
+        for(var j = 1; j < y_max; j++)
+        {
+          y = gy+self.graph_h - j*h;
+          ctx.fillText(""+j, gx-10, y+5);
         }
 
         //playhead
         ctx.lineWidth = 2;
         ctx.strokeStyle = "#888888";
-        x = gx + (self.bg_w-self.graph_w) + ((t_i+(1-(advance_timer/advance_timer_max)))/(t_max-1)) * self.graph_w;
+        x = gx + ((t_i+(1-(advance_timer/advance_timer_max)))/(t_max-1)) * self.graph_w;
         ctx.beginPath();
         ctx.moveTo(x,gy);
         ctx.lineTo(x,gy+self.graph_h);
         ctx.stroke();
 
-        ctx.lineWidth = 2;
-
-        fillR(gx+self.graph_w/2-20,gy+self.graph_h-6,40,12,5,ctx);
-        if(modules[i].title && modules[i].title != "")
-        fillR(gx-6,gy+self.graph_h/2-50,12,100,5,ctx);
-
+        //line
         ctx.strokeStyle = modules[i].color;
         ctx.fillStyle = modules[i].color;
-        ctx.textAlign = "center";
-        ctx.font = "10px Roboto Mono";
-        ctx.save();
-        ctx.translate(gx+4,gy+self.graph_h/2);
-        ctx.rotate(-halfpi);
-        ctx.fillText(modules[i].title,0,0);
-        ctx.restore();
-        ctx.fillText("time",gx+self.graph_w/2,gy+self.graph_h+4);
-
-        ctx.strokeStyle = modules[i].color;
-        x = gx+10;
+        x = gx;
         y = gy+self.graph_h;
-
         ctx.beginPath();
-        if(!isNaN(modules[i].plot[0])) y = gy+self.graph_h - clamp(0,1,mapVal(modules[i].min,modules[i].max,0,1,modules[i].plot[0]))*self.graph_h;
+        if(!isNaN(modules[i].plot[0])) y = gy+self.graph_h - clamp(0,1,mapVal(min(0,modules[i].min),modules[i].max,0,1,modules[i].plot[0]))*self.graph_h;
         ctx.moveTo(x,y);
         for(var j = 0; j <= t_i || (predict && j < t_max); j++)
         {
-          x = gx+10 + (j/(t_max-1)) * self.graph_w;
-          if(!isNaN(modules[i].plot[j])) y = gy+self.graph_h - (clamp(0,1,mapVal(modules[i].min,modules[i].max,0,1,modules[i].plot[j]))*self.graph_h);
+          x = gx + (j/(t_max-1)) * self.graph_w;
+          if(!isNaN(modules[i].plot[j])) y = gy+self.graph_h - clamp(0,1,mapVal(min(0,modules[i].min),modules[i].max,0,1,modules[i].plot[j]))*self.graph_h;
           ctx.lineTo(x,y);
           if(j == t_i)
           {
-            if(!isNaN(modules[i].prev_plot)) y = gy+self.graph_h - (clamp(0,1,mapVal(modules[i].min,modules[i].max,0,1,modules[i].prev_plot))*self.graph_h);
+            if(!isNaN(modules[i].prev_plot)) y = gy+self.graph_h - clamp(0,1,mapVal(min(0,modules[i].min),modules[i].max,0,1,modules[i].prev_plot))*self.graph_h;
             ctx.lineTo(x,y);
           }
         }
         ctx.stroke();
 
+        //points
         if(levels[cur_level_i] && levels[cur_level_i].primary_module_target_vals[i])
         {
           var targets = levels[cur_level_i].primary_module_target_vals[i];
           for(var j = 0; j < targets.length || !isNaN(modules[i].plot[j]); j++)
           {
-            x = gx+10 + (j/(t_max-1)) * self.graph_w;
+            x = gx + (j/(t_max-1)) * self.graph_w;
             if(j < targets.length)
             {
-              y = gy + self.graph_h - (clamp(0,1,mapVal(modules[i].min,modules[i].max,0,1,targets[j]))*self.graph_h);
+              y = gy + self.graph_h - (clamp(0,1,mapVal(min(0,modules[i].min),modules[i].max,0,1,targets[j]))*self.graph_h);
               ctx.beginPath();
               ctx.arc(x,y,4,0,twopi);
               var off = -8;
@@ -1395,7 +1407,7 @@ var GamePlayScene = function(game, stage)
                 ctx.font = "10px Roboto Mono";
                 ctx.textAlign = "center";
                 ctx.fillStyle = white;
-                y = gy + self.graph_h - (clamp(0,1,mapVal(modules[i].min,modules[i].max,0,1,modules[i].plot[j]))*self.graph_h);
+                y = my + self.graph_h - (clamp(0,1,mapVal(min(0,modules[i].min),modules[i].max,0,1,modules[i].plot[j]))*self.graph_h);
                 var off = 14;
                 if(j < targets.length && modules[i].plot[j] > targets[j]) off = -8;
                 ctx.fillText(fdisp(modules[i].plot[j],1),x,y+off);
@@ -1412,13 +1424,13 @@ var GamePlayScene = function(game, stage)
         {
           for(var j = 0; !isNaN(modules[i].plot[j]); j++)
           {
-            x = gx+10 + (j/(t_max-1)) * self.graph_w;
+            x = gx + (j/(t_max-1)) * self.graph_w;
             if(j <= t_i && !isNaN(modules[i].plot[j]))
             {
               ctx.font = "10px Roboto Mono";
               ctx.textAlign = "center";
               ctx.fillStyle = white;
-              y = gy + self.graph_h - (clamp(0,1,mapVal(modules[i].min,modules[i].max,0,1,modules[i].plot[j]))*self.graph_h);
+              y = gy + self.graph_h - (clamp(0,1,mapVal(min(0,modules[i].min),modules[i].max,0,1,modules[i].plot[j]))*self.graph_h);
               var off = -8;
               if(j%2) off = 14;
               ctx.fillText(fdisp(modules[i].plot[j],1),x,y+off);
@@ -1432,6 +1444,7 @@ var GamePlayScene = function(game, stage)
         graph_i++;
       }
       ctx.textAlign = "center";
+
     }
 
     self.drag_start_off_x = 0;
