@@ -1614,9 +1614,9 @@ var GamePlayScene = function(game, stage)
 
         if(!selected_module.primary)
         {
-          self.del_btn.w = self.w/2-s;
+          self.del_btn.w = self.w-2*s;
           self.del_btn.h = h;
-          self.del_btn.x = self.x + self.w/2;
+          self.del_btn.x = self.x + s;
           self.del_btn.y = self.y + s + (h+s)*i;
           i++;
         }
@@ -1810,9 +1810,11 @@ var GamePlayScene = function(game, stage)
 
         if(!selected_module.primary)
         {
-          ctx.fillStyle = green;
+          ctx.fillStyle = red;
           fillRBox(self.del_btn,5,ctx);
           strokeRBox(self.del_btn,5,ctx);
+          ctx.fillStyle = white;
+          ctx.fillText("DELETE",self.del_btn.x+44,self.del_btn.y+self.del_btn.h-8);
         }
 
       }
