@@ -1291,8 +1291,8 @@ var GamePlayScene = function(game, stage)
       {
         if(!modules[i].graph) continue;
 
-        var mx = self.x + self.graph_p + self.off_x;// + (graph_i * (self.bg_w + self.graph_p));
-        var my = self.y + self.graph_p + self.off_y + (graph_i * (self.bg_h + self.graph_p));
+        var mx = self.x + self.graph_p + self.off_x;// + (graph_i * (self.module_w + self.graph_p));
+        var my = self.y + self.graph_p + self.off_y + (graph_i * (self.module_h + self.graph_p));
         var bx = mx + self.graph_b;
         var by = my;
         var gx = bx + self.graph_b;
@@ -1447,18 +1447,28 @@ var GamePlayScene = function(game, stage)
 
     }
 
-    self.drag_start_off_x = 0;
-    self.drag_start_x = 0;
+    self.drag_start_off_y = 0;
+    self.drag_start_y = 0;
+    self.shouldDrag = function(evt)
+    {
+      var n_graphs = 0;
+      for(var i = 0; i < modules.length; i++) if(modules[i].graph) n_graphs++;
+      if(evt.x > self.x && evt.x < self.x+self.w &&
+         evt.y > self.y && evt.y < self.y+((self.module_h+self.graph_p)*n_graphs)+self.off_y) return true;
+         return false;
+    }
     self.dragStart = function(evt)
     {
-      self.drag_start_off_x = self.off_x;
-      self.drag_start_x = evt.doX;
+      self.drag_start_off_y = self.off_y;
+      self.drag_start_y = evt.doY;
     }
     self.drag = function(evt)
     {
-      self.off_x = self.drag_start_off_x+(evt.doX-self.drag_start_x);
-      if(self.off_x < (canv.width-((self.graph_w+10)*modules.length+10))) self.off_x = canv.width-((self.graph_w+10)*modules.length+10);
-      if(self.off_x > 0) self.off_x = 0;
+      var n_graphs = 0;
+      for(var i = 0; i < modules.length; i++) if(modules[i].graph) n_graphs++;
+      self.off_y = self.drag_start_off_y+(evt.doY-self.drag_start_y);
+      if(self.off_y < self.h-((self.module_h+self.graph_p)*n_graphs)-50) self.off_y = self.h-((self.module_h+self.graph_p)*n_graphs)-50;
+      if(self.off_y > 0) self.off_y = 0;
     }
     self.dragFinish = function(evt)
     {
