@@ -1520,6 +1520,13 @@ var GamePlayScene = function(game, stage)
     self.sign_box_neg     = new ToggleBox(0,0,0,0,0,function(v){ if(self.sign_box_pos.on     == v) self.sign_box_pos.set(!v);     });
     self.sign_box_neg.on_img = on_img;
     self.sign_box_neg.off_img = off_img;
+    self.del_btn = new ButtonBox(0,0,0,0,function(v){
+      deleteModule(selected_module);
+      selected_module = 0;
+      dragging_obj = 0;
+      resetGraph();
+      s_editor.center();
+    });
 
     self.calc_sub_params = function()
     {
@@ -1605,6 +1612,15 @@ var GamePlayScene = function(game, stage)
           self.sign_box_neg.y = self.y + s + (h+s)*i;
           i++;
         }
+
+        if(!selected_module.primary)
+        {
+          self.del_btn.w = self.w/2-s;
+          self.del_btn.h = h;
+          self.del_btn.x = self.x + self.w/2;
+          self.del_btn.y = self.y + s + (h+s)*i;
+          i++;
+        }
       }
       self.h = s+(h+s)*i;
     }
@@ -1685,6 +1701,8 @@ var GamePlayScene = function(game, stage)
       if(clicker.filter(self.operator_box_div)) hit = true;
       if(clicker.filter(self.sign_box_pos)) hit = true;
       if(clicker.filter(self.sign_box_neg)) hit = true;
+
+      if(clicker.filter(self.del_btn)) hit = true;
 
       return hit;
     }
@@ -1790,6 +1808,14 @@ var GamePlayScene = function(game, stage)
 
           drawPrevLine(self.sign_box_pos.y+self.sign_box_pos.h+5);
         }
+
+        if(!selected_module.primary)
+        {
+          ctx.fillStyle = green;
+          fillRBox(self.del_btn,5,ctx);
+          strokeRBox(self.del_btn,5,ctx);
+        }
+
       }
     }
   }
@@ -1898,6 +1924,7 @@ var GamePlayScene = function(game, stage)
 
     work_cam.wx = 0;
     work_cam.wy = 0;
+    s_graphs.off_y = 0;
   }
 
   var load_next_template = function()
@@ -2213,8 +2240,8 @@ var GamePlayScene = function(game, stage)
       if(dragging_obj == self)
       {
         dragging_obj = 0;
-        if(!self.primary && rectCollide(self.x,self.y,self.w,self.h,remove_module_btn.x,remove_module_btn.y,remove_module_btn.w,remove_module_btn.h))
-          deleteModule(self);
+        //if(!self.primary && rectCollide(self.x,self.y,self.w,self.h,remove_module_btn.x,remove_module_btn.y,remove_module_btn.w,remove_module_btn.h))
+          //deleteModule(self);
         if(self.title == "") s_editor.title_box.focus();
       }
     }
@@ -3371,6 +3398,7 @@ var GamePlayScene = function(game, stage)
     }
   }
 
+  var spin_t = 0;
   self.tick = function()
   {
     if(game_state == GAME_STATE_PLAY || game_state == GAME_STATE_MODAL)
@@ -3468,6 +3496,7 @@ var GamePlayScene = function(game, stage)
     blurer.flush();
 
     n_ticks++;
+    spin_t++;
   };
 
   self.draw = function()
@@ -3485,11 +3514,10 @@ var GamePlayScene = function(game, stage)
       ctx.textAlign = "left";
       if(!levels[cur_level_i] || levels[cur_level_i].add_module_enabled)
         imageBox(add_btn_img,add_module_btn,ctx);
-      if(dragging_obj && !dragging_obj.primary && dragging_obj != s_dragger && dragging_obj != s_editor && !dragging_obj.src) //src implies whippet
-        imageBox(remove_btn_img,remove_module_btn,ctx);
+      //if(dragging_obj && !dragging_obj.primary && dragging_obj != s_dragger && dragging_obj != s_editor && !dragging_obj.src) //src implies whippet
+        //imageBox(remove_btn_img,remove_module_btn,ctx);
 
       ctx.textAlign = "center";
-
 
       for(var i = 0; i < modules.length; i++)
         screenSpace(work_cam,canv,modules[i]);
@@ -3590,6 +3618,9 @@ var GamePlayScene = function(game, stage)
       ctx.fillRect(10+(60*i),10,50,50);
     }
 */
+
+    ctx.fillStyle = red;
+    ctx.fillRect(canv.width/2-10+cos(spin_t/10)*20,canv.height/2-10+sin(spin_t/10)*20,20,20);
   };
 
   self.cleanup = function()
