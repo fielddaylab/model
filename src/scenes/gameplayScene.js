@@ -1511,13 +1511,13 @@ var GamePlayScene = function(game, stage)
     self.operator_box_mul = new ToggleBox(0,0,0,0,0,function(v){ var new_v; if(v) new_v = OPERATOR_MUL; else new_v = OPERATOR_DIV; var old_v = selected_module.operator; selected_module.operator = new_v; if(new_v != old_v) resetGraph(); if(self.operator_box_div.on == v) self.operator_box_div.set(!v); });
     self.operator_box_mul.on_img = on_img;
     self.operator_box_mul.off_img = off_img;
-    self.sign_box_pos     = new ToggleBox(0,0,0,0,0,function(v){ var new_v; if(v) new_v = 1.;           else new_v = -1.;          var old_v = selected_module.sign;     selected_module.sign     = new_v; if(new_v != old_v) resetGraph(); if(self.sign_box_neg.on     == v) self.sign_box_neg.set(!v);     });
+    self.sign_box_pos = new ToggleBox(0,0,0,0,0,function(v){ var new_v; if(v) new_v = 1.; else new_v = -1.; var old_v = selected_module.sign; selected_module.sign = new_v; if(new_v != old_v) resetGraph(); if(self.sign_box_neg.on == v) self.sign_box_neg.set(!v); });
     self.sign_box_pos.on_img = on_img;
     self.sign_box_pos.off_img = off_img;
     self.operator_box_div = new ToggleBox(0,0,0,0,0,function(v){ if(self.operator_box_div.on == v) self.operator_box_mul.set(!v); });
     self.operator_box_div.on_img = on_img;
     self.operator_box_div.off_img = off_img;
-    self.sign_box_neg     = new ToggleBox(0,0,0,0,0,function(v){ if(self.sign_box_pos.on     == v) self.sign_box_pos.set(!v);     });
+    self.sign_box_neg = new ToggleBox(0,0,0,0,0,function(v){ if(self.sign_box_pos.on == v) self.sign_box_pos.set(!v); });
     self.sign_box_neg.on_img = on_img;
     self.sign_box_neg.off_img = off_img;
     self.del_btn = new ButtonBox(0,0,0,0,function(v){
@@ -1525,7 +1525,6 @@ var GamePlayScene = function(game, stage)
       selected_module = 0;
       dragging_obj = 0;
       resetGraph();
-      s_editor.center();
     });
 
     self.calc_sub_params = function()
@@ -1672,7 +1671,7 @@ var GamePlayScene = function(game, stage)
     self.filter = function()
     {
       var hit = false;
-      if(!selected_module) return false;
+      if(!selected_module || dragging_obj) return false;
 
       if(dragger.filter(self)) hit = true;
 
