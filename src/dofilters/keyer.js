@@ -38,7 +38,7 @@ var Keyer = function(init)
   {
     evts.push(evt);
     evt_types.push(KEY_EVT_DOWN);
-    if(evt.keyCode == 8) //prevent backspace
+    if(evt.keyCode == 8 || evt.keyCode == 9) //prevent backspace || tab
     {
       evt.preventDefault();
       return false;
@@ -48,7 +48,7 @@ var Keyer = function(init)
   {
     evts.push(evt);
     evt_types.push(KEY_EVT_UP);
-    if(evt.keyCode == 8) //prevent backspace
+    if(evt.keyCode == 8 || evt.keyCode == 9) //prevent backspace || tab
     {
       evt.preventDefault();
       return false;
