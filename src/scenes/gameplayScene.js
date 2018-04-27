@@ -1341,6 +1341,7 @@ var GamePlayScene = function(game, stage)
         {
           y = gy+self.graph_h - j*h;
           ctx.fillText(""+j, gx-10, y+5);
+          if(y_max > 10) if(j == 1) j += 3; else j += 4;
         }
 
         //playhead
