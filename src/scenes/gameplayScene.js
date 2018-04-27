@@ -2217,6 +2217,8 @@ var GamePlayScene = function(game, stage)
     self.output_dongle = new whippet_dongle(-self.w,0,dongle_img.width/4,self,self.shouldShowOutputDongle);
 
     //the module itself
+    self.sticky_drag = 0;
+    self.drag_t = 0;
     self.shouldDrag = function(evt)
     {
       if(dragging_obj && dragging_obj != self) return false;
@@ -2230,6 +2232,9 @@ var GamePlayScene = function(game, stage)
       self.drag_start_y = evt.doY-self.y;
       s_editor.center();
       s_editor.calc_sub_values();
+      self.drag_t = 0;
+      if(self.sticky_drag) self.sticky_drag = 0;
+      else                 self.sticky_drag = 1;
     }
     self.drag = function(evt)
     {
@@ -2237,15 +2242,25 @@ var GamePlayScene = function(game, stage)
       self.y = evt.doY-self.drag_start_y;
       worldSpaceCoords(work_cam,canv,self);
       s_editor.center();
+      self.drag_t++;
+      if(self.drag_t > 5) self.sticky_drag = 0;
     }
     self.dragFinish = function(evt)
     {
       if(dragging_obj == self)
       {
-        dragging_obj = 0;
-        //if(!self.primary && rectCollide(self.x,self.y,self.w,self.h,remove_module_btn.x,remove_module_btn.y,remove_module_btn.w,remove_module_btn.h))
-          //deleteModule(self);
-        if(self.title == "") s_editor.title_box.focus();
+        if(!self.sticky_drag)
+        {
+          dragging_obj = 0;
+          //if(!self.primary && rectCollide(self.x,self.y,self.w,self.h,remove_module_btn.x,remove_module_btn.y,remove_module_btn.w,remove_module_btn.h))
+            //deleteModule(self);
+          if(self.title == "") s_editor.title_box.focus();
+        }
+        else
+        {
+          setTimeout(function(){self.dragging = true;},1); //hack keep it dragging
+          self.sticky_drag = 0;
+        }
       }
     }
 
