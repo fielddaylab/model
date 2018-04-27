@@ -1674,7 +1674,8 @@ var GamePlayScene = function(game, stage)
     self.filter = function()
     {
       var hit = false;
-      if(!selected_module || dragging_obj) return false;
+      if(!selected_module || (dragging_obj && dragging_obj != self))
+        return false;
 
       if(dragger.filter(self)) hit = true;
 
@@ -2234,8 +2235,6 @@ var GamePlayScene = function(game, stage)
       s_editor.center();
       s_editor.calc_sub_values();
       self.drag_t = 0;
-      if(self.sticky_drag) self.sticky_drag = 0;
-      else                 self.sticky_drag = 1;
     }
     self.drag = function(evt)
     {
@@ -3253,7 +3252,7 @@ var GamePlayScene = function(game, stage)
         m.graph = 0;
         screenSpace(work_cam,canv,m);
 
-        if(m.shouldDrag(evt)) { m.dragStart(evt); m.dragging = true; }
+        if(m.shouldDrag(evt)) { m.dragStart(evt); m.dragging = true; m.sticky_drag = 1; }
         modules.push(m);
         resetGraph();
       }
