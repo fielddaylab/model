@@ -10,7 +10,7 @@ body,div
 }
 </style>
 <script type="text/javascript">
-window.addEventListener("load",function(){ document.getElementById("content").contentWindow.focus(); },false);
+window.addEventListener("load",function(){ setInterval(function(){document.getElementById("content").contentWindow.focus();},100); },false);
 </script>
 <link href='https://fonts.googleapis.com/css?family=Open+Sans' rel='stylesheet' type='text/css'>
 </head>
