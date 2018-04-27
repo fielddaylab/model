@@ -1309,159 +1309,168 @@ var GamePlayScene = function(game, stage)
       for(var i = 0; i < modules.length; i++)
       {
         if(!modules[i].graph) continue;
-
         var mx = self.x + self.graph_p + self.off_x;// + (graph_i * (self.module_w + self.graph_p));
         var my = self.y + self.graph_p + self.off_y + (graph_i * (self.module_h + self.graph_p));
-        var bx = mx + self.graph_b;
-        var by = my;
+
+        //b[xy] and g[xy] are relative to m[xy]; m[xy] is absolute!
+        var bx = self.graph_b;
+        var by = 0;
         var gx = bx + self.graph_b;
         var gy = by;
 
-        //bg
-        ctx.fillStyle = graph_bg_dark_color;
-        fillR(bx,by,self.bg_w,self.bg_h,self.graph_r,ctx);
-
-        //graph squares
-        ctx.fillStyle = graph_bg_vlight_color;
-        var x;
-        var y;
-        var w = self.graph_w/(t_max-1);
-        var y_max = modules[i].max-min(0,modules[i].min);
-        var h = self.graph_h/y_max;
-        for(var j = 0; j < (t_max-1); j++)
+        if(!modules[i].cache_graph)
         {
-          x = gx + j*w;
-          for(var k = 0; k < y_max; k++)
+          modules[i].cache_graph = GenIcon(self.module_w,self.module_h);
+          var mctx = modules[i].cache_graph.context;
+
+
+          //bg
+          mctx.fillStyle = graph_bg_dark_color;
+          fillR(bx,by,self.bg_w,self.bg_h,self.graph_r,mctx);
+
+          //graph squares
+          mctx.fillStyle = graph_bg_vlight_color;
+          var x;
+          var y;
+          var w = self.graph_w/(t_max-1);
+          var y_max = modules[i].max-min(0,modules[i].min);
+          var h = self.graph_h/y_max;
+          for(var j = 0; j < (t_max-1); j++)
           {
-            y = gy + k*h;
-            ctx.fillRect(x+1,y+1,w-2,h-2);
+            x = gx + j*w;
+            for(var k = 0; k < y_max; k++)
+            {
+              y = gy + k*h;
+              mctx.fillRect(x+1,y+1,w-2,h-2);
+            }
+          }
+
+          //labels
+          mctx.fillStyle = modules[i].color;
+          mctx.textAlign = "center";
+          mctx.font = "10px Roboto Mono";
+          mctx.save();
+          mctx.translate(10,self.module_h/2);
+          mctx.rotate(-halfpi);
+          mctx.fillText(modules[i].title,0,0);
+          mctx.restore();
+          mctx.fillText("time",self.module_w/2,self.module_h-4);
+
+          //axis numbers
+          mctx.fillStyle = white;
+          for(var j = 1; j < (t_max-1); j++)
+          {
+            x = gx + j*w;
+            mctx.fillText(""+j, x, gy+self.graph_h+10);
+          }
+          for(var j = 1; j < y_max; j++)
+          {
+            y = gy+self.graph_h - j*h;
+            mctx.fillText(""+j, gx-10, y+5);
+            if(y_max > 10) if(j == 1) j += 3; else j += 4;
+          }
+
+          //line
+          mctx.strokeStyle = modules[i].color;
+          mctx.fillStyle = modules[i].color;
+          x = gx;
+          y = gy+self.graph_h;
+          mctx.beginPath();
+          if(!isNaN(modules[i].plot[0])) y = gy+self.graph_h - clamp(0,1,mapVal(min(0,modules[i].min),modules[i].max,0,1,modules[i].plot[0]))*self.graph_h;
+          mctx.moveTo(x,y);
+          for(var j = 0; j <= t_i || (predict && j < t_max); j++)
+          {
+            x = gx + (j/(t_max-1)) * self.graph_w;
+            if(!isNaN(modules[i].plot[j])) y = gy+self.graph_h - clamp(0,1,mapVal(min(0,modules[i].min),modules[i].max,0,1,modules[i].plot[j]))*self.graph_h;
+            mctx.lineTo(x,y);
+            if(j == t_i)
+            {
+              if(!isNaN(modules[i].prev_plot)) y = gy+self.graph_h - clamp(0,1,mapVal(min(0,modules[i].min),modules[i].max,0,1,modules[i].prev_plot))*self.graph_h;
+              mctx.lineTo(x,y);
+            }
+          }
+          mctx.stroke();
+
+          //points
+          if(levels[cur_level_i] && levels[cur_level_i].primary_module_target_vals[i])
+          {
+            var targets = levels[cur_level_i].primary_module_target_vals[i];
+            for(var j = 0; j < targets.length || !isNaN(modules[i].plot[j]); j++)
+            {
+              x = gx + (j/(t_max-1)) * self.graph_w;
+              if(j < targets.length)
+              {
+                y = gy + self.graph_h - (clamp(0,1,mapVal(min(0,modules[i].min),modules[i].max,0,1,targets[j]))*self.graph_h);
+                mctx.beginPath();
+                mctx.arc(x,y,4,0,twopi);
+                var off = -8;
+                if(j <= t_i && !isNaN(modules[i].plot[j]) && modules[i].plot[j] == targets[j])
+                  mctx.fill();
+                else
+                {
+                  mctx.stroke();
+                  if(j <= t_i && modules[i].plot[j] > targets[j]) off = 14;
+                }
+
+                mctx.font = "10px Roboto Mono";
+                mctx.textAlign = "center";
+                mctx.fillStyle = white;
+                mctx.fillText(fdisp(targets[j],1),x,y+off);
+                mctx.font = "20px Roboto Mono";
+                mctx.textAlign = "left";
+                mctx.fillStyle = modules[i].color;
+              }
+              if(j <= t_i && !isNaN(modules[i].plot[j]))
+              {
+                if((j < targets.length && modules[i].plot[j] != targets[j]) || j >= targets.length)
+                {
+                  mctx.font = "10px Roboto Mono";
+                  mctx.textAlign = "center";
+                  mctx.fillStyle = white;
+                  y = self.graph_h - (clamp(0,1,mapVal(min(0,modules[i].min),modules[i].max,0,1,modules[i].plot[j]))*self.graph_h);
+                  var off = 14;
+                  if(j < targets.length && modules[i].plot[j] > targets[j]) off = -8;
+                  mctx.fillText(fdisp(modules[i].plot[j],1),x,y+off);
+                  mctx.font = "20px Roboto Mono";
+                  mctx.textAlign = "left";
+                  mctx.fillStyle = modules[i].color;
+                  if(j < targets.length)
+                    mctx.drawImage(wrong_img,x-5,y-5,10,10);
+                }
+              }
+            }
+          }
+          else
+          {
+            for(var j = 0; !isNaN(modules[i].plot[j]); j++)
+            {
+              x = gx + (j/(t_max-1)) * self.graph_w;
+              if(j <= t_i && !isNaN(modules[i].plot[j]))
+              {
+                mctx.font = "10px Roboto Mono";
+                mctx.textAlign = "center";
+                mctx.fillStyle = white;
+                y = gy + self.graph_h - (clamp(0,1,mapVal(min(0,modules[i].min),modules[i].max,0,1,modules[i].plot[j]))*self.graph_h);
+                var off = -8;
+                if(j%2) off = 14;
+                mctx.fillText(fdisp(modules[i].plot[j],1),x,y+off);
+                mctx.font = "20px Roboto Mono";
+                mctx.textAlign = "left";
+                mctx.fillStyle = modules[i].color;
+              }
+            }
           }
         }
-
-        //labels
-        ctx.fillStyle = modules[i].color;
-        ctx.textAlign = "center";
-        ctx.font = "10px Roboto Mono";
-        ctx.save();
-        ctx.translate(mx+10,my+self.module_h/2);
-        ctx.rotate(-halfpi);
-        ctx.fillText(modules[i].title,0,0);
-        ctx.restore();
-        ctx.fillText("time",mx+self.module_w/2,my+self.module_h-4);
-
-        //axis numbers
-        ctx.fillStyle = white;
-        for(var j = 1; j < (t_max-1); j++)
-        {
-          x = gx + j*w;
-          ctx.fillText(""+j, x, gy+self.graph_h+10);
-        }
-        for(var j = 1; j < y_max; j++)
-        {
-          y = gy+self.graph_h - j*h;
-          ctx.fillText(""+j, gx-10, y+5);
-          if(y_max > 10) if(j == 1) j += 3; else j += 4;
-        }
+        ctx.drawImage(modules[i].cache_graph,mx,my,self.module_w,self.module_h);
 
         //playhead
         ctx.lineWidth = 2;
         ctx.strokeStyle = "#888888";
-        x = gx + ((t_i+(1-(advance_timer/advance_timer_max)))/(t_max-1)) * self.graph_w;
+        var x = mx + gx + ((t_i+(1-(advance_timer/advance_timer_max)))/(t_max-1)) * self.graph_w;
         ctx.beginPath();
-        ctx.moveTo(x,gy);
-        ctx.lineTo(x,gy+self.graph_h);
+        ctx.moveTo(x,my+gy);
+        ctx.lineTo(x,my+gy+self.graph_h);
         ctx.stroke();
-
-        //line
-        ctx.strokeStyle = modules[i].color;
-        ctx.fillStyle = modules[i].color;
-        x = gx;
-        y = gy+self.graph_h;
-        ctx.beginPath();
-        if(!isNaN(modules[i].plot[0])) y = gy+self.graph_h - clamp(0,1,mapVal(min(0,modules[i].min),modules[i].max,0,1,modules[i].plot[0]))*self.graph_h;
-        ctx.moveTo(x,y);
-        for(var j = 0; j <= t_i || (predict && j < t_max); j++)
-        {
-          x = gx + (j/(t_max-1)) * self.graph_w;
-          if(!isNaN(modules[i].plot[j])) y = gy+self.graph_h - clamp(0,1,mapVal(min(0,modules[i].min),modules[i].max,0,1,modules[i].plot[j]))*self.graph_h;
-          ctx.lineTo(x,y);
-          if(j == t_i)
-          {
-            if(!isNaN(modules[i].prev_plot)) y = gy+self.graph_h - clamp(0,1,mapVal(min(0,modules[i].min),modules[i].max,0,1,modules[i].prev_plot))*self.graph_h;
-            ctx.lineTo(x,y);
-          }
-        }
-        ctx.stroke();
-
-        //points
-        if(levels[cur_level_i] && levels[cur_level_i].primary_module_target_vals[i])
-        {
-          var targets = levels[cur_level_i].primary_module_target_vals[i];
-          for(var j = 0; j < targets.length || !isNaN(modules[i].plot[j]); j++)
-          {
-            x = gx + (j/(t_max-1)) * self.graph_w;
-            if(j < targets.length)
-            {
-              y = gy + self.graph_h - (clamp(0,1,mapVal(min(0,modules[i].min),modules[i].max,0,1,targets[j]))*self.graph_h);
-              ctx.beginPath();
-              ctx.arc(x,y,4,0,twopi);
-              var off = -8;
-              if(j <= t_i && !isNaN(modules[i].plot[j]) && modules[i].plot[j] == targets[j])
-                ctx.fill();
-              else
-              {
-                ctx.stroke();
-                if(j <= t_i && modules[i].plot[j] > targets[j]) off = 14;
-              }
-
-              ctx.font = "10px Roboto Mono";
-              ctx.textAlign = "center";
-              ctx.fillStyle = white;
-              ctx.fillText(fdisp(targets[j],1),x,y+off);
-              ctx.font = "20px Roboto Mono";
-              ctx.textAlign = "left";
-              ctx.fillStyle = modules[i].color;
-            }
-            if(j <= t_i && !isNaN(modules[i].plot[j]))
-            {
-              if((j < targets.length && modules[i].plot[j] != targets[j]) || j >= targets.length)
-              {
-                ctx.font = "10px Roboto Mono";
-                ctx.textAlign = "center";
-                ctx.fillStyle = white;
-                y = my + self.graph_h - (clamp(0,1,mapVal(min(0,modules[i].min),modules[i].max,0,1,modules[i].plot[j]))*self.graph_h);
-                var off = 14;
-                if(j < targets.length && modules[i].plot[j] > targets[j]) off = -8;
-                ctx.fillText(fdisp(modules[i].plot[j],1),x,y+off);
-                ctx.font = "20px Roboto Mono";
-                ctx.textAlign = "left";
-                ctx.fillStyle = modules[i].color;
-                if(j < targets.length)
-                  ctx.drawImage(wrong_img,x-5,y-5,10,10);
-              }
-            }
-          }
-        }
-        else
-        {
-          for(var j = 0; !isNaN(modules[i].plot[j]); j++)
-          {
-            x = gx + (j/(t_max-1)) * self.graph_w;
-            if(j <= t_i && !isNaN(modules[i].plot[j]))
-            {
-              ctx.font = "10px Roboto Mono";
-              ctx.textAlign = "center";
-              ctx.fillStyle = white;
-              y = gy + self.graph_h - (clamp(0,1,mapVal(min(0,modules[i].min),modules[i].max,0,1,modules[i].plot[j]))*self.graph_h);
-              var off = -8;
-              if(j%2) off = 14;
-              ctx.fillText(fdisp(modules[i].plot[j],1),x,y+off);
-              ctx.font = "20px Roboto Mono";
-              ctx.textAlign = "left";
-              ctx.fillStyle = modules[i].color;
-            }
-          }
-        }
 
         graph_i++;
       }
@@ -2831,47 +2840,6 @@ var GamePlayScene = function(game, stage)
         }
       }
 
-      /*
-      //old
-      var s = module_inner_s*self.val_s;
-      if((self.input_dongle.attachment && self.output_dongle.attachment) || self.type == MODULE_TYPE_RELATIONSHIP)
-        s *= 0.75;
-      ctx.drawImage(inner_module_img,self.x+self.w/2-s/2,self.y+self.h/2-s/2,s,s);
-      var targets = levels[cur_level_i].primary_module_target_vals;
-      ctx.fillStyle = black
-      ctx.fillText(self.title,self.x+self.w/2,self.y-10);
-      if(self.primary && targets[self.primary_index])
-      {
-        if(targets[self.primary_index].length <= t_i)
-          ctx.fillStyle = black;
-        else if(targets[self.primary_index][t_i] == self.v)
-          ctx.fillStyle = green;
-        else
-          ctx.fillStyle = red;
-      }
-      if((self.input_dongle.attachment && self.output_dongle.attachment) || self.type == MODULE_TYPE_RELATIONSHIP)
-        ctx.fillText("x"+fdisp(self.v,2),self.x+self.w/2,self.y+self.h/2+5);
-      else
-        ctx.fillText(fdisp(self.v,2),self.x+self.w/2,self.y+self.h/2+5);
-
-      var t = 1-(advance_timer/advance_timer_max);
-      if(self.cache_delta > 0)
-      {
-        var olda = ctx.globalAlpha;
-        ctx.globalAlpha = (1-t);
-        ctx.fillStyle = green;
-        ctx.fillText("+"+self.cache_delta,self.x+sin(t*5*pi),self.y-t*20);
-        ctx.globalAlpha = olda;
-      }
-      else if(self.cache_delta < 0)
-      {
-        var olda = ctx.globalAlpha;
-        ctx.globalAlpha = (1-t);
-        ctx.fillStyle = red;
-        ctx.fillText(self.cache_delta,self.x+sin(t*5*pi),self.y-t*20);
-        ctx.globalAlpha = olda;
-      }
-      */
     }
 
     var tvecs = [];
@@ -3384,6 +3352,7 @@ var GamePlayScene = function(game, stage)
       advance_timer = advance_timer_max;
       for(var i = 0; i < modules.length; i++)
       {
+        modules[i].cache_graph = 0;
         modules[i].v = modules[i].v_default;
         modules[i].cache_delta = 0;
         modules[i].plot[0] = modules[i].v;
@@ -3445,7 +3414,6 @@ var GamePlayScene = function(game, stage)
     }
   }
 
-  var spin_t = 0;
   self.tick = function()
   {
     if(game_state == GAME_STATE_PLAY || game_state == GAME_STATE_MODAL)
@@ -3521,6 +3489,8 @@ var GamePlayScene = function(game, stage)
             levels[cur_level_i].finished = true;
             game_state = GAME_STATE_MODAL;
           }
+          for(var i = 0; i < modules.length; i++)
+            modules[i].cache_graph = 0;
         }
       }
 
@@ -3543,7 +3513,6 @@ var GamePlayScene = function(game, stage)
     blurer.flush();
 
     n_ticks++;
-    spin_t++;
   };
 
   self.draw = function()
@@ -3665,9 +3634,6 @@ var GamePlayScene = function(game, stage)
       ctx.fillRect(10+(60*i),10,50,50);
     }
 */
-
-    ctx.fillStyle = red;
-    ctx.fillRect(canv.width/2-10+cos(spin_t/10)*20,canv.height/2-10+sin(spin_t/10)*20,20,20);
   };
 
   self.cleanup = function()
