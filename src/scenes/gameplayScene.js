@@ -403,6 +403,25 @@ var GamePlayScene = function(game, stage)
     beginLevel();
   }
 
+  var genCode = function()
+  {
+    var c = "";
+    for(var i = 0; i < levels.length; i++)
+      c += levels[i].complete ? "1" : "0";
+    return c;
+  }
+
+  var consumeCode = function(c)
+  {
+    var cbit;
+    for(var i = 0; i < levels.length; i++)
+    {
+      cbit = c.substr(0,1);
+      c = c.substr(1);
+      levels[i].complete = cbit == "1" ? 1 : 0;
+    }
+  }
+
   var levels = [];
   var level_btns = [];
   var cur_level_i = 0;
@@ -3299,6 +3318,13 @@ var GamePlayScene = function(game, stage)
       {
         if(levels[cur_level_i]) levels[cur_level_i].complete = true;
         game_state = GAME_STATE_MENU;
+
+        var url = location.href;
+        var p_i = url.indexOf("?");
+        if(p_i != -1) url = url.substr(0,p_i);
+        url = url + "?code=" + genCode();
+        window.history.replaceState({},"Modelling Game",url);
+
         if(blurb.g_viz == 1) blurb.g_viz = 0;
       }
     }
@@ -3345,6 +3371,9 @@ var GamePlayScene = function(game, stage)
     game_state = GAME_STATE_MENU;
     beginLevel();
     blurb.g_viz = 0;
+
+    var j = jsonFromURL();
+    if(j && j.code) consumeCode(j.code);
   };
 
   var resetGraph = function()
