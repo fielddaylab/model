@@ -1341,7 +1341,13 @@ var GamePlayScene = function(game, stage)
             for(var k = 0; k < y_max; k++)
             {
               y = gy + k*h;
-              mctx.fillRect(x+1,y+1,w-2,h-2);
+              if(y_max > 20)
+              {
+                if(k == 1) k += 3; else k += 4;
+                mctx.fillRect(x+1,y+1,w-2,h*5-2);
+              }
+              else
+                mctx.fillRect(x+1,y+1,w-2,h-2);
             }
           }
 
