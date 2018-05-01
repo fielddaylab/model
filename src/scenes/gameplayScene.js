@@ -1822,6 +1822,7 @@ var GamePlayScene = function(game, stage)
       ctx.font = "10px Roboto Mono";
       ctx.textAlign = "left";
       ctx.fillStyle = white;
+      ctx.lineWidth = 2;
       fillRBox(self,10,ctx);
       ctx.fillStyle = black;
       var label_yoff = 15;
@@ -3643,7 +3644,6 @@ var GamePlayScene = function(game, stage)
       }
 
       ctx.textAlign = "left";
-      if(selected_module) s_editor.draw();
       ctx.font = "10px Roboto Mono";
       if(levels[cur_level_i].speed_enabled)
       {
@@ -3670,6 +3670,7 @@ var GamePlayScene = function(game, stage)
       ctx.fillText("Big Systems",x,y); y += h+40;
     }
     blurb.draw();
+    if(game_state == GAME_STATE_PLAY && selected_module) s_editor.draw();
     if(game_state == GAME_STATE_MODAL)
     {
       modal.draw();
