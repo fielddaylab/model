@@ -513,7 +513,7 @@ var GamePlayScene = function(game, stage)
     var targets = levels[cur_level_i].primary_module_target_vals;
     if(t_i > 0 && modules[0].plot[1] != targets[0][1] && blurb.g_viz != 1)
     {
-      blurb.enq(["This model doesn't conform to our data... Select the Sunlight & CO₂ module and set its value to fix it!"]);
+      blurb.enq(["This model doesn't conform to our data... Select the Sunlight & CO₂ module and set its value to fix it!"],[{title:"Sunlight & CO₂"}]);
     }
     if(levelComplete() && t_i >= 4)
     {
@@ -554,7 +554,7 @@ var GamePlayScene = function(game, stage)
     var targets = levels[cur_level_i].primary_module_target_vals;
     if(modules[0].plot[0] != targets[0][0] && blurb.g_viz != 1)
     {
-      blurb.enq(["This model doesn't conform to our data... Select the Tree Height module and set its starting value."]);
+      blurb.enq(["This model doesn't conform to our data... Select the Tree Height module and set its starting value."],[{title:"Tree Height (M)"}]);
     }
     if(levelComplete() && t_i >= 4)
     {
@@ -651,7 +651,7 @@ var GamePlayScene = function(game, stage)
     var targets = levels[cur_level_i].primary_module_target_vals;
     if(t_i > 0 && modules[0].plot[1] != targets[0][1] && blurb.g_viz != 1)
     {
-      blurb.enq(["This model doesn't conform to our data... Select the Grows relationship and modify its multiplier."]);
+      blurb.enq(["This model doesn't conform to our data... Select the Grows relationship and modify its multiplier."],[{title:"Grows"}]);
     }
     if(levelComplete() && t_i >= 4)
     {
@@ -1058,15 +1058,18 @@ var GamePlayScene = function(game, stage)
     self.g_viz = 0;
 
     self.q = [];
+    self.a_q = [];
     self.q_i = 0;
+    self.a_t = 0;
 
     var font_size = 14;
     var font = font_size+"px Roboto Mono";
     self.dom = new CanvDom(canv);
 
-    self.enq = function(txt)
+    self.enq = function(txt,arrow)
     {
       self.q = txt;
+      self.a_q = arrow;
       self.q_i = 0;
       self.g_viz = 1;
       self.dom.popDismissableMessage(textToLines(canv, font, self.w-160, self.q[self.q_i]),self.x+20,self.y+15,self.w-80,self.h,function(){});
@@ -1090,6 +1093,8 @@ var GamePlayScene = function(game, stage)
       self.viz = lerp(self.viz,self.g_viz,0.1);
       self.y = lerp(self.inviz_y,self.viz_y,self.viz);
       self.dom.y = self.y+15;
+      self.a_t++;
+      if(self.a_t > 1000) self.a_t -= 1000;
     }
 
     self.click = function()
@@ -1113,6 +1118,23 @@ var GamePlayScene = function(game, stage)
       self.dom.draw(font_size+4,canv);
       var w = 160;
       ctx.drawImage(girl_img,self.x+self.w-w-20,self.y+20,w,girl_img.height*(w/girl_img.width));
+      if(self.g_viz && self.a_q && self.a_q[self.q_i])
+      {
+        var a = self.a_q[self.q_i];
+        var m = 0;
+        for(var i = 0; !m && i < modules.length; i++)
+          if(a.title == modules[i].title) m = modules[i];
+
+        if(m)
+        {
+          var x = m.x+m.w/2;
+          var y = m.y+m.h/2;
+          ctx.lineWidth = 10;
+          ctx.strokeStyle = white;
+          var d = sin(self.a_t/1000*twopi*8)*10;
+          drawArrow(canv,x+100+d,y-100-d,x+50+d,y-50-d,20);
+        }
+      }
     }
   }
 
