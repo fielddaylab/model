@@ -752,7 +752,7 @@ var GamePlayScene = function(game, stage)
 
   l = new level();
   l.title = "Multiple Sources";
-  l.primary_module_template = "{\"modules\":[{\"title\":\"Greenhouse Effect\",\"img_name\":\"undefined\",\"color\":\"#95F32E\",\"type\":0,\"v\":1,\"min\":0,\"max\":20,\"pool\":1,\"graph\":1,\"wx\":0.7454545454545455,\"wy\":0.09772727272727279,\"ww\":0.1136,\"wh\":0.1136,\"input\":-1,\"output\":-1,\"lock_move\":false,\"lock_input\":false,\"lock_output\":false,\"lock_value\":false,\"lock_min\":false,\"lock_max\":false,\"lock_pool\":false,\"lock_graph\":false},{\"title\":\"Cars\",\"img_name\":\"undefined\",\"color\":\"#ACF9D2\",\"type\":0,\"v\":1,\"min\":0,\"max\":10,\"pool\":1,\"graph\":1,\"wx\":-0.07954545454545432,\"wy\":0.32727272727272727,\"ww\":0.1136,\"wh\":0.1136,\"input\":-1,\"output\":-1,\"lock_move\":false,\"lock_input\":false,\"lock_output\":false,\"lock_value\":false,\"lock_min\":false,\"lock_max\":false,\"lock_pool\":false,\"lock_graph\":false},{\"title\":\"Cows\",\"img_name\":\"undefined\",\"color\":\"#F5A623\",\"type\":0,\"v\":1,\"min\":0,\"max\":10,\"pool\":1,\"graph\":1,\"wx\":-0.08409090909090884,\"wy\":-0.08409090909090913,\"ww\":0.1136,\"wh\":0.1136,\"input\":-1,\"output\":-1,\"lock_move\":false,\"lock_input\":false,\"lock_output\":false,\"lock_value\":false,\"lock_min\":false,\"lock_max\":false,\"lock_pool\":false,\"lock_graph\":false},{\"title\":\"CO₂ Emissions\",\"img_name\":\"undefined\",\"color\":\"#95F32E\",\"type\":2,\"v\":1,\"min\":0,\"max\":10,\"pool\":1,\"graph\":0,\"wx\":0.3431818181818182,\"wy\":0.30909090909090897,\"ww\":0.1136,\"wh\":0.1136,\"input\":1,\"output\":0,\"lock_move\":false,\"lock_input\":false,\"lock_output\":false,\"lock_value\":false,\"lock_min\":false,\"lock_max\":false,\"lock_pool\":false,\"lock_graph\":false},{\"title\":\"Methane Release\",\"img_name\":\"undefined\",\"color\":\"#BDAEFF\",\"type\":2,\"v\":1,\"min\":0,\"max\":10,\"pool\":1,\"graph\":0,\"wx\":0.33409090909090916,\"wy\":-0.07727272727272719,\"ww\":0.1136,\"wh\":0.1136,\"input\":2,\"output\":0,\"lock_move\":false,\"lock_input\":false,\"lock_output\":false,\"lock_value\":false,\"lock_min\":false,\"lock_max\":false,\"lock_pool\":false,\"lock_graph\":false}]}";
+  l.primary_module_template = "{\"modules\":[{\"title\":\"Greenhouse Effect\",\"img_name\":\"assets/greenhouse.png\",\"color\":\"#95F32E\",\"type\":0,\"v\":1,\"min\":0,\"max\":20,\"pool\":1,\"graph\":1,\"wx\":0.7454545454545455,\"wy\":0.09772727272727279,\"ww\":0.1136,\"wh\":0.1136,\"input\":-1,\"output\":-1,\"lock_move\":false,\"lock_input\":false,\"lock_output\":false,\"lock_value\":false,\"lock_min\":false,\"lock_max\":false,\"lock_pool\":false,\"lock_graph\":false},{\"title\":\"Cars\",\"img_name\":\"assets/car.png\",\"color\":\"#ACF9D2\",\"type\":0,\"v\":1,\"min\":0,\"max\":10,\"pool\":1,\"graph\":1,\"wx\":-0.07954545454545432,\"wy\":0.32727272727272727,\"ww\":0.1136,\"wh\":0.1136,\"input\":-1,\"output\":-1,\"lock_move\":false,\"lock_input\":false,\"lock_output\":false,\"lock_value\":false,\"lock_min\":false,\"lock_max\":false,\"lock_pool\":false,\"lock_graph\":false},{\"title\":\"Cows\",\"img_name\":\"assets/cow.png\",\"color\":\"#F5A623\",\"type\":0,\"v\":1,\"min\":0,\"max\":10,\"pool\":1,\"graph\":1,\"wx\":-0.08409090909090884,\"wy\":-0.08409090909090913,\"ww\":0.1136,\"wh\":0.1136,\"input\":-1,\"output\":-1,\"lock_move\":false,\"lock_input\":false,\"lock_output\":false,\"lock_value\":false,\"lock_min\":false,\"lock_max\":false,\"lock_pool\":false,\"lock_graph\":false},{\"title\":\"CO₂ Emissions\",\"img_name\":\"undefined\",\"color\":\"#95F32E\",\"type\":2,\"v\":1,\"min\":0,\"max\":10,\"pool\":1,\"graph\":0,\"wx\":0.3431818181818182,\"wy\":0.30909090909090897,\"ww\":0.1136,\"wh\":0.1136,\"input\":1,\"output\":0,\"lock_move\":false,\"lock_input\":false,\"lock_output\":false,\"lock_value\":false,\"lock_min\":false,\"lock_max\":false,\"lock_pool\":false,\"lock_graph\":false},{\"title\":\"Methane Release\",\"img_name\":\"undefined\",\"color\":\"#BDAEFF\",\"type\":2,\"v\":1,\"min\":0,\"max\":10,\"pool\":1,\"graph\":0,\"wx\":0.33409090909090916,\"wy\":-0.07727272727272719,\"ww\":0.1136,\"wh\":0.1136,\"input\":2,\"output\":0,\"lock_move\":false,\"lock_input\":false,\"lock_output\":false,\"lock_value\":false,\"lock_min\":false,\"lock_max\":false,\"lock_pool\":false,\"lock_graph\":false}]}";
   l.primary_module_target_titles.push("Plants");
   l.primary_module_target_vals.push([1,4,7,10,13]);
   l.add_module_enabled = false;
@@ -786,7 +786,7 @@ var GamePlayScene = function(game, stage)
 
   l = new level();
   l.title = "Counteracting Sources";
-  l.primary_module_template = "{\"modules\":[{\"title\":\"Greenhouse Effect\",\"img_name\":\"undefined\",\"color\":\"#F5A623\",\"type\":0,\"v\":1,\"min\":0,\"max\":20,\"pool\":1,\"graph\":1,\"wx\":0.7045454545454545,\"wy\":0.12727272727272726,\"ww\":0.1136,\"wh\":0.1136,\"input\":-1,\"output\":-1,\"lock_move\":false,\"lock_input\":false,\"lock_output\":false,\"lock_value\":false,\"lock_min\":false,\"lock_max\":false,\"lock_pool\":false,\"lock_graph\":false},{\"title\":\"Cars\",\"img_name\":\"undefined\",\"color\":\"#FFAEAE\",\"type\":0,\"v\":1,\"min\":0,\"max\":10,\"pool\":1,\"graph\":1,\"wx\":-0.09090909090909087,\"wy\":0.37045454545454526,\"ww\":0.1136,\"wh\":0.1136,\"input\":-1,\"output\":-1,\"lock_move\":false,\"lock_input\":false,\"lock_output\":false,\"lock_value\":false,\"lock_min\":false,\"lock_max\":false,\"lock_pool\":false,\"lock_graph\":false},{\"title\":\"Cows\",\"img_name\":\"undefined\",\"color\":\"#FFF46F\",\"type\":0,\"v\":1,\"min\":0,\"max\":10,\"pool\":1,\"graph\":1,\"wx\":-0.1045454545454542,\"wy\":-0.10909090909090913,\"ww\":0.1136,\"wh\":0.1136,\"input\":-1,\"output\":-1,\"lock_move\":false,\"lock_input\":false,\"lock_output\":false,\"lock_value\":false,\"lock_min\":false,\"lock_max\":false,\"lock_pool\":false,\"lock_graph\":false},{\"title\":\"Trees\",\"img_name\":\"assets/tree.png\",\"color\":\"#95F32E\",\"type\":0,\"v\":1,\"min\":0,\"max\":10,\"pool\":1,\"graph\":1,\"wx\":-0.11136363636363626,\"wy\":0.15681818181818208,\"ww\":0.1136,\"wh\":0.1136,\"input\":-1,\"output\":-1,\"lock_move\":false,\"lock_input\":false,\"lock_output\":false,\"lock_value\":false,\"lock_min\":false,\"lock_max\":false,\"lock_pool\":false,\"lock_graph\":false},{\"title\":\"CO₂ Emissions\",\"img_name\":\"undefined\",\"color\":\"#AFF865\",\"type\":2,\"v\":1,\"min\":-1,\"max\":1,\"pool\":1,\"graph\":0,\"wx\":0.3,\"wy\":0.34772727272727266,\"ww\":0.1136,\"wh\":0.1136,\"input\":1,\"output\":0,\"lock_move\":false,\"lock_input\":false,\"lock_output\":false,\"lock_value\":false,\"lock_min\":false,\"lock_max\":false,\"lock_pool\":false,\"lock_graph\":false},{\"title\":\"Methane Release\",\"img_name\":\"undefined\",\"color\":\"#FFF46F\",\"type\":2,\"v\":1,\"min\":0,\"max\":10,\"pool\":1,\"graph\":0,\"wx\":0.28863636363636375,\"wy\":-0.08636363636363659,\"ww\":0.1136,\"wh\":0.1136,\"input\":2,\"output\":0,\"lock_move\":false,\"lock_input\":false,\"lock_output\":false,\"lock_value\":false,\"lock_min\":false,\"lock_max\":false,\"lock_pool\":false,\"lock_graph\":false},{\"title\":\"CO₂ Scrubbing\",\"img_name\":\"undefined\",\"color\":\"#87E2FF\",\"type\":2,\"v\":-1,\"min\":-1,\"max\":1,\"pool\":1,\"graph\":0,\"wx\":0.28636363636363654,\"wy\":0.13863636363636372,\"ww\":0.1136,\"wh\":0.1136,\"input\":3,\"output\":0,\"lock_move\":false,\"lock_input\":false,\"lock_output\":false,\"lock_value\":true,\"lock_min\":false,\"lock_max\":false,\"lock_pool\":false,\"lock_graph\":false}]}";
+  l.primary_module_template = "{\"modules\":[{\"title\":\"Greenhouse Effect\",\"img_name\":\"assets/greenhouse.png\",\"color\":\"#F5A623\",\"type\":0,\"v\":1,\"min\":0,\"max\":20,\"pool\":1,\"graph\":1,\"wx\":0.7045454545454545,\"wy\":0.12727272727272726,\"ww\":0.1136,\"wh\":0.1136,\"input\":-1,\"output\":-1,\"lock_move\":false,\"lock_input\":false,\"lock_output\":false,\"lock_value\":false,\"lock_min\":false,\"lock_max\":false,\"lock_pool\":false,\"lock_graph\":false},{\"title\":\"Cars\",\"img_name\":\"assets/car.png\",\"color\":\"#FFAEAE\",\"type\":0,\"v\":1,\"min\":0,\"max\":10,\"pool\":1,\"graph\":1,\"wx\":-0.09090909090909087,\"wy\":0.37045454545454526,\"ww\":0.1136,\"wh\":0.1136,\"input\":-1,\"output\":-1,\"lock_move\":false,\"lock_input\":false,\"lock_output\":false,\"lock_value\":false,\"lock_min\":false,\"lock_max\":false,\"lock_pool\":false,\"lock_graph\":false},{\"title\":\"Cows\",\"img_name\":\"assets/cow.png\",\"color\":\"#FFF46F\",\"type\":0,\"v\":1,\"min\":0,\"max\":10,\"pool\":1,\"graph\":1,\"wx\":-0.1045454545454542,\"wy\":-0.10909090909090913,\"ww\":0.1136,\"wh\":0.1136,\"input\":-1,\"output\":-1,\"lock_move\":false,\"lock_input\":false,\"lock_output\":false,\"lock_value\":false,\"lock_min\":false,\"lock_max\":false,\"lock_pool\":false,\"lock_graph\":false},{\"title\":\"Trees\",\"img_name\":\"assets/tree.png\",\"color\":\"#95F32E\",\"type\":0,\"v\":1,\"min\":0,\"max\":10,\"pool\":1,\"graph\":1,\"wx\":-0.11136363636363626,\"wy\":0.15681818181818208,\"ww\":0.1136,\"wh\":0.1136,\"input\":-1,\"output\":-1,\"lock_move\":false,\"lock_input\":false,\"lock_output\":false,\"lock_value\":false,\"lock_min\":false,\"lock_max\":false,\"lock_pool\":false,\"lock_graph\":false},{\"title\":\"CO₂ Emissions\",\"img_name\":\"undefined\",\"color\":\"#AFF865\",\"type\":2,\"v\":1,\"min\":-1,\"max\":1,\"pool\":1,\"graph\":0,\"wx\":0.3,\"wy\":0.34772727272727266,\"ww\":0.1136,\"wh\":0.1136,\"input\":1,\"output\":0,\"lock_move\":false,\"lock_input\":false,\"lock_output\":false,\"lock_value\":false,\"lock_min\":false,\"lock_max\":false,\"lock_pool\":false,\"lock_graph\":false},{\"title\":\"Methane Release\",\"img_name\":\"undefined\",\"color\":\"#FFF46F\",\"type\":2,\"v\":1,\"min\":0,\"max\":10,\"pool\":1,\"graph\":0,\"wx\":0.28863636363636375,\"wy\":-0.08636363636363659,\"ww\":0.1136,\"wh\":0.1136,\"input\":2,\"output\":0,\"lock_move\":false,\"lock_input\":false,\"lock_output\":false,\"lock_value\":false,\"lock_min\":false,\"lock_max\":false,\"lock_pool\":false,\"lock_graph\":false},{\"title\":\"CO₂ Scrubbing\",\"img_name\":\"undefined\",\"color\":\"#87E2FF\",\"type\":2,\"v\":-1,\"min\":-1,\"max\":1,\"pool\":1,\"graph\":0,\"wx\":0.28636363636363654,\"wy\":0.13863636363636372,\"ww\":0.1136,\"wh\":0.1136,\"input\":3,\"output\":0,\"lock_move\":false,\"lock_input\":false,\"lock_output\":false,\"lock_value\":true,\"lock_min\":false,\"lock_max\":false,\"lock_pool\":false,\"lock_graph\":false}]}";
   l.primary_module_target_titles.push("Plants");
   l.primary_module_target_vals.push([1,4,7,10,13]);
   l.add_module_enabled = false;
@@ -820,7 +820,7 @@ var GamePlayScene = function(game, stage)
 
   l = new level();
   l.title = "Chain Reaction";
-  l.primary_module_template = "{\"modules\":[{\"title\":\"Plants\",\"img_name\":\"undefined\",\"color\":\"#95F32E\",\"type\":0,\"v\":1,\"min\":0,\"max\":10,\"pool\":1,\"graph\":1,\"wx\":0.3659090909090909,\"wy\":0.09090909090909101,\"ww\":0.1136,\"wh\":0.1136,\"input\":-1,\"output\":-1,\"lock_move\":false,\"lock_input\":true,\"lock_output\":true,\"lock_value\":true,\"lock_min\":true,\"lock_max\":true,\"lock_pool\":true,\"lock_graph\":true},{\"title\":\"Bugs\",\"img_name\":\"undefined\",\"color\":\"#FFAEAE\",\"type\":0,\"v\":1,\"min\":0,\"max\":10,\"pool\":1,\"graph\":1,\"wx\":0.8,\"wy\":0.07045454545454548,\"ww\":0.1136,\"wh\":0.1136,\"input\":-1,\"output\":-1,\"lock_move\":false,\"lock_input\":true,\"lock_output\":false,\"lock_value\":true,\"lock_min\":true,\"lock_max\":true,\"lock_pool\":true,\"lock_graph\":true},{\"title\":\"Sunlight & CO₂\",\"img_name\":\"assets/sun.png\",\"color\":\"#FFF46F\",\"type\":3,\"v\":10,\"min\":0,\"max\":50,\"pool\":1,\"graph\":1,\"wx\":-0.08863636363636344,\"wy\":0.08863636363636358,\"ww\":0.1136,\"wh\":0.1136,\"input\":-1,\"output\":-1,\"lock_move\":false,\"lock_input\":true,\"lock_output\":false,\"lock_value\":true,\"lock_min\":true,\"lock_max\":true,\"lock_pool\":true,\"lock_graph\":true},{\"title\":\"feed\",\"img_name\":\"undefined\",\"color\":\"#FFF46F\",\"type\":2,\"v\":0.1,\"min\":0,\"max\":10,\"pool\":1,\"graph\":0,\"wx\":0.6136363636363634,\"wy\":0.20454545454545464,\"ww\":0.1136,\"wh\":0.1136,\"input\":0,\"output\":1,\"lock_move\":false,\"lock_input\":false,\"lock_output\":false,\"lock_value\":false,\"lock_min\":false,\"lock_max\":false,\"lock_pool\":false,\"lock_graph\":false}]}";
+  l.primary_module_template = "{\"modules\":[{\"title\":\"Plants\",\"img_name\":\"assets/plant.png\",\"color\":\"#95F32E\",\"type\":0,\"v\":1,\"min\":0,\"max\":10,\"pool\":1,\"graph\":1,\"wx\":0.3659090909090909,\"wy\":0.09090909090909101,\"ww\":0.1136,\"wh\":0.1136,\"input\":-1,\"output\":-1,\"lock_move\":false,\"lock_input\":true,\"lock_output\":true,\"lock_value\":true,\"lock_min\":true,\"lock_max\":true,\"lock_pool\":true,\"lock_graph\":true},{\"title\":\"Bugs\",\"img_name\":\"assets/bug.png\",\"color\":\"#FFAEAE\",\"type\":0,\"v\":1,\"min\":0,\"max\":10,\"pool\":1,\"graph\":1,\"wx\":0.8,\"wy\":0.07045454545454548,\"ww\":0.1136,\"wh\":0.1136,\"input\":-1,\"output\":-1,\"lock_move\":false,\"lock_input\":true,\"lock_output\":false,\"lock_value\":true,\"lock_min\":true,\"lock_max\":true,\"lock_pool\":true,\"lock_graph\":true},{\"title\":\"Sunlight & CO₂\",\"img_name\":\"assets/sun.png\",\"color\":\"#FFF46F\",\"type\":3,\"v\":10,\"min\":0,\"max\":50,\"pool\":1,\"graph\":1,\"wx\":-0.08863636363636344,\"wy\":0.08863636363636358,\"ww\":0.1136,\"wh\":0.1136,\"input\":-1,\"output\":-1,\"lock_move\":false,\"lock_input\":true,\"lock_output\":false,\"lock_value\":true,\"lock_min\":true,\"lock_max\":true,\"lock_pool\":true,\"lock_graph\":true},{\"title\":\"feed\",\"img_name\":\"undefined\",\"color\":\"#FFF46F\",\"type\":2,\"v\":0.1,\"min\":0,\"max\":10,\"pool\":1,\"graph\":0,\"wx\":0.6136363636363634,\"wy\":0.20454545454545464,\"ww\":0.1136,\"wh\":0.1136,\"input\":0,\"output\":1,\"lock_move\":false,\"lock_input\":false,\"lock_output\":false,\"lock_value\":false,\"lock_min\":false,\"lock_max\":false,\"lock_pool\":false,\"lock_graph\":false}]}";
   l.primary_module_target_titles.push("Plants");
   l.primary_module_target_vals.push([1,2,3,4,5]);
   l.primary_module_target_titles.push("Bugs");
@@ -855,7 +855,7 @@ var GamePlayScene = function(game, stage)
 
   l = new level();
   l.title = "Polynomial Growth";
-  l.primary_module_template = "{\"modules\":[{\"title\":\"Minnow Population\",\"img_name\":\"undefined\",\"color\":\"#FFAEAE\",\"type\":3,\"v\":1,\"min\":0,\"max\":30,\"pool\":1,\"graph\":1,\"wx\":0.4204545454545454,\"wy\":0.10863636363636352,\"ww\":0.1136,\"wh\":0.1136,\"input\":-1,\"output\":-1,\"lock_move\":false,\"lock_input\":true,\"lock_output\":false,\"lock_value\":true,\"lock_min\":true,\"lock_max\":true,\"lock_pool\":true,\"lock_graph\":false},{\"title\":\"Walleye Population\",\"img_name\":\"undefined\",\"color\":\"#FFAEAE\",\"type\":0,\"v\":1,\"min\":0,\"max\":30,\"pool\":1,\"graph\":1,\"wx\":0.8249999999999997,\"wy\":0.09499999999999988,\"ww\":0.1136,\"wh\":0.1136,\"input\":-1,\"output\":-1,\"lock_move\":false,\"lock_input\":true,\"lock_output\":true,\"lock_value\":true,\"lock_min\":true,\"lock_max\":true,\"lock_pool\":true,\"lock_graph\":false},{\"title\":\"DNR Minnow Dump\",\"img_name\":\"undefined\",\"color\":\"#95F32E\",\"type\":3,\"v\":1,\"min\":0,\"max\":10,\"pool\":1,\"graph\":0,\"wx\":-0.11136363636363632,\"wy\":0.10863636363636368,\"ww\":0.1136,\"wh\":0.1136,\"input\":-1,\"output\":-1,\"lock_move\":false,\"lock_input\":true,\"lock_output\":true,\"lock_value\":false,\"lock_min\":false,\"lock_max\":false,\"lock_pool\":false,\"lock_graph\":false},{\"title\":\"\",\"img_name\":\"undefined\",\"color\":\"#F5A623\",\"type\":2,\"v\":1,\"min\":0,\"max\":10,\"pool\":1,\"graph\":false,\"wx\":0.1477272727272727,\"wy\":0.2063636363636363,\"ww\":0.1136,\"wh\":0.1136,\"input\":2,\"output\":0,\"lock_move\":false,\"lock_input\":true,\"lock_output\":true,\"lock_value\":false,\"lock_min\":false,\"lock_max\":false,\"lock_pool\":false,\"lock_graph\":false}]}";
+  l.primary_module_template = "{\"modules\":[{\"title\":\"Minnow Population\",\"img_name\":\"assets/minnow.png\",\"color\":\"#FFAEAE\",\"type\":3,\"v\":1,\"min\":0,\"max\":30,\"pool\":1,\"graph\":1,\"wx\":0.4204545454545454,\"wy\":0.10863636363636352,\"ww\":0.1136,\"wh\":0.1136,\"input\":-1,\"output\":-1,\"lock_move\":false,\"lock_input\":true,\"lock_output\":false,\"lock_value\":true,\"lock_min\":true,\"lock_max\":true,\"lock_pool\":true,\"lock_graph\":false},{\"title\":\"Walleye Population\",\"img_name\":\"assets/walleye.png\",\"color\":\"#FFAEAE\",\"type\":0,\"v\":1,\"min\":0,\"max\":30,\"pool\":1,\"graph\":1,\"wx\":0.8249999999999997,\"wy\":0.09499999999999988,\"ww\":0.1136,\"wh\":0.1136,\"input\":-1,\"output\":-1,\"lock_move\":false,\"lock_input\":true,\"lock_output\":true,\"lock_value\":true,\"lock_min\":true,\"lock_max\":true,\"lock_pool\":true,\"lock_graph\":false},{\"title\":\"DNR Minnow Dump\",\"img_name\":\"assets/dnr.png\",\"color\":\"#95F32E\",\"type\":3,\"v\":1,\"min\":0,\"max\":10,\"pool\":1,\"graph\":0,\"wx\":-0.11136363636363632,\"wy\":0.10863636363636368,\"ww\":0.1136,\"wh\":0.1136,\"input\":-1,\"output\":-1,\"lock_move\":false,\"lock_input\":true,\"lock_output\":true,\"lock_value\":false,\"lock_min\":false,\"lock_max\":false,\"lock_pool\":false,\"lock_graph\":false},{\"title\":\"\",\"img_name\":\"undefined\",\"color\":\"#F5A623\",\"type\":2,\"v\":1,\"min\":0,\"max\":10,\"pool\":1,\"graph\":false,\"wx\":0.1477272727272727,\"wy\":0.2063636363636363,\"ww\":0.1136,\"wh\":0.1136,\"input\":2,\"output\":0,\"lock_move\":false,\"lock_input\":true,\"lock_output\":true,\"lock_value\":false,\"lock_min\":false,\"lock_max\":false,\"lock_pool\":false,\"lock_graph\":false}]}";
   l.primary_module_target_titles.push("Minnow");
   l.primary_module_target_titles.push("Walleye");
   l.primary_module_target_vals.push([1,2,3,4,5]);
@@ -890,7 +890,7 @@ var GamePlayScene = function(game, stage)
 
   l = new level();
   l.title = "Understanding Polynomial Growth";
-  l.primary_module_template = "{\"modules\":[{\"title\":\"Minnow Population\",\"img_name\":\"undefined\",\"color\":\"#BDAEFF\",\"type\":3,\"v\":1,\"min\":0,\"max\":30,\"pool\":1,\"graph\":1,\"wx\":0.42045454545454564,\"wy\":0.07227272727272728,\"ww\":0.1136,\"wh\":0.1136,\"input\":-1,\"output\":-1,\"lock_move\":false,\"lock_input\":true,\"lock_output\":false,\"lock_value\":true,\"lock_min\":true,\"lock_max\":true,\"lock_pool\":true,\"lock_graph\":false},{\"title\":\"Walleye Population\",\"img_name\":\"undefined\",\"color\":\"#FFAEAE\",\"type\":0,\"v\":1,\"min\":0,\"max\":30,\"pool\":1,\"graph\":1,\"wx\":0.8113636363636363,\"wy\":0.0677272727272727,\"ww\":0.1136,\"wh\":0.1136,\"input\":-1,\"output\":-1,\"lock_move\":false,\"lock_input\":true,\"lock_output\":true,\"lock_value\":true,\"lock_min\":true,\"lock_max\":true,\"lock_pool\":true,\"lock_graph\":false},{\"title\":\"DNR Minnow Dump\",\"img_name\":\"undefined\",\"color\":\"#F5A623\",\"type\":3,\"v\":1,\"min\":0,\"max\":10,\"pool\":1,\"graph\":0,\"wx\":-0.1249999999999999,\"wy\":0.07227272727272728,\"ww\":0.1136,\"wh\":0.1136,\"input\":-1,\"output\":-1,\"lock_move\":false,\"lock_input\":true,\"lock_output\":true,\"lock_value\":false,\"lock_min\":false,\"lock_max\":false,\"lock_pool\":false,\"lock_graph\":false},{\"title\":\"\",\"img_name\":\"undefined\",\"color\":\"#E774FF\",\"type\":2,\"v\":1,\"min\":0,\"max\":10,\"pool\":1,\"graph\":false,\"wx\":0.1409090909090911,\"wy\":0.17681818181818176,\"ww\":0.1136,\"wh\":0.1136,\"input\":2,\"output\":0,\"lock_move\":false,\"lock_input\":true,\"lock_output\":true,\"lock_value\":false,\"lock_min\":false,\"lock_max\":false,\"lock_pool\":false,\"lock_graph\":false}]}";
+  l.primary_module_template = "{\"modules\":[{\"title\":\"Minnow Population\",\"img_name\":\"assets/minnow.png\",\"color\":\"#BDAEFF\",\"type\":3,\"v\":1,\"min\":0,\"max\":30,\"pool\":1,\"graph\":1,\"wx\":0.42045454545454564,\"wy\":0.07227272727272728,\"ww\":0.1136,\"wh\":0.1136,\"input\":-1,\"output\":-1,\"lock_move\":false,\"lock_input\":true,\"lock_output\":false,\"lock_value\":true,\"lock_min\":true,\"lock_max\":true,\"lock_pool\":true,\"lock_graph\":false},{\"title\":\"Walleye Population\",\"img_name\":\"assets/walleye.png\",\"color\":\"#FFAEAE\",\"type\":0,\"v\":1,\"min\":0,\"max\":30,\"pool\":1,\"graph\":1,\"wx\":0.8113636363636363,\"wy\":0.0677272727272727,\"ww\":0.1136,\"wh\":0.1136,\"input\":-1,\"output\":-1,\"lock_move\":false,\"lock_input\":true,\"lock_output\":true,\"lock_value\":true,\"lock_min\":true,\"lock_max\":true,\"lock_pool\":true,\"lock_graph\":false},{\"title\":\"DNR Minnow Dump\",\"img_name\":\"assets/dnr.png\",\"color\":\"#F5A623\",\"type\":3,\"v\":1,\"min\":0,\"max\":10,\"pool\":1,\"graph\":0,\"wx\":-0.1249999999999999,\"wy\":0.07227272727272728,\"ww\":0.1136,\"wh\":0.1136,\"input\":-1,\"output\":-1,\"lock_move\":false,\"lock_input\":true,\"lock_output\":true,\"lock_value\":false,\"lock_min\":false,\"lock_max\":false,\"lock_pool\":false,\"lock_graph\":false},{\"title\":\"\",\"img_name\":\"undefined\",\"color\":\"#E774FF\",\"type\":2,\"v\":1,\"min\":0,\"max\":10,\"pool\":1,\"graph\":false,\"wx\":0.1409090909090911,\"wy\":0.17681818181818176,\"ww\":0.1136,\"wh\":0.1136,\"input\":2,\"output\":0,\"lock_move\":false,\"lock_input\":true,\"lock_output\":true,\"lock_value\":false,\"lock_min\":false,\"lock_max\":false,\"lock_pool\":false,\"lock_graph\":false}]}";
   l.primary_module_target_titles.push("Minnow");
   l.primary_module_target_titles.push("Walleye");
   l.primary_module_target_vals.push([1,2,3,4,5]);
@@ -925,7 +925,7 @@ var GamePlayScene = function(game, stage)
 
   l = new level();
   l.title = "Big System";
-  l.primary_module_template = "{\"modules\":[{\"title\":\"Grass\",\"img_name\":\"undefined\",\"color\":\"#E774FF\",\"type\":0,\"v\":1,\"min\":0,\"max\":100,\"pool\":1,\"graph\":1,\"wx\":0.11306818181818198,\"wy\":0.2508522727272726,\"ww\":0.1136,\"wh\":0.1136,\"input\":-1,\"output\":-1,\"lock_move\":0,\"lock_input\":0,\"lock_output\":0,\"lock_value\":0,\"lock_min\":0,\"lock_max\":0,\"lock_pool\":0,\"lock_graph\":0},{\"title\":\"Herbivores\",\"img_name\":\"\",\"color\":\"#E774FF\",\"type\":3,\"v\":1,\"min\":0,\"max\":100,\"pool\":1,\"graph\":1,\"wx\":-0.12106818181818203,\"wy\":-0.04402272727272705,\"ww\":0.1136,\"wh\":0.1136,\"input\":-1,\"output\":-1,\"lock_move\":0,\"lock_input\":0,\"lock_output\":false,\"lock_value\":0,\"lock_min\":0,\"lock_max\":0,\"lock_pool\":0,\"lock_graph\":0},{\"title\":\"Carnivores\",\"img_name\":\"undefined\",\"color\":\"#FF6578\",\"type\":3,\"v\":1,\"min\":0,\"max\":100,\"pool\":1,\"graph\":1,\"wx\":0.31113636363636354,\"wy\":-0.07353409090909069,\"ww\":0.1136,\"wh\":0.1136,\"input\":-1,\"output\":-1,\"lock_move\":0,\"lock_input\":0,\"lock_output\":0,\"lock_value\":0,\"lock_min\":0,\"lock_max\":0,\"lock_pool\":0,\"lock_graph\":0},{\"title\":\"Sun\",\"img_name\":\"assets/sun.png\",\"color\":\"#FFF46F\",\"type\":0,\"v\":10,\"min\":0,\"max\":10,\"pool\":1,\"graph\":false,\"wx\":0.7784090909090912,\"wy\":0.2948863636363635,\"ww\":0.1136,\"wh\":0.1136,\"input\":-1,\"output\":-1,\"lock_move\":0,\"lock_input\":0,\"lock_output\":0,\"lock_value\":0,\"lock_min\":0,\"lock_max\":0,\"lock_pool\":0,\"lock_graph\":0},{\"title\":\"gives light\",\"img_name\":\"undefined\",\"color\":\"#AFF865\",\"type\":2,\"v\":1,\"min\":0,\"max\":10,\"pool\":1,\"graph\":false,\"wx\":0.4522272727272729,\"wy\":0.3380795454545457,\"ww\":0.1136,\"wh\":0.1136,\"input\":3,\"output\":0,\"lock_move\":0,\"lock_input\":0,\"lock_output\":0,\"lock_value\":0,\"lock_min\":0,\"lock_max\":0,\"lock_pool\":0,\"lock_graph\":0},{\"title\":\"nourishes\",\"img_name\":\"undefined\",\"color\":\"#ACF9D2\",\"type\":2,\"v\":1,\"min\":-1,\"max\":1,\"pool\":1,\"graph\":false,\"wx\":-0.05373863636363643,\"wy\":0.16506818181818206,\"ww\":0.1136,\"wh\":0.1136,\"input\":0,\"output\":1,\"lock_move\":0,\"lock_input\":0,\"lock_output\":0,\"lock_value\":0,\"lock_min\":0,\"lock_max\":0,\"lock_pool\":0,\"lock_graph\":0},{\"title\":\"eats\",\"img_name\":\"undefined\",\"color\":\"#AFF865\",\"type\":2,\"v\":-0.5,\"min\":-1,\"max\":1,\"pool\":1,\"graph\":false,\"wx\":-0.12220454545454563,\"wy\":0.27415909090909135,\"ww\":0.1136,\"wh\":0.1136,\"input\":1,\"output\":0,\"lock_move\":0,\"lock_input\":0,\"lock_output\":0,\"lock_value\":0,\"lock_min\":0,\"lock_max\":0,\"lock_pool\":0,\"lock_graph\":0},{\"title\":\"dies\",\"img_name\":\"undefined\",\"color\":\"#87E2FF\",\"type\":2,\"v\":-0.5,\"min\":-1,\"max\":1,\"pool\":false,\"graph\":false,\"wx\":0.6812727272727278,\"wy\":-0.08102272727272714,\"ww\":0.1136,\"wh\":0.1136,\"input\":2,\"output\":2,\"lock_move\":0,\"lock_input\":0,\"lock_output\":0,\"lock_value\":0,\"lock_min\":0,\"lock_max\":0,\"lock_pool\":0,\"lock_graph\":0}]}";
+  l.primary_module_template = "{\"modules\":[{\"title\":\"Grass\",\"img_name\":\"assets/grass.png\",\"color\":\"#95F32E\",\"type\":0,\"v\":1,\"min\":0,\"max\":100,\"pool\":1,\"graph\":1,\"wx\":0.11306818181818198,\"wy\":0.2508522727272726,\"ww\":0.1136,\"wh\":0.1136,\"input\":-1,\"output\":-1,\"lock_move\":0,\"lock_input\":0,\"lock_output\":0,\"lock_value\":0,\"lock_min\":0,\"lock_max\":0,\"lock_pool\":0,\"lock_graph\":0},{\"title\":\"Herbivores\",\"img_name\":\"assets/herbivore.png\",\"color\":\"#E774FF\",\"type\":3,\"v\":1,\"min\":0,\"max\":100,\"pool\":1,\"graph\":1,\"wx\":-0.12106818181818203,\"wy\":-0.04402272727272705,\"ww\":0.1136,\"wh\":0.1136,\"input\":-1,\"output\":-1,\"lock_move\":0,\"lock_input\":0,\"lock_output\":false,\"lock_value\":0,\"lock_min\":0,\"lock_max\":0,\"lock_pool\":0,\"lock_graph\":0},{\"title\":\"Carnivores\",\"img_name\":\"assets/carnivore.png\",\"color\":\"#FF6578\",\"type\":3,\"v\":1,\"min\":0,\"max\":100,\"pool\":1,\"graph\":1,\"wx\":0.31113636363636354,\"wy\":-0.07353409090909069,\"ww\":0.1136,\"wh\":0.1136,\"input\":-1,\"output\":-1,\"lock_move\":0,\"lock_input\":0,\"lock_output\":0,\"lock_value\":0,\"lock_min\":0,\"lock_max\":0,\"lock_pool\":0,\"lock_graph\":0},{\"title\":\"Sun\",\"img_name\":\"assets/sun.png\",\"color\":\"#FFF46F\",\"type\":0,\"v\":10,\"min\":0,\"max\":10,\"pool\":1,\"graph\":false,\"wx\":0.7784090909090912,\"wy\":0.2948863636363635,\"ww\":0.1136,\"wh\":0.1136,\"input\":-1,\"output\":-1,\"lock_move\":0,\"lock_input\":0,\"lock_output\":0,\"lock_value\":0,\"lock_min\":0,\"lock_max\":0,\"lock_pool\":0,\"lock_graph\":0},{\"title\":\"gives light\",\"img_name\":\"undefined\",\"color\":\"#AFF865\",\"type\":2,\"v\":1,\"min\":0,\"max\":10,\"pool\":1,\"graph\":false,\"wx\":0.4522272727272729,\"wy\":0.3380795454545457,\"ww\":0.1136,\"wh\":0.1136,\"input\":3,\"output\":0,\"lock_move\":0,\"lock_input\":0,\"lock_output\":0,\"lock_value\":0,\"lock_min\":0,\"lock_max\":0,\"lock_pool\":0,\"lock_graph\":0},{\"title\":\"nourishes\",\"img_name\":\"undefined\",\"color\":\"#ACF9D2\",\"type\":2,\"v\":1,\"min\":-1,\"max\":1,\"pool\":1,\"graph\":false,\"wx\":-0.05373863636363643,\"wy\":0.16506818181818206,\"ww\":0.1136,\"wh\":0.1136,\"input\":0,\"output\":1,\"lock_move\":0,\"lock_input\":0,\"lock_output\":0,\"lock_value\":0,\"lock_min\":0,\"lock_max\":0,\"lock_pool\":0,\"lock_graph\":0},{\"title\":\"eats\",\"img_name\":\"undefined\",\"color\":\"#AFF865\",\"type\":2,\"v\":-0.5,\"min\":-1,\"max\":1,\"pool\":1,\"graph\":false,\"wx\":-0.12220454545454563,\"wy\":0.27415909090909135,\"ww\":0.1136,\"wh\":0.1136,\"input\":1,\"output\":0,\"lock_move\":0,\"lock_input\":0,\"lock_output\":0,\"lock_value\":0,\"lock_min\":0,\"lock_max\":0,\"lock_pool\":0,\"lock_graph\":0},{\"title\":\"dies\",\"img_name\":\"undefined\",\"color\":\"#87E2FF\",\"type\":2,\"v\":-0.5,\"min\":-1,\"max\":1,\"pool\":false,\"graph\":false,\"wx\":0.6812727272727278,\"wy\":-0.08102272727272714,\"ww\":0.1136,\"wh\":0.1136,\"input\":2,\"output\":2,\"lock_move\":0,\"lock_input\":0,\"lock_output\":0,\"lock_value\":0,\"lock_min\":0,\"lock_max\":0,\"lock_pool\":0,\"lock_graph\":0}]}";
   l.primary_module_target_titles.push("Grass");
   l.primary_module_target_vals.push([1,10.5,19.75,24.13,19.19]);
   l.primary_module_target_titles.push("Herbivores");
@@ -1418,51 +1418,72 @@ var GamePlayScene = function(game, stage)
           }
           mctx.stroke();
 
+        }
+        ctx.drawImage(modules[i].cache_graph,mx,my,self.module_w,self.module_h);
+
+        //NOCACHE
+        {
+          //playhead
+          ctx.lineWidth = 2;
+          ctx.strokeStyle = "#888888";
+          var x = mx + gx + ((t_i+(1-(advance_timer/advance_timer_max)))/(t_max-1)) * self.graph_w;
+          ctx.beginPath();
+          ctx.moveTo(x,my+gy);
+          ctx.lineTo(x,my+gy+self.graph_h);
+          ctx.stroke();
+
+          ctx.fillStyle = modules[i].color;
+          ctx.strokeStyle = modules[i].color;
           //points
           if(levels[cur_level_i] && levels[cur_level_i].primary_module_target_vals[i])
           {
             var targets = levels[cur_level_i].primary_module_target_vals[i];
             for(var j = 0; j < targets.length || !isNaN(modules[i].plot[j]); j++)
             {
-              x = gx + (j/(t_max-1)) * self.graph_w;
+              x = mx + gx + (j/(t_max-1)) * self.graph_w;
               if(j < targets.length)
               {
-                y = gy + self.graph_h - (clamp(0,1,mapVal(min(0,modules[i].min),modules[i].max,0,1,targets[j]))*self.graph_h);
-                mctx.beginPath();
-                mctx.arc(x,y,4,0,twopi);
+                y = my + gy + self.graph_h - (clamp(0,1,mapVal(min(0,modules[i].min),modules[i].max,0,1,targets[j]))*self.graph_h);
+                ctx.beginPath();
+                ctx.arc(x,y,4,0,twopi);
                 var off = -8;
                 if(j <= t_i && !isNaN(modules[i].plot[j]) && modules[i].plot[j] == targets[j])
-                  mctx.fill();
+                  ctx.fill();
                 else
                 {
-                  mctx.stroke();
+                  ctx.stroke();
                   if(j <= t_i && modules[i].plot[j] > targets[j]) off = 14;
                 }
 
-                mctx.font = "10px Roboto Mono";
-                mctx.textAlign = "center";
-                mctx.fillStyle = white;
-                mctx.fillText(fdisp(targets[j],1),x,y+off);
-                mctx.font = "20px Roboto Mono";
-                mctx.textAlign = "left";
-                mctx.fillStyle = modules[i].color;
+                ctx.font = "10px Roboto Mono";
+                ctx.textAlign = "center";
+                ctx.fillStyle = white;
+                ctx.fillText(fdisp(targets[j],1),x,y+off);
+                ctx.font = "20px Roboto Mono";
+                ctx.textAlign = "left";
+                ctx.fillStyle = modules[i].color;
               }
               if(j <= t_i && !isNaN(modules[i].plot[j]))
               {
                 if((j < targets.length && modules[i].plot[j] != targets[j]) || j >= targets.length)
                 {
-                  mctx.font = "10px Roboto Mono";
-                  mctx.textAlign = "center";
-                  mctx.fillStyle = white;
-                  y = self.graph_h - (clamp(0,1,mapVal(min(0,modules[i].min),modules[i].max,0,1,modules[i].plot[j]))*self.graph_h);
+                  ctx.font = "10px Roboto Mono";
+                  ctx.textAlign = "center";
+                  ctx.fillStyle = white;
+                  y = my+ gy + self.graph_h - (clamp(0,1,mapVal(min(0,modules[i].min),modules[i].max,0,1,modules[i].plot[j]))*self.graph_h);
                   var off = 14;
                   if(j < targets.length && modules[i].plot[j] > targets[j]) off = -8;
-                  mctx.fillText(fdisp(modules[i].plot[j],1),x,y+off);
-                  mctx.font = "20px Roboto Mono";
-                  mctx.textAlign = "left";
-                  mctx.fillStyle = modules[i].color;
+                  ctx.fillText(fdisp(modules[i].plot[j],1),x,y+off);
+                  ctx.font = "20px Roboto Mono";
+                  ctx.textAlign = "left";
+                  ctx.fillStyle = modules[i].color;
                   if(j < targets.length)
-                    mctx.drawImage(wrong_img,x-5,y-5,10,10);
+                  {
+                    var scale = 1;
+                    scale += sin(n_ticks/10)*0.2;
+                    if(scale > 0.9)
+                    ctx.drawImage(wrong_img,x-5*scale,y-5*scale,10*scale,10*scale);
+                  }
                 }
               }
             }
@@ -1471,33 +1492,23 @@ var GamePlayScene = function(game, stage)
           {
             for(var j = 0; !isNaN(modules[i].plot[j]); j++)
             {
-              x = gx + (j/(t_max-1)) * self.graph_w;
+              x = mx + gx + (j/(t_max-1)) * self.graph_w;
               if(j <= t_i && !isNaN(modules[i].plot[j]))
               {
-                mctx.font = "10px Roboto Mono";
-                mctx.textAlign = "center";
-                mctx.fillStyle = white;
-                y = gy + self.graph_h - (clamp(0,1,mapVal(min(0,modules[i].min),modules[i].max,0,1,modules[i].plot[j]))*self.graph_h);
+                ctx.font = "10px Roboto Mono";
+                ctx.textAlign = "center";
+                ctx.fillStyle = white;
+                y = my + gy + self.graph_h - (clamp(0,1,mapVal(min(0,modules[i].min),modules[i].max,0,1,modules[i].plot[j]))*self.graph_h);
                 var off = -8;
                 if(j%2) off = 14;
-                mctx.fillText(fdisp(modules[i].plot[j],1),x,y+off);
-                mctx.font = "20px Roboto Mono";
-                mctx.textAlign = "left";
-                mctx.fillStyle = modules[i].color;
+                ctx.fillText(fdisp(modules[i].plot[j],1),x,y+off);
+                ctx.font = "20px Roboto Mono";
+                ctx.textAlign = "left";
+                ctx.fillStyle = modules[i].color;
               }
             }
           }
         }
-        ctx.drawImage(modules[i].cache_graph,mx,my,self.module_w,self.module_h);
-
-        //playhead
-        ctx.lineWidth = 2;
-        ctx.strokeStyle = "#888888";
-        var x = mx + gx + ((t_i+(1-(advance_timer/advance_timer_max)))/(t_max-1)) * self.graph_w;
-        ctx.beginPath();
-        ctx.moveTo(x,my+gy);
-        ctx.lineTo(x,my+gy+self.graph_h);
-        ctx.stroke();
 
         graph_i++;
       }
