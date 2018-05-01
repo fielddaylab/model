@@ -513,7 +513,7 @@ var GamePlayScene = function(game, stage)
     var targets = levels[cur_level_i].primary_module_target_vals;
     if(t_i > 0 && modules[0].plot[1] != targets[0][1] && blurb.g_viz != 1)
     {
-      blurb.enq(["This model doesn't conform to our data... Select the Sunlight & CO₂ module and set its quantity to fix it!"]);
+      blurb.enq(["This model doesn't conform to our data... Select the Sunlight & CO₂ module and set its value to fix it!"]);
     }
     if(levelComplete() && t_i >= 4)
     {
@@ -1323,7 +1323,6 @@ var GamePlayScene = function(game, stage)
           modules[i].cache_graph = GenIcon(self.module_w,self.module_h);
           var mctx = modules[i].cache_graph.context;
 
-
           //bg
           mctx.fillStyle = graph_bg_dark_color;
           fillR(bx,by,self.bg_w,self.bg_h,self.graph_r,mctx);
@@ -1521,7 +1520,7 @@ var GamePlayScene = function(game, stage)
     self.w = 0;
     self.h = 0;
 
-    self.title_box = new TextBox(0,0,0,0,"",18,function(v){ if(selected_module.primary) return; var new_v = v; var old_v = selected_module.title; selected_module.title = new_v; });
+    self.title_box = new TextBox(0,0,0,0,"",18,function(v){ if(selected_module.primary) return; var new_v = v; var old_v = selected_module.title; selected_module.title = new_v; resetGraph(); });
     self.v_box     = new NumberBox(0,0,0,0,0,0,function(v)
     {
       if(selected_module.lock_value) return;
@@ -1783,7 +1782,7 @@ var GamePlayScene = function(game, stage)
 
       if(selected_module)
       {
-        { self.title_box.draw(canv); if(!self.title_box.txt.length) { ctx.fillText("(title)",self.title_box.x+4,self.title_box.y+self.title_box.h*3/4); } prevy = self.title_box.y+self.title_box.h+5; }
+        { self.title_box.draw(canv); if(!self.title_box.txt.length) { ctx.fillText("(untitled)",self.title_box.x+4,self.title_box.y+self.title_box.h*3/4); } prevy = self.title_box.y+self.title_box.h+5; }
         if(!selected_module.lock_value)
         {
           self.drawRightAlign(self.v_box);
@@ -2288,7 +2287,7 @@ var GamePlayScene = function(game, stage)
           dragging_obj = 0;
           //if(!self.primary && rectCollide(self.x,self.y,self.w,self.h,remove_module_btn.x,remove_module_btn.y,remove_module_btn.w,remove_module_btn.h))
             //deleteModule(self);
-          if(self.title == "") s_editor.title_box.focus();
+          if(!self.primary && self.title == "") s_editor.title_box.focus();
         }
         else
         {
