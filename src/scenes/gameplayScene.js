@@ -513,7 +513,7 @@ var GamePlayScene = function(game, stage)
     var targets = levels[cur_level_i].primary_module_target_vals;
     if(t_i > 0 && modules[0].plot[1] != targets[0][1] && blurb.g_viz != 1)
     {
-      blurb.enq(["This model doesn't conform to our data... Select the Sunlight & CO₂ module and set its value to fix it!"],[{title:"Sunlight & CO₂"}]);
+      blurb.enq(["This model doesn't conform to our data... Select the Sunlight & CO₂ module and set its value to fix it!"],[[{title:"Sunlight & CO₂"},{x:70,y:250}]]);
     }
     if(levelComplete() && t_i >= 4)
     {
@@ -554,7 +554,7 @@ var GamePlayScene = function(game, stage)
     var targets = levels[cur_level_i].primary_module_target_vals;
     if(modules[0].plot[0] != targets[0][0] && blurb.g_viz != 1)
     {
-      blurb.enq(["This model doesn't conform to our data... Select the Tree Height module and set its starting value."],[{title:"Tree Height (M)"}]);
+      blurb.enq(["This model doesn't conform to our data... Select the Tree Height module and set its starting value."],[[{title:"Tree Height (M)"},{x:40,y:260}]]);
     }
     if(levelComplete() && t_i >= 4)
     {
@@ -651,7 +651,7 @@ var GamePlayScene = function(game, stage)
     var targets = levels[cur_level_i].primary_module_target_vals;
     if(t_i > 0 && modules[0].plot[1] != targets[0][1] && blurb.g_viz != 1)
     {
-      blurb.enq(["This model doesn't conform to our data... Select the Grows relationship and modify its multiplier."],[{title:"Grows"}]);
+      blurb.enq(["This model doesn't conform to our data... Select the Grows relationship and modify its multiplier."],[[{title:"Grows"}]]);
     }
     if(levelComplete() && t_i >= 4)
     {
@@ -1120,15 +1120,28 @@ var GamePlayScene = function(game, stage)
       ctx.drawImage(girl_img,self.x+self.w-w-20,self.y+20,w,girl_img.height*(w/girl_img.width));
       if(self.g_viz && self.a_q && self.a_q[self.q_i])
       {
-        var a = self.a_q[self.q_i];
-        var m = 0;
-        for(var i = 0; !m && i < modules.length; i++)
-          if(a.title == modules[i].title) m = modules[i];
-
-        if(m)
+        for(var i = 0; i < self.a_q[self.q_i].length; i++)
         {
-          var x = m.x+m.w/2;
-          var y = m.y+m.h/2;
+          var a = self.a_q[self.q_i][i];
+          var x = 0;
+          var y = 0;
+          if(a.title)
+          {
+            var m = 0;
+            for(var j = 0; !m && j < modules.length; j++)
+              if(a.title == modules[j].title) m = modules[j];
+
+            if(m)
+            {
+              var x = m.x+m.w/2;
+              var y = m.y+m.h/2;
+            }
+          }
+          else if(a.x)
+          {
+            var x = a.x;
+            var y = a.y;
+          }
           ctx.lineWidth = 10;
           ctx.strokeStyle = white;
           var d = sin(self.a_t/1000*twopi*8)*10;
