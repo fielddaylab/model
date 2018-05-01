@@ -610,7 +610,7 @@ var GamePlayScene = function(game, stage)
   {
     if(modules.length == 0 && blurb.g_viz != 1)
     {
-      blurb.enq(["Create the Tree Growth Model from scratch!"]);
+      blurb.enq(["Create the Tree Growth Model from scratch!"],[[{x:55,y:620}]]);
     }
     if(levelComplete() && t_i >= 4)
     {
@@ -1566,7 +1566,22 @@ var GamePlayScene = function(game, stage)
     self.w = 0;
     self.h = 0;
 
-    self.title_box = new TextBox(0,0,0,0,"",18,function(v){ if(selected_module.primary) return; var new_v = v; var old_v = selected_module.title; selected_module.title = new_v; resetGraph(); });
+    self.title_box = new TextBox(0,0,0,0,"",18,function(v){ if(selected_module.primary) return; var new_v = v; var old_v = selected_module.title; selected_module.title = new_v;
+    if(selected_module.title.match(/tree/))       { selected_module.color = "#95F32E"; selected_module.img_name = "assets/tree.png";       selected_module.img = 0; };
+    if(selected_module.title.match(/sun/))        { selected_module.color = "#FFF46F"; selected_module.img_name = "assets/sun.png";        selected_module.img = 0; };
+    if(selected_module.title.match(/greenhouse/)) { selected_module.color = "#ACF9D2"; selected_module.img_name = "assets/greenhouse.png"; selected_module.img = 0; };
+    if(selected_module.title.match(/car/))        { selected_module.color = "#87E2FF"; selected_module.img_name = "assets/car.png";        selected_module.img = 0; };
+    if(selected_module.title.match(/cow/))        { selected_module.color = "#FFAEAE"; selected_module.img_name = "assets/cow.png";        selected_module.img = 0; };
+    if(selected_module.title.match(/grass/))      { selected_module.color = "#AFF865"; selected_module.img_name = "assets/grass.png";      selected_module.img = 0; };
+    if(selected_module.title.match(/plant/))      { selected_module.color = "#95F32E"; selected_module.img_name = "assets/plant.png";      selected_module.img = 0; };
+    if(selected_module.title.match(/bug/))        { selected_module.color = "#E774FF"; selected_module.img_name = "assets/bug.png";        selected_module.img = 0; };
+    if(selected_module.title.match(/minnow/))     { selected_module.color = "#BDAEFF"; selected_module.img_name = "assets/minnow.png";     selected_module.img = 0; };
+    if(selected_module.title.match(/walleye/))    { selected_module.color = "#F5A623"; selected_module.img_name = "assets/walleye.png";    selected_module.img = 0; };
+    if(selected_module.title.match(/dnr/))        { selected_module.color = "#E774FF"; selected_module.img_name = "assets/dnr.png";        selected_module.img = 0; };
+    if(selected_module.title.match(/herbivore/))  { selected_module.color = "#F5A623"; selected_module.img_name = "assets/herbivore.png";  selected_module.img = 0; };
+    if(selected_module.title.match(/carnivore/))  { selected_module.color = "#FF6578"; selected_module.img_name = "assets/carnivore.png";  selected_module.img = 0; };
+    if(selected_module.img_name && !selected_module.img) { selected_module.img = new Image(); selected_module.img.onload = (function(m){return (function(){ m.body_cache = {buffer:10}; })})(selected_module); selected_module.img.src = selected_module.img_name; }
+    resetGraph(); });
     self.v_box     = new NumberBox(0,0,0,0,0,0,function(v)
     {
       if(selected_module.lock_value) return;
