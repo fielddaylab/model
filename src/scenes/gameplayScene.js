@@ -453,7 +453,7 @@ var GamePlayScene = function(game, stage)
   levels.push(l);
 
   l = new level();
-  l.title = "Watch";
+  l.title = "Observe";
   l.primary_module_template = "{\"modules\":[{\"title\":\"Tree Height (M)\",\"img_name\":\"assets/tree.png\",\"color\":\"#95F32E\",\"type\":0,\"v\":1,\"min\":0,\"max\":20,\"pool\":1,\"graph\":1,\"wx\":0.7045454545454546,\"wy\":0.20181818181818184,\"ww\":0.1136,\"wh\":0.1136,\"input\":-1,\"output\":-1,\"lock_move\":false,\"lock_input\":true,\"lock_output\":true,\"lock_value\":true,\"lock_min\":true,\"lock_max\":true,\"lock_pool\":true,\"lock_graph\":true},{\"title\":\"Sunlight & CO₂\",\"img_name\":\"assets/sun.png\",\"color\":\"#FFF46F\",\"type\":3,\"v\":1,\"min\":0,\"max\":10,\"pool\":1,\"graph\":0,\"wx\":-0.013636363636363849,\"wy\":0.20181818181818184,\"ww\":0.1136,\"wh\":0.1136,\"input\":-1,\"output\":-1,\"lock_move\":false,\"lock_input\":true,\"lock_output\":true,\"lock_value\":true,\"lock_min\":false,\"lock_max\":false,\"lock_pool\":false,\"lock_graph\":false},{\"title\":\"\",\"img_name\":\"undefined\",\"color\":\"#FF6578\",\"type\":2,\"v\":1,\"min\":0,\"max\":10,\"pool\":1,\"graph\":false,\"wx\":0.3454545454545455,\"wy\":0.20636363636363642,\"ww\":0.1136,\"wh\":0.1136,\"input\":1,\"output\":0,\"lock_move\":false,\"lock_input\":true,\"lock_output\":true,\"lock_value\":true,\"lock_min\":true,\"lock_max\":true,\"lock_pool\":true,\"lock_graph\":true}]}";
   l.primary_module_target_titles.push("Height(M)");
   l.primary_module_target_vals.push([1,2,3,4,5]);
@@ -475,7 +475,16 @@ var GamePlayScene = function(game, stage)
     if(t_i < 4)
     {
       if(advance_timer == advance_timer_max && blurb.g_viz != 1)
-        blurb.enq(["Click \"Next Step\"!"]);
+      {
+        switch(t_i)
+        {
+          case 0: blurb.enq(["Click \"Next Step\"!"],[[{x:620,y:450}]]); break;
+          case 1: blurb.enq(["Great! Click \"Next Step\" again! This time, watch the numbers."],[[{x:620,y:450},{title:"Tree Height (M)"}]]); break;
+          case 2: blurb.enq(["And again, but now keep an eye on the data..."],[[{x:620,y:450},{x:115,y:245}]]); break;
+          case 3:
+          default: blurb.enq(["One more time. Let's see if this model corresponds to our collected data."],[[{x:620,y:450}]]); break;
+        }
+      }
       if(advance_timer != advance_timer_max && blurb.g_viz == 1)
         blurb.dismiss();
     }
@@ -492,7 +501,7 @@ var GamePlayScene = function(game, stage)
   levels.push(l);
 
   l = new level();
-  l.title = "Source";
+  l.title = "Faulty Source";
   l.primary_module_template = "{\"modules\":[{\"title\":\"Tree Height (M)\",\"img_name\":\"assets/tree.png\",\"color\":\"#95F32E\",\"type\":0,\"v\":1,\"min\":0,\"max\":20,\"pool\":1,\"graph\":1,\"wx\":0.7227272727272729,\"wy\":0.19500000000000006,\"ww\":0.1136,\"wh\":0.1136,\"input\":-1,\"output\":-1,\"lock_move\":false,\"lock_input\":true,\"lock_output\":true,\"lock_value\":true,\"lock_min\":true,\"lock_max\":true,\"lock_pool\":true,\"lock_graph\":true},{\"title\":\"Sunlight & CO₂\",\"img_name\":\"assets/sun.png\",\"color\":\"#FFF46F\",\"type\":3,\"v\":1,\"min\":0,\"max\":10,\"pool\":1,\"graph\":0,\"wx\":-0.03863636363636376,\"wy\":0.15181818181818185,\"ww\":0.1136,\"wh\":0.1136,\"input\":-1,\"output\":-1,\"lock_move\":false,\"lock_input\":true,\"lock_output\":true,\"lock_value\":false,\"lock_min\":false,\"lock_max\":false,\"lock_pool\":false,\"lock_graph\":false},{\"title\":\"\",\"img_name\":\"undefined\",\"color\":\"#87E2FF\",\"type\":2,\"v\":1,\"min\":0,\"max\":10,\"pool\":1,\"graph\":false,\"wx\":0.3204545454545456,\"wy\":0.16545454545454552,\"ww\":0.1136,\"wh\":0.1136,\"input\":1,\"output\":0,\"lock_move\":false,\"lock_input\":true,\"lock_output\":true,\"lock_value\":true,\"lock_min\":true,\"lock_max\":true,\"lock_pool\":true,\"lock_graph\":true}]}";
   l.primary_module_target_titles.push("Height(M)");
   l.primary_module_target_vals.push([1,3,5,7,9]);
@@ -533,7 +542,7 @@ var GamePlayScene = function(game, stage)
   levels.push(l);
 
   l = new level();
-  l.title = "Start";
+  l.title = "Bad Start";
   l.primary_module_template = "{\"modules\":[{\"title\":\"Tree Height (M)\",\"img_name\":\"assets/tree.png\",\"color\":\"#95F32E\",\"type\":0,\"v\":1,\"min\":0,\"max\":20,\"pool\":1,\"graph\":1,\"wx\":0.7204545454545455,\"wy\":0.22909090909090912,\"ww\":0.1136,\"wh\":0.1136,\"input\":-1,\"output\":-1,\"lock_move\":false,\"lock_input\":true,\"lock_output\":true,\"lock_value\":false,\"lock_min\":true,\"lock_max\":true,\"lock_pool\":true,\"lock_graph\":true},{\"title\":\"Sunlight & CO₂\",\"img_name\":\"assets/sun.png\",\"color\":\"#FFF46F\",\"type\":3,\"v\":2,\"min\":0,\"max\":10,\"pool\":1,\"graph\":0,\"wx\":0.006818181818181654,\"wy\":0.24272727272727274,\"ww\":0.1136,\"wh\":0.1136,\"input\":-1,\"output\":-1,\"lock_move\":false,\"lock_input\":true,\"lock_output\":true,\"lock_value\":false,\"lock_min\":false,\"lock_max\":false,\"lock_pool\":false,\"lock_graph\":false},{\"title\":\"\",\"img_name\":\"undefined\",\"color\":\"#FFF46F\",\"type\":2,\"v\":1,\"min\":0,\"max\":10,\"pool\":1,\"graph\":false,\"wx\":0.3818181818181819,\"wy\":0.22454545454545466,\"ww\":0.1136,\"wh\":0.1136,\"input\":1,\"output\":0,\"lock_move\":false,\"lock_input\":true,\"lock_output\":true,\"lock_value\":true,\"lock_min\":true,\"lock_max\":true,\"lock_pool\":true,\"lock_graph\":true}]}";
   l.primary_module_target_titles.push("Height(M)");
   l.primary_module_target_vals.push([2,4,6,8,10]);
@@ -554,7 +563,7 @@ var GamePlayScene = function(game, stage)
     var targets = levels[cur_level_i].primary_module_target_vals;
     if(modules[0].plot[0] != targets[0][0] && blurb.g_viz != 1)
     {
-      blurb.enq(["This model doesn't conform to our data... Select the Tree Height module and set its starting value."],[[{title:"Tree Height (M)"},{x:40,y:260}]]);
+      blurb.enq(["This model already doesn't conform to our data... Select the Tree Height module and set its starting value."],[[{title:"Tree Height (M)"},{x:40,y:260}]]);
     }
     if(levelComplete() && t_i >= 4)
     {
@@ -574,65 +583,12 @@ var GamePlayScene = function(game, stage)
   levels.push(l);
 
   l = new level();
-  l.title = "Build a Tree";
-  l.primary_module_template = "{\"modules\":[]}";
-  l.primary_module_target_titles.push("Height(M)");
-  l.primary_module_target_vals.push([0.5,1,1.5,2,2.5]);
-  l.add_module_enabled = true;
-  l.remove_enabled = false;
-  l.play_enabled = false;
-  l.speed_enabled = false;
-  l.should_allow_creation = function(type)
-  {
-    var n = 0;
-    if(type == MODULE_TYPE_OBJECT)
-    {
-      for(var i = 0; i < modules.length; i++)
-        if(modules[i].type == type) n++;
-    }
-    if(type == MODULE_TYPE_GENERATOR)
-    {
-      for(var i = 0; i < modules.length; i++)
-        if(modules[i].type == type) n++;
-    }
-    if(n > 0) return false;
-    return true
-  }
-  l.ready = function()
-  {
-    selected_module = undefined;
-  }
-  l.should_dismiss_blurb = function()
-  {
-    return false;
-  }
-  l.draw = function()
-  {
-    if(modules.length == 0 && blurb.g_viz != 1)
-    {
-      blurb.enq(["Create the Tree Growth Model from scratch!"],[[{x:55,y:620}]]);
-    }
-    if(levelComplete() && t_i >= 4)
-    {
-      if(blurb.g_viz != 1)
-        blurb.enq(["Simulation Complete! Click \"Next Level\""]);
-    }
-    else if(modules.length > 0 && blurb.g_viz == 1)
-    {
-      blurb.dismiss();
-    }
-  }
-  l.click = function(evt)
-  {
-  }
-  l.comic = false;
-  levels.push(l);
-
-  l = new level();
   l.title = "Rate";
-  l.primary_module_template = "{\"modules\":[{\"title\":\"Tree Height (M)\",\"img_name\":\"assets/tree.png\",\"color\":\"#95F32E\",\"type\":0,\"v\":1,\"min\":0,\"max\":50,\"pool\":1,\"graph\":1,\"wx\":0.7068181818181816,\"wy\":0.14500000000000007,\"ww\":0.1136,\"wh\":0.1136,\"input\":-1,\"output\":-1,\"lock_move\":false,\"lock_input\":true,\"lock_output\":true,\"lock_value\":true,\"lock_min\":true,\"lock_max\":true,\"lock_pool\":true,\"lock_graph\":false},{\"title\":\"Sunlight & CO₂\",\"img_name\":\"assets/sun.png\",\"color\":\"#FFF46F\",\"type\":3,\"v\":10,\"min\":0,\"max\":50,\"pool\":1,\"graph\":0,\"wx\":-0.006818181818181682,\"wy\":0.14500000000000007,\"ww\":0.1136,\"wh\":0.1136,\"input\":-1,\"output\":-1,\"lock_move\":false,\"lock_input\":true,\"lock_output\":true,\"lock_value\":true,\"lock_min\":true,\"lock_max\":true,\"lock_pool\":true,\"lock_graph\":false},{\"title\":\"Grows\",\"img_name\":\"undefined\",\"color\":\"#BDAEFF\",\"type\":2,\"v\":0.5,\"min\":0,\"max\":10,\"pool\":1,\"graph\":0,\"wx\":0.3363636363636365,\"wy\":0.1954545454545455,\"ww\":0.1136,\"wh\":0.1136,\"input\":1,\"output\":0,\"lock_move\":false,\"lock_input\":true,\"lock_output\":true,\"lock_value\":false,\"lock_min\":true,\"lock_max\":true,\"lock_pool\":true,\"lock_graph\":false}]}";
+  l.primary_module_template = "{\"modules\":[{\"title\":\"Tree Height (M)\",\"img_name\":\"assets/tree.png\",\"color\":\"#95F32E\",\"type\":0,\"v\":1,\"min\":0,\"max\":50,\"pool\":1,\"graph\":1,\"wx\":0.7068181818181816,\"wy\":0.14500000000000007,\"ww\":0.1136,\"wh\":0.1136,\"input\":-1,\"output\":-1,\"lock_move\":false,\"lock_input\":true,\"lock_output\":true,\"lock_value\":true,\"lock_min\":true,\"lock_max\":true,\"lock_pool\":true,\"lock_graph\":false},{\"title\":\"Sunlight & CO₂\",\"img_name\":\"assets/sun.png\",\"color\":\"#FFF46F\",\"type\":3,\"v\":10,\"min\":0,\"max\":50,\"pool\":1,\"graph\":1,\"wx\":-0.006818181818181682,\"wy\":0.14500000000000007,\"ww\":0.1136,\"wh\":0.1136,\"input\":-1,\"output\":-1,\"lock_move\":false,\"lock_input\":true,\"lock_output\":true,\"lock_value\":true,\"lock_min\":true,\"lock_max\":true,\"lock_pool\":true,\"lock_graph\":false},{\"title\":\"Grows\",\"img_name\":\"undefined\",\"color\":\"#BDAEFF\",\"type\":2,\"v\":0.5,\"min\":0,\"max\":10,\"pool\":1,\"graph\":0,\"wx\":0.3363636363636365,\"wy\":0.1954545454545455,\"ww\":0.1136,\"wh\":0.1136,\"input\":1,\"output\":0,\"lock_move\":false,\"lock_input\":true,\"lock_output\":true,\"lock_value\":false,\"lock_min\":true,\"lock_max\":true,\"lock_pool\":true,\"lock_graph\":false}]}";
   l.primary_module_target_titles.push("Plants");
   l.primary_module_target_vals.push([1,2,3,4,5]);
+  l.primary_module_target_titles.push("Sun");
+  l.primary_module_target_vals.push([10,10,10,10,10]);
   l.add_module_enabled = false;
   l.remove_enabled = false;
   l.play_enabled = false;
@@ -670,7 +626,7 @@ var GamePlayScene = function(game, stage)
   levels.push(l);
 
   l = new level();
-  l.title = "Two ways";
+  l.title = "Multiple Solutions";
   l.primary_module_template = "{\"modules\":[{\"title\":\"Tree Height (M)\",\"img_name\":\"assets/tree.png\",\"color\":\"#95F32E\",\"type\":0,\"v\":1,\"min\":0,\"max\":80,\"pool\":1,\"graph\":1,\"wx\":0.8022727272727274,\"wy\":0.201818181818182,\"ww\":0.1136,\"wh\":0.1136,\"input\":-1,\"output\":-1,\"lock_move\":false,\"lock_input\":true,\"lock_output\":true,\"lock_value\":false,\"lock_min\":true,\"lock_max\":true,\"lock_pool\":true,\"lock_graph\":false},{\"title\":\"Sunlight & CO₂\",\"img_name\":\"assets/sun.png\",\"color\":\"#FFF46F\",\"type\":3,\"v\":10,\"min\":0,\"max\":50,\"pool\":1,\"graph\":1,\"wx\":-0.015909090909091053,\"wy\":0.20863636363636362,\"ww\":0.1136,\"wh\":0.1136,\"input\":-1,\"output\":-1,\"lock_move\":false,\"lock_input\":true,\"lock_output\":true,\"lock_value\":false,\"lock_min\":true,\"lock_max\":true,\"lock_pool\":true,\"lock_graph\":false},{\"title\":\"Grows\",\"img_name\":\"undefined\",\"color\":\"#FFF46F\",\"type\":2,\"v\":0.5,\"min\":0,\"max\":10,\"pool\":1,\"graph\":0,\"wx\":0.3454545454545456,\"wy\":0.27727272727272734,\"ww\":0.1136,\"wh\":0.1136,\"input\":1,\"output\":0,\"lock_move\":false,\"lock_input\":true,\"lock_output\":true,\"lock_value\":false,\"lock_min\":true,\"lock_max\":true,\"lock_pool\":true,\"lock_graph\":false}]}";
   l.primary_module_target_titles.push("Plants");
   l.primary_module_target_vals.push([10,20,30,40,50]);
@@ -732,7 +688,7 @@ var GamePlayScene = function(game, stage)
     var targets = levels[cur_level_i].primary_module_target_vals;
     if(modules[0].plot[1] != targets[0][1] && blurb.g_viz != 1)
     {
-      blurb.enq(["Create the Relationship required to model our collected data."]);
+      blurb.enq(["Create the Relationship required to model our collected data.            To do this, hover over the Source node and drag an arrow out to the Sink node."]);
     }
     if(levelComplete() && t_i >= 4)
     {
@@ -742,6 +698,63 @@ var GamePlayScene = function(game, stage)
     else if(modules[0].plot[1] == targets[0][1] && blurb.g_viz == 1)
     {
       blurb.dismiss();
+    }
+  }
+  l.click = function(evt)
+  {
+  }
+  l.comic = false;
+  levels.push(l);
+
+  l = new level();
+  l.title = "Build a Tree";
+  l.primary_module_template = "{\"modules\":[]}";
+  l.primary_module_target_titles.push("Height(M)");
+  l.primary_module_target_vals.push([0.5,1,1.5,2,2.5]);
+  l.add_module_enabled = true;
+  l.remove_enabled = false;
+  l.play_enabled = false;
+  l.speed_enabled = false;
+  l.should_allow_creation = function(type)
+  {
+    var n = 0;
+    if(type == MODULE_TYPE_OBJECT)
+    {
+      for(var i = 0; i < modules.length; i++)
+        if(modules[i].type == type) n++;
+    }
+    if(type == MODULE_TYPE_GENERATOR)
+    {
+      for(var i = 0; i < modules.length; i++)
+        if(modules[i].type == type) n++;
+    }
+    if(n > 0) return false;
+    return true
+  }
+  l.ready = function()
+  {
+    selected_module = undefined;
+  }
+  l.should_dismiss_blurb = function()
+  {
+    return false;
+  }
+  l.draw = function()
+  {
+    if(levelComplete() && t_i >= 4)
+    {
+      if(blurb.g_viz != 1)
+        blurb.enq(["Simulation Complete! Click \"Next Level\""]);
+    }
+    else if(modules.length > 1 && blurb.a_q && blurb.a_q[0].length > 0)
+    {
+      if(blurb.g_viz == 1) blurb.dismiss();
+      else blurb.enq(["Create the Tree Growth Model from scratch! You just need to make sure it fits the data. Good luck!"]);
+    }
+    else if(modules.length < 2 && (!blurb.a_q || blurb.a_q[0].length == 0))
+    {
+      if(blurb.g_viz == 1) blurb.dismiss();
+      else blurb.enq(["Create the Tree Growth Model from scratch! You just need to make sure it fits the data. Good luck!"],[[{x:55,y:620}]]);
     }
   }
   l.click = function(evt)
@@ -1030,7 +1043,7 @@ var GamePlayScene = function(game, stage)
     switch(i)
     {
       case 0:
-      case 4:
+      case 3:
       case 7:
       case 9:
       case 12:
@@ -1621,6 +1634,7 @@ var GamePlayScene = function(game, stage)
       deleteModule(selected_module);
       selected_module = 0;
       dragging_obj = 0;
+      drag_pause = false;
       resetGraph();
     });
 
