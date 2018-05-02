@@ -2614,12 +2614,12 @@ var GamePlayScene = function(game, stage)
               fillR(self.body_cache.buffer+self.w/7,self.body_cache.buffer+self.h/3,self.w*5/7,self.h/3,5,self.body_cache.rel_const.context);
               if(self.img_name && self.img && self.img.complete)
               {
-                self.body_cache.module_rel_const.context.globalCompositeOperation = "source-atop";
-                self.body_cache.module_rel_const.context.drawImage(self.img,0,0,self.body_cache.module_rel_const.width,self.body_cache.module_rel_const.height);
-                self.body_cache.module_rel_const.context.globalCompositeOperation = "source-over";
-                self.body_cache.module_rel_const.context.globalAlpha = 0.1;
+                self.body_cache.rel_const.context.globalCompositeOperation = "source-atop";
+                self.body_cache.rel_const.context.drawImage(self.img,0,0,self.body_cache.rel_const.width,self.body_cache.rel_const.height);
+                self.body_cache.rel_const.context.globalCompositeOperation = "source-over";
+                self.body_cache.rel_const.context.globalAlpha = 0.1;
                 fillR(self.body_cache.buffer+self.w/7,self.body_cache.buffer+self.h/3,self.w*5/7,self.h/3,5,self.body_cache.rel_const.context);
-                self.body_cache.module_rel_const.context.globalAlpha = 1;
+                self.body_cache.rel_const.context.globalAlpha = 1;
               }
               strokeR(self.body_cache.buffer+self.w/7,self.body_cache.buffer+self.h/3,self.w*5/7,self.h/3,5,self.body_cache.rel_const.context);
             }
@@ -2637,12 +2637,12 @@ var GamePlayScene = function(game, stage)
             self.body_cache.rel_nconst.context.drawImage(hex_bg_img,self.body_cache.buffer+b,self.body_cache.buffer+b,self.w-b*2,self.h-b*2);
             if(self.img_name && self.img && self.img.complete)
             {
-              self.body_cache.module_rel_nconst.context.globalCompositeOperation = "source-atop";
-              self.body_cache.module_rel_nconst.context.drawImage(self.img,0,0,self.body_cache.module_rel_nconst.width,self.body_cache.module_rel_nconst.height);
-              self.body_cache.module_rel_nconst.context.globalCompositeOperation = "source-over";
-              self.body_cache.module_rel_nconst.context.globalAlpha = 0.1;
+              self.body_cache.rel_nconst.context.globalCompositeOperation = "source-atop";
+              self.body_cache.rel_nconst.context.drawImage(self.img,0,0,self.body_cache.rel_nconst.width,self.body_cache.rel_nconst.height);
+              self.body_cache.rel_nconst.context.globalCompositeOperation = "source-over";
+              self.body_cache.rel_nconst.context.globalAlpha = 0.1;
               self.body_cache.rel_nconst.context.drawImage(hex_bg_img,self.body_cache.buffer+b,self.body_cache.buffer+b,self.w-b*2,self.h-b*2);
-              self.body_cache.module_rel_nconst.context.globalAlpha = 1;
+              self.body_cache.rel_nconst.context.globalAlpha = 1;
             }
           }
           ctx.drawImage(self.body_cache.rel_nconst,self.x-self.body_cache.buffer,self.y-self.body_cache.buffer,self.w+self.body_cache.buffer*2,self.h+self.body_cache.buffer*2);
@@ -3116,6 +3116,8 @@ var GamePlayScene = function(game, stage)
     dst.h = src.h;
     dst.title = src.title;
     dst.color = src.color;
+    dst.img_name = src.img_name;
+    dst.img = src.img;
     dst.primary = src.primary;
     dst.primary_index = src.primary_index;
     dst.lock_move = src.lock_move;
@@ -3164,6 +3166,8 @@ var GamePlayScene = function(game, stage)
     mod.h = 0;
 
     mod.title = "";
+    mod.img_name = 0;
+    mod.img = 0;
     mod.color = good_colors[randIntBelow(good_colors.length)];
     mod.primary = false;
     mod.primary_index = 0;
