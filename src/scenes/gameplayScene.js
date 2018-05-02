@@ -776,7 +776,7 @@ var GamePlayScene = function(game, stage)
   l.ready = function()
   {
     selected_module = undefined;
-    blurb.enq(["Multiple objects can have an additive effect."]);
+    blurb.enq(["Multiple objects can have an additive effect. Create a model that fits the data!"]);
   }
   l.should_dismiss_blurb = function()
   {
@@ -810,7 +810,7 @@ var GamePlayScene = function(game, stage)
   l.ready = function()
   {
     selected_module = undefined;
-    blurb.enq(["Some relationships inversely affect their output."]);
+    blurb.enq(["Some relationships inversely affect their output. Alter the model to one that fits the data."]);
   }
   l.should_dismiss_blurb = function()
   {
@@ -845,7 +845,7 @@ var GamePlayScene = function(game, stage)
   l.ready = function()
   {
     selected_module = undefined;
-    blurb.enq(["Chain reactions have compounding results- which can be hard to predict. Try to focus on getting one piece right at a time!"]);
+    blurb.enq(["Chain reactions have compounding results- which can be hard to predict.    Try to focus on getting one piece right at a time!"]);
   }
   l.should_dismiss_blurb = function()
   {
