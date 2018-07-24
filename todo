@@ -1,3 +1,27 @@
+don't name category "grow a tree", but rather "model a tree"
+needs "newly available level" icon (not drawn to click initial level)
+"click next" as first intro to content is... intriguing? Could use a "hello" or something (to acknowledge you didn't accidentally drop in to the middle)
+"this time watch the numbers" should be worded... better
+"keep an eye on the data" should explicitly draw the link between "the numbers" and "the simulated data" (show they correspond)
+graph should be labeled with - = simulated data, o = collected data
+label the workspace as "The Model" or something
+"this model is a good representation of our data" should follow up with "we should see what our model says will happen next"
+green check with rays coming out looks like "pay attention to me!" when it's really "stop paying attention to me!"
+should model something with very explicit, coherent units. though, that changes the abstraction of rate to something useless...
+incorrect data point should pulse with red x, so should the number on the incorrect module
+value parser should regex validate a mathematical expression, then execute it (for example, 1/10 should be appropriate)
+simulation numbers on graph should be color of graph(?)
+graphs don't render negative numbers successfully (probably fine?)
+keyboard focus issue not fixed!!! (tab is fine- but clicking anywhere outside of game loses keyboard)
+"rate" level defaults to "fast", which is a bit much (but maybe opportunity to explicitly see speed functions?)
+auto-title "create nodes" levels' nodes
+"build a tree"- confident it's beatable by someone sat in front of computer, but it's unpleasant to do ("why am I fiddling with this" -> don't need a narrative/challenge/fun justification, need a trust that this fiddling is actually building to something)
+preamble with "We've observed this _greenhouse effect_, and have reason to believe it is caused proportionately by _cars_ and _cows_, but our current model doesn't add up..."
+(specifically "chain reactions") "this model is a good match for our data" pops up and takes over the screen (like "nothing more to see here!") even though that's _precisely when things are starting to get good_
+wtf is "polynomial growth" level?
+"pool" never used- confusing
+
+OLD TODO
 highlighting editor ui should pause
 highlighting editor ui shouldn't pass through to screen dragger
 selected module
