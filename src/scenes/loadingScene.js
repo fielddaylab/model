@@ -54,7 +54,7 @@ var LoadingScene = function(game, stage)
     lerp_chase_percent_loaded = 0;
     ticks_since_ready = 0;
     post_load_countdown = 200;
-    post_load_countdown = 1; //uncomment to skip anim
+    //post_load_countdown = 1; //uncomment to skip anim
 
     n_loading_imgs_loaded = 0;
     loading_img_srcs = [];
