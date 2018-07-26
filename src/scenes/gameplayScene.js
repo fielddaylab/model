@@ -6,6 +6,7 @@ var GamePlayScene = function(game, stage)
   var ALLOW_SAVE = true;
 
   var precision = 2;
+  var realprecision = 2;
   var predict = true;
 
   ENUM = 0;
@@ -3494,8 +3495,8 @@ var GamePlayScene = function(game, stage)
 
     for(var i = 0; i < modules.length; i++)
     {
-      modules[i].v_temp = fdisp(clamp(modules[i].min,modules[i].max,modules[i].v_temp),2);
-      modules[i].cache_delta = fdisp(modules[i].v_temp-modules[i].v,2);
+      modules[i].v_temp = fdisp(clamp(modules[i].min,modules[i].max,modules[i].v_temp),realprecision);
+      modules[i].cache_delta = fdisp(modules[i].v_temp-modules[i].v,realprecision);
       modules[i].v = modules[i].v_temp;
       modules[i].plot[t_i] = modules[i].v;
     }
